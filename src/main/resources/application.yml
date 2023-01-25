@@ -1,0 +1,19 @@
+#data source
+spring:
+  datasource:
+    url: ${DATABASE_POSTGRES_URL}
+    username: ${DATABASE_POSTGRES_USERNAME}
+    password: ${DATABASE_POSTGRES_PASSWORD}
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
