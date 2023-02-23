@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.expense
 
+import br.com.zinid.smartwallet.domain.acquaintance.Acquaintance
 import br.com.zinid.smartwallet.domain.payment.Payment
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -10,5 +11,6 @@ data class Expense(
     val date: LocalDate,
     val price: BigDecimal,
     val payment: Payment,
-    val essential: Boolean? = false
+    val essential: Boolean? = false,
+    val expenseFor: Acquaintance?
 )
