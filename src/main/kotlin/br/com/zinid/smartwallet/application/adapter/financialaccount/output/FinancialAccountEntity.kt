@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.financialaccount.output
 
+import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodEntity
 import br.com.zinid.smartwallet.application.adapter.user.output.UserEntity
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import jakarta.persistence.*
@@ -16,11 +17,21 @@ data class FinancialAccountEntity(
 
     val institution: String? = null,
     val balance: BigDecimal? = null,
-//    val paymentMethods: List<PaymentMethodEntity>? = listOf()
+
+    @OneToMany(mappedBy = "financialAccount")
+    val paymentMethods: List<PaymentMethodEntity>? = listOf(),
+
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     val user: UserEntity
 ) {
+
+    fun toDomain() = FinancialAccount(
+        id = id,
+        institution = institution,
+        balance = balance,
+        user = user.toDomain()
+    )
     companion object {
         fun fromDomain(financialAccount: FinancialAccount?) = FinancialAccountEntity(
             id = financialAccount?.id,

@@ -32,8 +32,8 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
         val globalErrors = ex.bindingResult.globalErrors
         val fieldErrors = ex.bindingResult.fieldErrors
 
-        val errors: ValidationErrorResponse = buildValidationErrors(globalErrors, fieldErrors)
-        val validationErr = ValidationErrorOutputResponse(
+        val errors: ValidationErrorOutputDto = buildValidationErrors(globalErrors, fieldErrors)
+        val validationErr = ValidationErrorResponse(
             status = status.value(),
             title = "One or more fields has invalid values. Fill the field(s) correctly and try again.",
             fields = errors
@@ -43,9 +43,9 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     fun buildValidationErrors(
         globalErrors: List<ObjectError?>, fieldErrors: List<FieldError>
-    ): ValidationErrorResponse {
+    ): ValidationErrorOutputDto {
 
-        val validationErrors = ValidationErrorResponse()
+        val validationErrors = ValidationErrorOutputDto()
 
         globalErrors.forEach(Consumer { error: ObjectError? ->
             validationErrors.globalErrorMessages.add(getErrorMessage(error))
@@ -53,7 +53,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
         fieldErrors.forEach(Consumer { error: FieldError ->
             val errorMessage = getErrorMessage(error)
-            validationErrors.fieldErrors.add(FieldErrorResponse(error.field, errorMessage))
+            validationErrors.fieldErrors.add(FieldErrorOutputDto(error.field, errorMessage))
         })
         return validationErrors
     }

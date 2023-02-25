@@ -1,9 +1,11 @@
 package br.com.zinid.smartwallet.domain.paymentmethod
 
 import br.com.zinid.smartwallet.domain.creditcard.CreditCard
+import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 
 data class PaymentMethod(
-    val id: Long,
-    val method: PaymentMethods, // pix, débito, crédito, va, vr, etc
-    val creditCard: CreditCard?
+    val id: Long? = null,
+    val method: String? = null, // pix, débito, crédito, va, vr, etc
+    val creditCard: CreditCard? = null,
+    val financialAccount: FinancialAccount? = null
 )

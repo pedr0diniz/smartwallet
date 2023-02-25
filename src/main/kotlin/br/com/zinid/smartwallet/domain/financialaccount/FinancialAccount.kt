@@ -9,5 +9,5 @@ data class FinancialAccount(
     val institution: String? = null,
     val balance: BigDecimal? = null,
     val paymentMethods: List<PaymentMethod>? = listOf(),
-    val user: User
+    val user: User? = null
 )
