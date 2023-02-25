@@ -1,0 +1,32 @@
+package br.com.zinid.smartwallet.application.adapter.financialaccount.output
+
+import br.com.zinid.smartwallet.application.adapter.user.output.UserEntity
+import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
+import jakarta.persistence.*
+import org.hibernate.Hibernate
+import java.math.BigDecimal
+
+@Entity
+@Table(name = "financial_account")
+data class FinancialAccountEntity(
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
+
+    val institution: String? = null,
+    val balance: BigDecimal? = null,
+//    val paymentMethods: List<PaymentMethodEntity>? = listOf()
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
+    val user: UserEntity
+) {
+    companion object {
+        fun fromDomain(financialAccount: FinancialAccount?) = FinancialAccountEntity(
+            id = financialAccount?.id,
+            institution = financialAccount?.institution,
+            balance = financialAccount?.balance,
+            user = UserEntity.fromDomain(financialAccount?.user)
+        )
+    }
+}

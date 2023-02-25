@@ -4,10 +4,10 @@ import br.com.zinid.smartwallet.domain.user.User
 import br.com.zinid.smartwallet.domain.user.output.CreateUserOutputPort
 
 class CreateUserUseCase(
-    private val createAuthorAdapter: CreateUserOutputPort
+    private val createUserAdapter: CreateUserOutputPort
 ) : CreateUserInputPort {
 
     override fun execute(user: User): Long? {
-        return createAuthorAdapter.create(user)
+        return createUserAdapter.create(user)
     }
 }

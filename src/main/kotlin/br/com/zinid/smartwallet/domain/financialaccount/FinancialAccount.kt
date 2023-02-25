@@ -6,8 +6,8 @@ import java.math.BigDecimal
 
 data class FinancialAccount(
     val id: Long? = null,
-    val institution: String,
-    val balance: BigDecimal,
+    val institution: String? = null,
+    val balance: BigDecimal? = null,
     val paymentMethods: List<PaymentMethod>? = listOf(),
     val user: User
 )

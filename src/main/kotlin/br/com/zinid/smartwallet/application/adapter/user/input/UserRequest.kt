@@ -7,11 +7,11 @@ import jakarta.validation.constraints.Size
 
 data class UserRequest(
     @field:NotBlank
-    @Size(min = 2, max = 255)
+    @field:Size(min = 2, max = 255)
     val firstname: String,
 
     @field:NotBlank
-    @Size(min = 2, max = 255)
+    @field:Size(min = 2, max = 255)
     val lastname: String,
 
     @field:NotBlank
@@ -19,7 +19,7 @@ data class UserRequest(
     val email: String,
 
     @field:NotBlank
-    @Size(min = 2, max = 20)
+    @field:Size(min = 2, max = 20)
     val phone: String,
 ) {
     fun toDomain() = User(
