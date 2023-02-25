@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.paymentmethod.output
 
+import br.com.zinid.smartwallet.application.adapter.creditcard.output.CreditCardEntity
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FinancialAccountEntity
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import jakarta.persistence.*
@@ -12,7 +13,6 @@ data class PaymentMethodEntity(
     val id: Long? = null,
 
     val method: String? = null,
-//    val creditCard: CreditCardEntity,
 
     @ManyToOne
     @JoinColumn(name = "financial_account_id", referencedColumnName = "id", nullable = false)

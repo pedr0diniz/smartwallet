@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.config.beans
 
+import br.com.zinid.smartwallet.application.adapter.creditcard.output.CreateCreditCardAdapter
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FindFinancialAccountAdapter
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.CreatePaymentMethodAdapter
 import br.com.zinid.smartwallet.domain.paymentmethod.input.CreatePaymentMethodInputPort
@@ -13,8 +14,13 @@ class PaymentMethodConfig {
     @Bean
     fun createPaymentMethodInputPort(
         findFinancialAccountAdapter: FindFinancialAccountAdapter,
-        createPaymentMethodAdapter: CreatePaymentMethodAdapter
+        createPaymentMethodAdapter: CreatePaymentMethodAdapter,
+        createCreditCardAdapter: CreateCreditCardAdapter
     ): CreatePaymentMethodInputPort {
-        return CreatePaymentMethodUseCase(findFinancialAccountAdapter, createPaymentMethodAdapter)
+        return CreatePaymentMethodUseCase(
+            findFinancialAccountAdapter,
+            createPaymentMethodAdapter,
+            createCreditCardAdapter
+        )
     }
 }
