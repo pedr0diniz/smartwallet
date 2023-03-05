@@ -7,7 +7,17 @@ import java.math.BigDecimal
 data class FinancialAccount(
     val id: Long? = null,
     val institution: String? = null,
-    val balance: BigDecimal? = null,
+    var balance: BigDecimal? = null,
     val paymentMethods: List<PaymentMethod>? = listOf(),
+    var overdraft: BigDecimal? = BigDecimal.ZERO,
     val user: User? = null
-)
+) {
+    fun deduct(value: BigDecimal): Boolean {
+        if ((balance!! - value) >= (- overdraft!!)) {
+            balance = balance!! - value
+            return true
+        }
+
+        return false
+    }
+}

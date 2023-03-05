@@ -1,6 +1,7 @@
 package br.com.zinid.smartwallet.application.adapter.expense.input
 
 import br.com.zinid.smartwallet.domain.expense.input.CreateExpenseInputPort
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,6 +17,7 @@ class ExpenseController(
 ) {
 
     @PostMapping
+    @Transactional
     fun create(@Valid @RequestBody expenseRequest: ExpenseRequest): ResponseEntity<Any?> {
         return ResponseEntity.status(HttpStatus.CREATED).body(
             createExpenseUseCase.execute(expenseRequest.toDomain())

@@ -12,4 +12,8 @@ class FindCreditCardAdapter(
     override fun findById(id: Long): CreditCard? {
         return creditCardRepository.findByIdOrNull(id)?.toDomain()
     }
+
+    override fun findByPaymentMethodId(id: Long): CreditCard? {
+        return creditCardRepository.findByPaymentMethodId(id)?.toDomain()
+    }
 }

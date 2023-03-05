@@ -25,7 +25,7 @@ data class PaymentMethodRequest(
     val creditCard: CreditCardRequest? = null
 ) {
     fun toDomain() = PaymentMethod(
-        method = method,
+        method = PaymentMethods.valueOf(method),
         creditCard = creditCard?.toDomain(),
         financialAccount = FinancialAccount(id = financialAccountId),
     )

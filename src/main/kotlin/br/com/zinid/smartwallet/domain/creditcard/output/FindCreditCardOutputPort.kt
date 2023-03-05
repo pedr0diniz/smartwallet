@@ -6,4 +6,6 @@ interface FindCreditCardOutputPort {
 
     fun findById(id: Long): CreditCard?
 
+    fun findByPaymentMethodId(id: Long): CreditCard?
+
 }

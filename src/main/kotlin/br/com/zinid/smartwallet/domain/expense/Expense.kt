@@ -2,6 +2,7 @@ package br.com.zinid.smartwallet.domain.expense
 
 import br.com.zinid.smartwallet.domain.acquaintance.Acquaintance
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
+import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethods
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -14,4 +15,8 @@ data class Expense(
     val monthlySubscription: Boolean? = false,
     val paymentMethod: PaymentMethod? = null,
     val expenseFor: Acquaintance? = null
-)
+) {
+    fun isCreditCardPurchase(): Boolean {
+        return paymentMethod?.method == PaymentMethods.CREDIT && paymentMethod.creditCard != null
+    }
+}

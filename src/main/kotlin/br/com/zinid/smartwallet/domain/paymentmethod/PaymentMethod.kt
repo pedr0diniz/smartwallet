@@ -6,7 +6,7 @@ import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 
 data class PaymentMethod(
     val id: Long? = null,
-    val method: String? = null, // pix, débito, crédito, va, vr, etc
+    val method: PaymentMethods? = null, // pix, débito, crédito, va, vr, etc
     val creditCard: CreditCard? = null,
     val financialAccount: FinancialAccount? = null,
     val expenses: List<Expense>? = listOf()

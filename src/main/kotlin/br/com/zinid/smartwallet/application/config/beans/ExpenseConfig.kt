@@ -1,6 +1,9 @@
 package br.com.zinid.smartwallet.application.config.beans
 
 import br.com.zinid.smartwallet.application.adapter.expense.output.CreateExpenseAdapter
+import br.com.zinid.smartwallet.application.adapter.financialaccount.output.CreateFinancialAccountAdapter
+import br.com.zinid.smartwallet.application.adapter.financialaccount.output.DeductFromBalanceAdapter
+import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FindFinancialAccountAdapter
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.FindPaymentMethodAdapter
 import br.com.zinid.smartwallet.domain.expense.input.CreateExpenseInputPort
 import br.com.zinid.smartwallet.domain.expense.input.CreateExpenseUseCase
@@ -13,8 +16,17 @@ class ExpenseConfig {
     @Bean
     fun createExpenseInputPort(
         findPaymentMethodAdapter: FindPaymentMethodAdapter,
+        findFinancialAccountAdapter: FindFinancialAccountAdapter,
+        deductFromBalanceAdapter: DeductFromBalanceAdapter,
+        createFinancialAccountAdapter: CreateFinancialAccountAdapter,
         createExpenseAdapter: CreateExpenseAdapter
     ): CreateExpenseInputPort {
-        return CreateExpenseUseCase(findPaymentMethodAdapter, createExpenseAdapter)
+        return CreateExpenseUseCase(
+            findPaymentMethodAdapter,
+            findFinancialAccountAdapter,
+            deductFromBalanceAdapter,
+            createFinancialAccountAdapter,
+            createExpenseAdapter
+        )
     }
 }
