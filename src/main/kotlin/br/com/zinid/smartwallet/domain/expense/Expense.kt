@@ -1,16 +1,17 @@
 package br.com.zinid.smartwallet.domain.expense
 
 import br.com.zinid.smartwallet.domain.acquaintance.Acquaintance
-import br.com.zinid.smartwallet.domain.payment.Payment
+import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import java.math.BigDecimal
 import java.time.LocalDate
 
 data class Expense(
-    val id: Long,
-    val content: String,
-    val date: LocalDate,
-    val price: BigDecimal,
-    val payment: Payment,
+    val id: Long? = null,
+    val content: String? = null,
+    val date: LocalDate? = null,
+    val price: BigDecimal? = null,
     val essential: Boolean? = false,
-    val expenseFor: Acquaintance?
+    val monthlySubscription: Boolean? = false,
+    val paymentMethod: PaymentMethod? = null,
+    val expenseFor: Acquaintance? = null
 )

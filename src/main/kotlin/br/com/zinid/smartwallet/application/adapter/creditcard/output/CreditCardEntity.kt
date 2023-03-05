@@ -16,14 +16,21 @@ data class CreditCardEntity(
     val last4Digits: String? = null,
     val expirationDate: LocalDate? = null,
     val cardLimit: BigDecimal? = null,
-//    val installments: List<CreditCardInstallmentEntity>? = listOf()
     val invoiceClosingDate: LocalDate? = null,
     val invoiceDueDate: LocalDate? = null,
 
     @OneToOne
-    @JoinColumn(name = "payment_method_id", referencedColumnName = "id", nullable = false)
-    val paymentMethod: PaymentMethodEntity
+    val paymentMethod: PaymentMethodEntity? = null,
 ) {
+    fun toDomain() = CreditCard(
+        id = id,
+        last4Digits = last4Digits,
+        expirationDate = expirationDate,
+        cardLimit = cardLimit,
+        invoiceClosingDate = invoiceClosingDate,
+        invoiceDueDate = invoiceDueDate,
+        paymentMethod = paymentMethod?.toDomain()
+    )
 
     companion object {
         fun fromDomain(creditCard: CreditCard?) = CreditCardEntity(
@@ -31,7 +38,6 @@ data class CreditCardEntity(
             last4Digits = creditCard?.last4Digits,
             expirationDate = creditCard?.expirationDate,
             cardLimit = creditCard?.cardLimit,
-//            installments,
             invoiceClosingDate = creditCard?.invoiceClosingDate,
             invoiceDueDate = creditCard?.invoiceDueDate,
             paymentMethod = PaymentMethodEntity.fromDomain(creditCard?.paymentMethod)

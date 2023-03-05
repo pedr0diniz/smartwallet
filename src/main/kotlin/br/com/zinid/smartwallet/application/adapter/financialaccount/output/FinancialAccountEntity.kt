@@ -23,14 +23,14 @@ data class FinancialAccountEntity(
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    val user: UserEntity
+    val user: UserEntity? = null,
 ) {
 
     fun toDomain() = FinancialAccount(
         id = id,
         institution = institution,
         balance = balance,
-        user = user.toDomain()
+        user = user?.toDomain()
     )
     companion object {
         fun fromDomain(financialAccount: FinancialAccount?) = FinancialAccountEntity(

@@ -16,13 +16,16 @@ data class PaymentMethodEntity(
 
     @ManyToOne
     @JoinColumn(name = "financial_account_id", referencedColumnName = "id", nullable = false)
-    val financialAccount: FinancialAccountEntity
+    val financialAccount: FinancialAccountEntity? = null,
+
+//    @OneToMany(mappedBy = "expense")
+//    val expenses: List<ExpenseEntity>
 ) {
 
     fun toDomain() = PaymentMethod(
         id = id,
         method = method,
-        financialAccount = financialAccount.toDomain()
+        financialAccount = financialAccount?.toDomain()
     )
 
     companion object {

@@ -38,7 +38,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
             title = "One or more fields has invalid values. Fill the field(s) correctly and try again.",
             fields = errors
         )
-        return handleExceptionInternal(ex, validationErr, headers!!, HttpStatus.BAD_REQUEST, request!!)
+        return handleExceptionInternal(ex, validationErr, headers, HttpStatus.BAD_REQUEST, request!!)
     }
 
     fun buildValidationErrors(
