@@ -16,8 +16,7 @@ data class CreditCardEntity(
     val last4Digits: String? = null,
     val expirationDate: LocalDate? = null,
     val cardLimit: BigDecimal? = null,
-    val invoiceClosingDate: LocalDate? = null,
-    val invoiceDueDate: LocalDate? = null,
+    val invoiceClosingDayOfMonth: Int? = null,
 
     @OneToOne
     val paymentMethod: PaymentMethodEntity? = null,
@@ -27,8 +26,7 @@ data class CreditCardEntity(
         last4Digits = last4Digits,
         expirationDate = expirationDate,
         cardLimit = cardLimit,
-        invoiceClosingDate = invoiceClosingDate,
-        invoiceDueDate = invoiceDueDate,
+        invoiceClosingDayOfMonth = invoiceClosingDayOfMonth,
         paymentMethod = paymentMethod?.toDomain()
     )
 
@@ -38,8 +36,7 @@ data class CreditCardEntity(
             last4Digits = creditCard?.last4Digits,
             expirationDate = creditCard?.expirationDate,
             cardLimit = creditCard?.cardLimit,
-            invoiceClosingDate = creditCard?.invoiceClosingDate,
-            invoiceDueDate = creditCard?.invoiceDueDate,
+            invoiceClosingDayOfMonth = creditCard?.invoiceClosingDayOfMonth,
             paymentMethod = PaymentMethodEntity.fromDomain(creditCard?.paymentMethod)
         )
     }

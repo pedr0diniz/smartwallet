@@ -12,7 +12,7 @@ data class FinancialAccount(
     var overdraft: BigDecimal? = BigDecimal.ZERO,
     val user: User? = null
 ) {
-    fun deduct(value: BigDecimal): Boolean {
+    fun hasBalance(value: BigDecimal): Boolean {
         if ((balance!! - value) >= (- overdraft!!)) {
             balance = balance!! - value
             return true
@@ -20,4 +20,27 @@ data class FinancialAccount(
 
         return false
     }
+
+    fun deductFromBalance(value: BigDecimal) {
+        balance!!.subtract(value)
+    }
+
+//    companion object {
+//        fun createBlank() = FinancialAccount(
+//            id = 0L,
+//            institution = "",
+//            balance = BigDecimal.ZERO,
+//            paymentMethods = listOf(),
+//            overdraft = BigDecimal.ZERO,
+//            user = User.createBlank()
+//        )
+//        fun createBlankFromId(id: Long) = FinancialAccount(
+//            id = id,
+//            institution = "",
+//            balance = BigDecimal.ZERO,
+//            paymentMethods = listOf(),
+//            overdraft = BigDecimal.ZERO,
+//            user = User.createBlank()
+//        )
+//    }
 }

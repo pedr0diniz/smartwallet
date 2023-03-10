@@ -4,7 +4,6 @@ import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.Payment
 import br.com.zinid.smartwallet.application.adapter.user.output.UserEntity
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import jakarta.persistence.*
-import org.hibernate.Hibernate
 import java.math.BigDecimal
 
 @Entity

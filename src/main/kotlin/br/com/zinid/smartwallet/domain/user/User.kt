@@ -12,5 +12,20 @@ data class User(
     val financialAccounts: List<FinancialAccount>? = listOf(),
     val acquaintances: List<Acquaintance>? = listOf()
 ) {
-
+//    companion object {
+//        fun createBlank() = User(
+//            id = 0L,
+//            firstname = "",
+//            lastname = "",
+//            email = "",
+//            phone = ""
+//        )
+//        fun createBlankFromId(id: Long) = User(
+//            id = id,
+//            firstname = "",
+//            lastname = "",
+//            email = "",
+//            phone = ""
+//        )
+//    }
 }

@@ -4,6 +4,8 @@ import br.com.zinid.smartwallet.domain.creditcard.CreditCard
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.validation.constraints.Future
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
@@ -23,19 +25,15 @@ data class CreditCardRequest(
     @field:NotNull
     val cardLimit: BigDecimal,
 
-    @field:NotBlank
-    @field:JsonFormat(pattern = "YYYY-MM-DD")
-    val invoiceClosingDate: String,
-
-    @field:NotBlank
-    @field:JsonFormat(pattern = "YYYY-MM-DD")
-    val invoiceDueDate: String,
+    @field:NotNull
+    @field:Min(1)
+    @field:Max(31)
+    val invoiceClosingDayOfMonth: Int
 ) {
     fun toDomain() = CreditCard(
         last4Digits = last4Digits,
         expirationDate = LocalDate.parse(expirationDate),
         cardLimit = cardLimit,
-        invoiceClosingDate = LocalDate.parse(invoiceClosingDate),
-        invoiceDueDate = LocalDate.parse(invoiceDueDate)
+        invoiceClosingDayOfMonth = invoiceClosingDayOfMonth
     )
 }

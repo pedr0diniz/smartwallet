@@ -27,5 +27,6 @@ data class FinancialAccountRequest(
         institution = institution,
         balance = balance!!,
         user = User(id = userId)
+//        user = User.createBlankFromId(id = userId)
     )
 }
