@@ -4,10 +4,10 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 data class CreditCardInstallments(
-    val numberOfMonths: Int? = null,
-    val totalValue: BigDecimal? = null,
-    val firstInstallmentValue: BigDecimal? = null,
-    val installmentValue: BigDecimal? = null,
+    val numberOfMonths: Int,
+    val totalValue: BigDecimal,
+    val firstInstallmentValue: BigDecimal,
+    val installmentValue: BigDecimal,
     val installments: List<CreditCardInstallment>? = listOf()
 ) {
     private fun getOngoingInstallments(lastClosingDate: LocalDate): List<CreditCardInstallment> = installments

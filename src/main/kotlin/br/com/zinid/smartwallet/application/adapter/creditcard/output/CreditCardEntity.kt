@@ -2,6 +2,7 @@ package br.com.zinid.smartwallet.application.adapter.creditcard.output
 
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodEntity
 import br.com.zinid.smartwallet.domain.creditcard.CreditCard
+import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -23,11 +24,11 @@ data class CreditCardEntity(
 ) {
     fun toDomain() = CreditCard(
         id = id,
-        last4Digits = last4Digits,
-        expirationDate = expirationDate,
-        cardLimit = cardLimit,
-        invoiceClosingDayOfMonth = invoiceClosingDayOfMonth,
-        paymentMethod = paymentMethod?.toDomain()
+        last4Digits = last4Digits ?: "",
+        expirationDate = expirationDate ?: LocalDate.now(),
+        cardLimit = cardLimit ?: BigDecimal.ZERO,
+        invoiceClosingDayOfMonth = invoiceClosingDayOfMonth ?: 1,
+        paymentMethod = paymentMethod?.toDomain() ?: PaymentMethod.createBlank()
     )
 
     companion object {

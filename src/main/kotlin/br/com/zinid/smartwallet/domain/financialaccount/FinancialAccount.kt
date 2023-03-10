@@ -6,15 +6,15 @@ import java.math.BigDecimal
 
 data class FinancialAccount(
     val id: Long? = null,
-    val institution: String? = null,
-    var balance: BigDecimal? = null,
+    val institution: String,
+    var balance: BigDecimal,
     val paymentMethods: List<PaymentMethod>? = listOf(),
-    var overdraft: BigDecimal? = BigDecimal.ZERO,
-    val user: User? = null
+    var overdraft: BigDecimal,
+    val user: User
 ) {
     fun hasBalance(value: BigDecimal): Boolean {
-        if ((balance!! - value) >= (- overdraft!!)) {
-            balance = balance!! - value
+        if (balance.subtract(value) >= overdraft.negate()) {
+            balance -= value
             return true
         }
 
@@ -22,25 +22,34 @@ data class FinancialAccount(
     }
 
     fun deductFromBalance(value: BigDecimal) {
-        balance!!.subtract(value)
+        balance.subtract(value)
     }
 
-//    companion object {
-//        fun createBlank() = FinancialAccount(
-//            id = 0L,
-//            institution = "",
-//            balance = BigDecimal.ZERO,
-//            paymentMethods = listOf(),
-//            overdraft = BigDecimal.ZERO,
-//            user = User.createBlank()
-//        )
-//        fun createBlankFromId(id: Long) = FinancialAccount(
-//            id = id,
-//            institution = "",
-//            balance = BigDecimal.ZERO,
-//            paymentMethods = listOf(),
-//            overdraft = BigDecimal.ZERO,
-//            user = User.createBlank()
-//        )
-//    }
+    companion object {
+        fun createBlank() = FinancialAccount(
+            id = 0L,
+            institution = "",
+            balance = BigDecimal.ZERO,
+            paymentMethods = listOf(),
+            overdraft = BigDecimal.ZERO,
+            user = User.createBlank()
+        )
+        fun createBlankFromId(id: Long) = FinancialAccount(
+            id = id,
+            institution = "",
+            balance = BigDecimal.ZERO,
+            paymentMethods = listOf(),
+            overdraft = BigDecimal.ZERO,
+            user = User.createBlank()
+        )
+
+        fun createBlankFromIdAndUserId(id: Long, userId: Long) = FinancialAccount(
+            id = id,
+            institution = "",
+            balance = BigDecimal.ZERO,
+            paymentMethods = listOf(),
+            overdraft = BigDecimal.ZERO,
+            user = User.createBlankFromId(userId)
+        )
+    }
 }

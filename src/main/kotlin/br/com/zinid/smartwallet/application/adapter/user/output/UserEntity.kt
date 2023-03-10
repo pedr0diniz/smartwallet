@@ -33,10 +33,10 @@ data class UserEntity(
 
     fun toDomain() = User(
         id = id,
-        firstname = firstname,
-        lastname = lastname,
-        email = email,
-        phone = phone
+        firstname = firstname ?: "",
+        lastname = lastname ?: "",
+        email = email ?: "",
+        phone = phone ?: ""
     )
     companion object {
         fun fromDomain(user: User?) = UserEntity(

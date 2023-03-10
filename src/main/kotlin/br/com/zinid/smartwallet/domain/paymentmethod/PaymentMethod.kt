@@ -8,16 +8,15 @@ import java.time.LocalDate
 
 data class PaymentMethod(
     val id: Long? = null,
-    val method: PaymentMethods? = null,
-    val creditCard: CreditCard? = null,
-    val financialAccount: FinancialAccount? = null,
+    val method: PaymentMethods,
+    var creditCard: CreditCard? = null,
+    val financialAccount: FinancialAccount,
     val expenses: List<Expense>? = listOf()
 ) {
     fun isCredit() = (method == PaymentMethods.CREDIT)
 
     fun hasCreditCardLimit(expenseValue: BigDecimal): Boolean {
         if (isCredit()) {
-
             return creditCard?.hasLimit(
                 getMonthlyExpensesValue().add(getOngoingInstallmentsValue()),
                 expenseValue
@@ -28,7 +27,7 @@ data class PaymentMethod(
 
     private fun getMonthlyExpensesValue() = getNonInstallmentCreditExpensesWithinDateRange(
         creditCard!!.previousInvoiceClosingDate,
-        creditCard.currentInvoiceClosingDate
+        creditCard!!.currentInvoiceClosingDate
     ).sumOf { it.price!! }
 
     private fun getNonInstallmentCreditExpensesWithinDateRange(
@@ -45,4 +44,18 @@ data class PaymentMethod(
             ?.getOngoingInstallmentsValue(creditCard!!.previousInvoiceClosingDate)
             ?: BigDecimal.ZERO
     }!!
+
+    companion object {
+
+        fun createBlank() = PaymentMethod(
+            id = 0L,
+            method = PaymentMethods.BLANK,
+            financialAccount = FinancialAccount.createBlank()
+        )
+        fun createBlankFromId(id: Long) = PaymentMethod(
+            id = id,
+            method = PaymentMethods.BLANK,
+            financialAccount = FinancialAccount.createBlank()
+        )
+    }
 }

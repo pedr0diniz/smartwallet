@@ -2,6 +2,7 @@ package br.com.zinid.smartwallet.application.adapter.expense.output
 
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodEntity
 import br.com.zinid.smartwallet.domain.expense.Expense
+import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -21,7 +22,7 @@ data class ExpenseEntity(
 
     @ManyToOne
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id", nullable = false)
-    val paymentMethod: PaymentMethodEntity,
+    val paymentMethod: PaymentMethodEntity
 
 //    @ManyToOne
 //    @JoinColumn(name = "payment_method_id", referencedColumnName = "id", nullable = false)
@@ -29,9 +30,9 @@ data class ExpenseEntity(
 ) {
     fun toDomain() = Expense(
         id = id,
-        content = content,
-        date = date,
-        price = price,
+        content = content ?: "",
+        date = date ?: LocalDate.now(),
+        price = price ?: BigDecimal.ZERO,
         essential = essential,
         monthlySubscription = monthlySubscription,
         paymentMethod = paymentMethod.toDomain()

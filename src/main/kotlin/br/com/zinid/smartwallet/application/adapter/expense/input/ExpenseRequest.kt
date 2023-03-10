@@ -35,6 +35,6 @@ data class ExpenseRequest(
         price = price,
         essential = essential,
         monthlySubscription = monthlySubscription,
-        paymentMethod = PaymentMethod(id = paymentMethodId)
+        paymentMethod = PaymentMethod.createBlankFromId(id = paymentMethodId)
     )
 }

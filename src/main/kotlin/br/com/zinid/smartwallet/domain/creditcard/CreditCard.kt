@@ -7,11 +7,11 @@ import java.time.LocalDate
 
 data class CreditCard(
     val id: Long? = null,
-    val last4Digits: String? = null,
-    val expirationDate: LocalDate? = null,
-    val cardLimit: BigDecimal? = null,
-    val invoiceClosingDayOfMonth: Int? = null,
-    val paymentMethod: PaymentMethod? = null
+    val last4Digits: String,
+    val expirationDate: LocalDate,
+    val cardLimit: BigDecimal,
+    val invoiceClosingDayOfMonth: Int,
+    val paymentMethod: PaymentMethod
 ) {
     val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate()
     val previousInvoiceClosingDate: LocalDate = getLastClosingDate()
@@ -19,11 +19,11 @@ data class CreditCard(
     fun hasLimit(
         consumedLimit: BigDecimal,
         expenseValue: BigDecimal
-    ): Boolean = (cardLimit!! >= consumedLimit.add(expenseValue))
+    ): Boolean = (cardLimit >= consumedLimit.add(expenseValue))
 
     private fun getLastClosingDate(): LocalDate {
         val today = LocalDate.now()
-        if (invoiceClosingDayOfMonth!! > today.dayOfMonth) {
+        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
             return today.minusMonths(1).withDayOfMonth(invoiceClosingDayOfMonth)
         }
 
@@ -32,7 +32,7 @@ data class CreditCard(
 
     private fun getCurrentClosingDate(): LocalDate {
         val today = LocalDate.now()
-        if (invoiceClosingDayOfMonth!! > today.dayOfMonth) {
+        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
             return today.withDayOfMonth(invoiceClosingDayOfMonth)
         }
 

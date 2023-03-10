@@ -3,6 +3,7 @@ package br.com.zinid.smartwallet.application.adapter.financialaccount.output
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodEntity
 import br.com.zinid.smartwallet.application.adapter.user.output.UserEntity
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
+import br.com.zinid.smartwallet.domain.user.User
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -16,6 +17,7 @@ data class FinancialAccountEntity(
 
     val institution: String? = null,
     val balance: BigDecimal? = null,
+    val overdraft: BigDecimal? = null,
 
     @OneToMany(mappedBy = "financialAccount")
     val paymentMethods: List<PaymentMethodEntity>? = listOf(),
@@ -27,15 +29,17 @@ data class FinancialAccountEntity(
 
     fun toDomain() = FinancialAccount(
         id = id,
-        institution = institution,
-        balance = balance,
-        user = user?.toDomain()
+        institution = institution ?: "",
+        balance = balance ?: BigDecimal.ZERO,
+        overdraft = overdraft ?: BigDecimal.ZERO,
+        user = user?.toDomain() ?: User.createBlank()
     )
     companion object {
         fun fromDomain(financialAccount: FinancialAccount?) = FinancialAccountEntity(
             id = financialAccount?.id,
             institution = financialAccount?.institution,
             balance = financialAccount?.balance,
+            overdraft = financialAccount?.overdraft,
             user = UserEntity.fromDomain(financialAccount?.user)
         )
     }

@@ -26,7 +26,8 @@ data class PaymentMethodRequest(
 ) {
     fun toDomain() = PaymentMethod(
         method = PaymentMethods.valueOf(method),
-        creditCard = creditCard?.toDomain(),
-        financialAccount = FinancialAccount(id = financialAccountId),
-    )
+        financialAccount = FinancialAccount.createBlankFromId(id = financialAccountId)
+    ).apply {
+        this.creditCard = this@PaymentMethodRequest.creditCard?.toDomain(this)
+    }
 }

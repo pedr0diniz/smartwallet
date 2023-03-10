@@ -4,6 +4,7 @@ import br.com.zinid.smartwallet.application.config.validation.ValueOfEnum
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.financialaccount.Institutions
 import br.com.zinid.smartwallet.domain.user.User
+import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
@@ -20,13 +21,15 @@ data class FinancialAccountRequest(
     @field:Positive
     val userId: Long,
 
-    @field:NotNull
-    val balance: BigDecimal? = BigDecimal.ZERO
+    val balance: BigDecimal? = BigDecimal.ZERO,
+
+    @field:DecimalMin(value = "0.0")
+    val overdraft: BigDecimal? = BigDecimal.ZERO
 ) {
     fun toDomain() = FinancialAccount(
         institution = institution,
         balance = balance!!,
-        user = User(id = userId)
-//        user = User.createBlankFromId(id = userId)
+        overdraft = overdraft!!,
+        user = User.createBlankFromId(id = userId)
     )
 }

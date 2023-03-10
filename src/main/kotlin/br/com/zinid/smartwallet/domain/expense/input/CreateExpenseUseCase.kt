@@ -13,17 +13,17 @@ class CreateExpenseUseCase(
     private val createExpenseAdapter: CreateExpenseOutputPort
 ) : CreateExpenseInputPort {
     override fun execute(expense: Expense): Long? {
-        val possiblePaymentMethod = findPaymentMethodAdapter.findById(expense.paymentMethod?.id!!) ?: return null
-        val possibleFinancialAccount = findFinancialAccountAdapter.findById(possiblePaymentMethod.financialAccount?.id!!)
+        val possiblePaymentMethod = findPaymentMethodAdapter.findById(expense.paymentMethod.id!!) ?: return null
+        val possibleFinancialAccount = findFinancialAccountAdapter.findById(possiblePaymentMethod.financialAccount.id!!)
             ?: return null
 
-        if (!expense.isCreditPurchase() && possibleFinancialAccount.hasBalance(expense.price!!)) {
+        if (!expense.isCreditPurchase() && possibleFinancialAccount.hasBalance(expense.price)) {
             possibleFinancialAccount.deductFromBalance(expense.price)
             updateFinancialAccountAdapter.update(possibleFinancialAccount)
             return createExpenseAdapter.create(expense.copy(paymentMethod = possiblePaymentMethod))
         }
 
-        if (possiblePaymentMethod.hasCreditCardLimit(expense.price!!)) {
+        if (possiblePaymentMethod.hasCreditCardLimit(expense.price)) {
             return createExpenseAdapter.create(expense.copy(paymentMethod = possiblePaymentMethod))
         }
 
