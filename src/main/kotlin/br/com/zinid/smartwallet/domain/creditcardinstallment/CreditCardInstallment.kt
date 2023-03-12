@@ -46,14 +46,26 @@ data class CreditCardInstallments(
 
         fun createFromExpenseAndCreditCard(expense: Expense, creditCard: CreditCard): CreditCardInstallments {
             val numberOfInstallments = expense.creditCardInstallments!!.numberOfMonths
+            val installmentValue = expense.price
+                .divide(
+                    BigDecimal.valueOf(expense.creditCardInstallments.numberOfMonths.toLong()),
+                    2,
+                    RoundingMode.DOWN
+                )
+
+            val firstInstallmentValue = expense.price.minus(
+                installmentValue
+                    .multiply(
+                        BigDecimal.valueOf(expense.creditCardInstallments.numberOfMonths.toLong())
+                            .minus(BigDecimal.ONE)
+                    )
+            )
 
             return CreditCardInstallments(
                 numberOfMonths = numberOfInstallments,
                 totalValue = expense.price,
-                firstInstallmentValue = expense.price
-                    .divideAndRemainder(BigDecimal.valueOf(numberOfInstallments.toLong())).sumOf { it },
-                installmentValue = expense.price
-                    .divide(BigDecimal.valueOf(numberOfInstallments.toLong()), RoundingMode.DOWN),
+                firstInstallmentValue = firstInstallmentValue,
+                installmentValue = installmentValue,
                 invoiceClosingDayOfMonth = creditCard.invoiceClosingDayOfMonth,
                 expense = expense
             )
