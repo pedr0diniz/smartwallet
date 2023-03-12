@@ -18,7 +18,22 @@ data class Expense(
     val expenseFor: Acquaintance? = null
 ) {
     fun isCreditPurchase() = paymentMethod.isCredit()
+
     fun wasPurchasedWithinDateRange(startDate: LocalDate, endDate: LocalDate): Boolean {
         return (date.isEqual(startDate) || date.isAfter(startDate)) && (date.isBefore(endDate))
+    }
+
+    fun hasInstallments() = (creditCardInstallments != null)
+
+    companion object {
+        fun createBlank() = Expense(
+            id = 0L,
+            content = "",
+            date = LocalDate.now(),
+            price = BigDecimal.ZERO,
+            essential = false,
+            monthlySubscription = false,
+            paymentMethod = PaymentMethod.createBlank()
+        )
     }
 }

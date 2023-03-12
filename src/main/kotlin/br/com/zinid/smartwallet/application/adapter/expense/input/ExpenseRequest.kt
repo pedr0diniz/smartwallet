@@ -1,13 +1,12 @@
 package br.com.zinid.smartwallet.application.adapter.expense.input
 
+import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import com.fasterxml.jackson.annotation.JsonFormat
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Positive
-import jakarta.validation.constraints.Size
+import jakarta.validation.constraints.*
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 
 data class ExpenseRequest(
@@ -27,14 +26,22 @@ data class ExpenseRequest(
 
     @field:NotNull
     @field:Positive
-    val paymentMethodId: Long
+    val paymentMethodId: Long,
+
+    @field:Min(2)
+    val numberOfInstallments: Int?
 ) {
     fun toDomain() = Expense(
-        content = content,
-        date = LocalDate.parse(date),
-        price = price,
-        essential = essential,
-        monthlySubscription = monthlySubscription,
-        paymentMethod = PaymentMethod.createBlankFromId(id = paymentMethodId)
-    )
+            content = content,
+            date = LocalDate.parse(date),
+            price = price,
+            essential = essential,
+            monthlySubscription = monthlySubscription,
+            paymentMethod = PaymentMethod.createBlankFromId(id = paymentMethodId),
+            creditCardInstallments = if (numberOfInstallments != null) {
+                CreditCardInstallments.createBlankFromNumberOfInstallments(numberOfInstallments)
+            } else {
+                null
+            }
+        )
 }

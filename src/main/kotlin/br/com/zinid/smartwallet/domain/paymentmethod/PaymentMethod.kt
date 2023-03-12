@@ -28,7 +28,7 @@ data class PaymentMethod(
     private fun getMonthlyExpensesValue() = getNonInstallmentCreditExpensesWithinDateRange(
         creditCard!!.previousInvoiceClosingDate,
         creditCard!!.currentInvoiceClosingDate
-    ).sumOf { it.price!! }
+    ).sumOf { it.price }
 
     private fun getNonInstallmentCreditExpensesWithinDateRange(
         startDate: LocalDate,

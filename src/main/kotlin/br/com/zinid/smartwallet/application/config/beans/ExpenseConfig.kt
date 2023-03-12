@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.config.beans
 
+import br.com.zinid.smartwallet.application.adapter.creditcardinstallments.output.CreateCreditCardInstallmentsAdapter
 import br.com.zinid.smartwallet.application.adapter.expense.output.CreateExpenseAdapter
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FindFinancialAccountAdapter
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.UpdateFinancialAccountAdapter
@@ -17,12 +18,14 @@ class ExpenseConfig {
         findPaymentMethodAdapter: FindPaymentMethodAdapter,
         findFinancialAccountAdapter: FindFinancialAccountAdapter,
         updateFinancialAccountAdapter: UpdateFinancialAccountAdapter,
+        createCreditCardInstallmentsAdapter: CreateCreditCardInstallmentsAdapter,
         createExpenseAdapter: CreateExpenseAdapter
     ): CreateExpenseInputPort {
         return CreateExpenseUseCase(
             findPaymentMethodAdapter,
             findFinancialAccountAdapter,
             updateFinancialAccountAdapter,
+            createCreditCardInstallmentsAdapter,
             createExpenseAdapter
         )
     }

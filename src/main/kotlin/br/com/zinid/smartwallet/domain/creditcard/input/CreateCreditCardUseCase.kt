@@ -10,7 +10,7 @@ class CreateCreditCardUseCase(
 ) : CreateCreditCardInputPort {
 
     override fun execute(creditCard: CreditCard): Long? {
-        val possiblePaymentMethod = findPaymentMethodAdapter.findById(creditCard.paymentMethod?.id!!) ?: return null
+        val possiblePaymentMethod = findPaymentMethodAdapter.findById(creditCard.paymentMethod.id!!) ?: return null
 
         return createCreditCardAdapter.create(creditCard.copy(paymentMethod = possiblePaymentMethod))
     }

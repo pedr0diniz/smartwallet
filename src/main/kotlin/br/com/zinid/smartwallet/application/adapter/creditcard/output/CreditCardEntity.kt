@@ -20,6 +20,7 @@ data class CreditCardEntity(
     val invoiceClosingDayOfMonth: Int? = null,
 
     @OneToOne
+    @JoinColumn(name = "payment_method_id", referencedColumnName = "id", nullable = false)
     val paymentMethod: PaymentMethodEntity? = null,
 ) {
     fun toDomain() = CreditCard(
