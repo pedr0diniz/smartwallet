@@ -36,7 +36,7 @@ class CreditCardInstallmentsEntity(
             expense = expense?.toDomain() ?: Expense.createBlank()
         )
 
-        return creditCardInstallments.copy(installments = creditCardInstallments.getInstallmentList())
+        return creditCardInstallments.copy(installments = creditCardInstallments.buildInstallmentsList())
     }
 
     companion object {

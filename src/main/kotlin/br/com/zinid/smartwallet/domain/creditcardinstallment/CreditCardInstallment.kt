@@ -24,13 +24,46 @@ data class CreditCardInstallments(
     fun getOngoingInstallmentsValue(lastClosingDate: LocalDate): BigDecimal = getOngoingInstallments(lastClosingDate)
         .sumOf { it.installmentValue }
 
-    fun getInstallmentList(): List<CreditCardInstallment> {
+    fun buildInstallmentsList(): List<CreditCardInstallment> {
         val installments: MutableList<CreditCardInstallment> = mutableListOf()
-//        installments.add(CreditCardInstallment(
-//
-//        ))
+        installments.add(
+            CreditCardInstallment(
+                dueDate = getClosingDate(expense.date),
+                installmentValue = firstInstallmentValue
+            )
+        )
+
+        for (i in 2..numberOfMonths) {
+            installments.add(
+                CreditCardInstallment(
+                    dueDate = getClosingDate(expense.date.plusMonths(i - 1L)),
+                    installmentValue = installmentValue
+                )
+            )
+        }
         return installments
     }
+
+    private fun getClosingDate(currentDate: LocalDate? = LocalDate.now()): LocalDate {
+        val closingDay = invoiceClosingDayOfMonth + 10
+        val lastDayOfMonth = getLastDayOfMonth(currentDate!!)
+
+        if (closingDay > currentDate.dayOfMonth) {
+            if (closingDay > lastDayOfMonth) {
+                return currentDate.withDayOfMonth(lastDayOfMonth)
+            }
+            return currentDate.withDayOfMonth(closingDay)
+        }
+
+        val nextMonthDate = currentDate.withDayOfMonth(1).plusMonths(1)
+        val lastDayOfNextMonth = getLastDayOfMonth(nextMonthDate)
+        if (closingDay > lastDayOfNextMonth) {
+            return nextMonthDate.withDayOfMonth(lastDayOfNextMonth)
+        }
+        return nextMonthDate.withDayOfMonth(closingDay)
+    }
+
+    private fun getLastDayOfMonth(date: LocalDate) = date.month.length(date.isLeapYear)
 
     companion object {
 
