@@ -23,19 +23,43 @@ data class CreditCard(
 
     private fun getLastClosingDate(): LocalDate {
         val today = LocalDate.now()
-        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
-            return today.minusMonths(1).withDayOfMonth(invoiceClosingDayOfMonth)
+        val closingDay = invoiceClosingDayOfMonth
+        val lastDayOfMonth = getLastDayOfMonth(today)
+
+        if (closingDay > today.dayOfMonth) {
+            val previousMonthDate = today.withDayOfMonth(1).minusMonths(1)
+            val lastDayOfPreviousMonth = getLastDayOfMonth(previousMonthDate)
+            if (closingDay > lastDayOfPreviousMonth) {
+                return previousMonthDate.withDayOfMonth(lastDayOfPreviousMonth)
+            }
+            return previousMonthDate.withDayOfMonth(closingDay)
         }
 
-        return today.withDayOfMonth(invoiceClosingDayOfMonth)
+        if (closingDay > lastDayOfMonth) {
+            return today.withDayOfMonth(lastDayOfMonth)
+        }
+        return today.withDayOfMonth(closingDay)
     }
 
     private fun getCurrentClosingDate(): LocalDate {
         val today = LocalDate.now()
-        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
-            return today.withDayOfMonth(invoiceClosingDayOfMonth)
+        val closingDay = invoiceClosingDayOfMonth
+        val lastDayOfMonth = getLastDayOfMonth(today)
+
+        if (closingDay > today.dayOfMonth) {
+            if (closingDay > lastDayOfMonth) {
+                return today.withDayOfMonth(lastDayOfMonth)
+            }
+            return today.withDayOfMonth(closingDay)
         }
 
-        return today.plusMonths(1).withDayOfMonth(invoiceClosingDayOfMonth)
+        val nextMonthDate = today.withDayOfMonth(1).plusMonths(1)
+        val lastDayOfNextMonth = getLastDayOfMonth(nextMonthDate)
+        if (closingDay > lastDayOfNextMonth) {
+            return nextMonthDate.withDayOfMonth(lastDayOfNextMonth)
+        }
+        return nextMonthDate.withDayOfMonth(closingDay)
     }
+
+    private fun getLastDayOfMonth(date: LocalDate) = date.month.length(date.isLeapYear)
 }
