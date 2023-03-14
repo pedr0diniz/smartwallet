@@ -4,6 +4,6 @@ import br.com.zinid.smartwallet.domain.expense.Expense
 
 interface CreateExpenseInputPort {
 
-    fun execute(expense: Expense): Long?
+    fun execute(expense: Expense): Expense?
 
 }

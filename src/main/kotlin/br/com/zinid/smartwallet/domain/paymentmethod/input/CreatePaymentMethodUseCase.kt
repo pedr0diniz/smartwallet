@@ -11,22 +11,24 @@ class CreatePaymentMethodUseCase(
     private val createCreditCardAdapter: CreateCreditCardOutputPort,
 ) : CreatePaymentMethodInputPort {
 
-    override fun execute(paymentMethod: PaymentMethod): Long? {
+    override fun execute(paymentMethod: PaymentMethod): PaymentMethod? {
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(paymentMethod.financialAccount.id!!)
             ?: return null
 
-        val paymentMethodId = createPaymentMethodAdapter
-            .create(paymentMethod.copy(financialAccount = possibleFinancialAccount))
+        val createdPaymentMethod = createPaymentMethodAdapter
+            .create(paymentMethod.copy(financialAccount = possibleFinancialAccount)) ?: return null
 
-        if (paymentMethod.creditCard != null) {
-            return createCreditCardAdapter
+        val createdCreditCard = if (paymentMethod.creditCard != null) {
+            createCreditCardAdapter
                 .create(
                     paymentMethod.creditCard!!.copy(
-                        paymentMethod = PaymentMethod.createBlankFromId(id = paymentMethodId!!)
+                        paymentMethod = createdPaymentMethod
                     )
                 )
+        } else {
+            null
         }
 
-        return paymentMethodId
+        return createdPaymentMethod.copy(creditCard = createdCreditCard)
     }
 }

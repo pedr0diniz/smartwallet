@@ -9,7 +9,7 @@ class CreateFinancialAccountAdapter(
     private val financialAccountRepository: FinancialAccountRepository
 ) : CreateFinancialAccountOutputPort {
 
-    override fun create(financialAccount: FinancialAccount): Long? {
-        return financialAccountRepository.save(FinancialAccountEntity.fromDomain(financialAccount)).id
+    override fun create(financialAccount: FinancialAccount): FinancialAccount? {
+        return financialAccountRepository.save(FinancialAccountEntity.fromDomain(financialAccount)).toDomain()
     }
 }

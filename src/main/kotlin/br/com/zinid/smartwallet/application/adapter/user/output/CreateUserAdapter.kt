@@ -9,7 +9,7 @@ class CreateUserAdapter(
     private val userRepository: UserRepository
 ) : CreateUserOutputPort {
 
-    override fun create(user: User): Long? {
-        return userRepository.save(UserEntity.fromDomain(user)).id
+    override fun create(user: User): User? {
+        return userRepository.save(UserEntity.fromDomain(user)).toDomain()
     }
 }

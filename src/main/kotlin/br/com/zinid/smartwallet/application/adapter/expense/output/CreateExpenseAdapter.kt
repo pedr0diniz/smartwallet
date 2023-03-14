@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 class CreateExpenseAdapter(
     val expenseRepository: ExpenseRepository
 ) : CreateExpenseOutputPort {
-    override fun create(expense: Expense): Long? {
-        return expenseRepository.save(ExpenseEntity.fromDomain(expense)).id
+    override fun create(expense: Expense): Expense? {
+        return expenseRepository.save(ExpenseEntity.fromDomain(expense)).toDomain()
     }
 }

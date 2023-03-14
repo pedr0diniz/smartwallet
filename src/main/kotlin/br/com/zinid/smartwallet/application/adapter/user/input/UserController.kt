@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.user.input
 
+import br.com.zinid.smartwallet.application.adapter.user.output.UserResponse
 import br.com.zinid.smartwallet.domain.user.input.CreateUserInputPort
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -17,8 +18,9 @@ class UserController(
 
     @PostMapping
     fun create(@Valid @RequestBody userRequest: UserRequest): ResponseEntity<Any?> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-            createUserUseCase.execute(userRequest.toDomain())
-        )
+        val possibleUser = createUserUseCase.execute(userRequest.toDomain())
+            ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromDomain(possibleUser))
     }
 }

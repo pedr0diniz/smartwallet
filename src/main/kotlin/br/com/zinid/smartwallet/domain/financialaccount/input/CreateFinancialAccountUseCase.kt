@@ -9,7 +9,7 @@ class CreateFinancialAccountUseCase(
     private val createFinancialAccountAdapter: CreateFinancialAccountOutputPort
 ) : CreateFinancialAccountInputPort {
 
-    override fun execute(financialAccount: FinancialAccount): Long? {
+    override fun execute(financialAccount: FinancialAccount): FinancialAccount? {
         val possibleUser = findUserAdapter.findById(financialAccount.user.id!!) ?: return null
         return createFinancialAccountAdapter.create(financialAccount.copy(user = possibleUser))
     }

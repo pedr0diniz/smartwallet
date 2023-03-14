@@ -7,7 +7,7 @@ class CreateUserUseCase(
     private val createUserAdapter: CreateUserOutputPort
 ) : CreateUserInputPort {
 
-    override fun execute(user: User): Long? {
+    override fun execute(user: User): User? {
         return createUserAdapter.create(user)
     }
 }

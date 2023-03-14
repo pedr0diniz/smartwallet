@@ -9,7 +9,7 @@ class CreatePaymentMethodAdapter(
     private val paymentMethodRepository: PaymentMethodRepository
 ) : CreatePaymentMethodOutputPort {
 
-    override fun create(paymentMethod: PaymentMethod): Long? {
-        return paymentMethodRepository.save(PaymentMethodEntity.fromDomain(paymentMethod)).id
+    override fun create(paymentMethod: PaymentMethod): PaymentMethod? {
+        return paymentMethodRepository.save(PaymentMethodEntity.fromDomain(paymentMethod)).toDomain()
     }
 }

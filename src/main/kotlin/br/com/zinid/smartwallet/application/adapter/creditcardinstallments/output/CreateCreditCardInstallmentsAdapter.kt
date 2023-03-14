@@ -9,7 +9,9 @@ class CreateCreditCardInstallmentsAdapter(
     private val creditCardInstallmentsRepository: CreditCardInstallmentsRepository
 ) : CreateCreditCardInstallmentsOutputPort {
 
-    override fun create(creditCardInstallments: CreditCardInstallments): Long? {
-        return creditCardInstallmentsRepository.save(CreditCardInstallmentsEntity.fromDomain(creditCardInstallments)).id
+    override fun create(creditCardInstallments: CreditCardInstallments): CreditCardInstallments? {
+        return creditCardInstallmentsRepository.save(
+            CreditCardInstallmentsEntity.fromDomain(creditCardInstallments)
+        ).toDomain()
     }
 }

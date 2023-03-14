@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.paymentmethod.input
 
+import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodResponse
 import br.com.zinid.smartwallet.domain.paymentmethod.input.CreatePaymentMethodInputPort
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -17,8 +18,11 @@ class PaymentMethodController(
 
     @PostMapping
     fun create(@Valid @RequestBody paymentMethodRequest: PaymentMethodRequest): ResponseEntity<Any?> {
+        val possiblePaymentMethod = createPaymentMethodUseCase.execute(paymentMethodRequest.toDomain())
+            ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
-            createPaymentMethodUseCase.execute(paymentMethodRequest.toDomain())
+            PaymentMethodResponse.fromDomain(possiblePaymentMethod)
         )
     }
 }

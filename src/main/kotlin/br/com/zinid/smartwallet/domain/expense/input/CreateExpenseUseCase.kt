@@ -15,7 +15,7 @@ class CreateExpenseUseCase(
     private val createCreditCardInstallmentsAdapter: CreateCreditCardInstallmentsOutputPort,
     private val createExpenseAdapter: CreateExpenseOutputPort
 ) : CreateExpenseInputPort {
-    override fun execute(expense: Expense): Long? {
+    override fun execute(expense: Expense): Expense? {
         val possiblePaymentMethod = findPaymentMethodAdapter.findById(expense.paymentMethod.id!!) ?: return null
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(possiblePaymentMethod.financialAccount.id!!)
             ?: return null
@@ -23,15 +23,16 @@ class CreateExpenseUseCase(
         val currentExpense = expense.copy(paymentMethod = possiblePaymentMethod)
         if (currentExpense.isCreditPurchase()) {
             if (possiblePaymentMethod.hasCreditCardLimit(currentExpense.price)) {
-                val expenseId = createExpenseAdapter.create(currentExpense)
+                val createdExpense = createExpenseAdapter.create(currentExpense)
                 if (currentExpense.hasInstallments()) {
                     val installments = CreditCardInstallments.createFromExpenseAndCreditCard(
-                        currentExpense.copy(id = expenseId),
+                        currentExpense.copy(id = createdExpense?.id),
                         possiblePaymentMethod.creditCard!!
                     )
-                    createCreditCardInstallmentsAdapter.create(installments)
+                    val createdInstallments = createCreditCardInstallmentsAdapter.create(installments)
+                    return createdExpense?.copy(creditCardInstallments = createdInstallments)
                 }
-                return expenseId
+                return createdExpense
             }
             println("Insufficient card limit")
             return null

@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.financialaccount.input
 
+import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FinancialAccountResponse
 import br.com.zinid.smartwallet.domain.financialaccount.input.CreateFinancialAccountInputPort
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -17,8 +18,11 @@ class FinancialAccountController(
 
     @PostMapping
     fun create(@Valid @RequestBody financialAccountRequest: FinancialAccountRequest): ResponseEntity<Any?> {
+        val possibleFinancialAccount = createFinancialAccountUseCase.execute(financialAccountRequest.toDomain())
+            ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
-            createFinancialAccountUseCase.execute(financialAccountRequest.toDomain())
+            FinancialAccountResponse.fromDomain(possibleFinancialAccount)
         )
     }
 }
