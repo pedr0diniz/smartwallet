@@ -1,21 +1,20 @@
 package br.com.zinid.smartwallet.application.adapter.paymentmethod.input
 
 import br.com.zinid.smartwallet.application.adapter.creditcard.input.CreditCardRequest
-import br.com.zinid.smartwallet.application.config.validation.ValueOfEnum
+import br.com.zinid.smartwallet.application.config.validation.CollectionOfEnumValues
+import br.com.zinid.smartwallet.application.config.validation.CreditMethodMustHaveACard
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethods
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
-import jakarta.validation.constraints.Size
 
+@CreditMethodMustHaveACard
 data class PaymentMethodRequest(
-    @field:ValueOfEnum(enumClass = PaymentMethods::class)
-    @field:NotBlank
-    @field:Size(min = 2, max = 255)
-    val method: String,
+
+    @field:CollectionOfEnumValues(enumClass = PaymentMethods::class)
+    val methods: Set<String>,
 
     @field:NotNull
     @field:Positive
@@ -24,10 +23,17 @@ data class PaymentMethodRequest(
     @field:Valid
     val creditCard: CreditCardRequest? = null
 ) {
-    fun toDomain() = PaymentMethod(
-        method = PaymentMethods.valueOf(method),
-        financialAccount = FinancialAccount.createBlankFromId(id = financialAccountId)
-    ).apply {
-        this.creditCard = this@PaymentMethodRequest.creditCard?.toDomain(this)
+
+    fun toDomain(): List<PaymentMethod> {
+        return methods.map {
+            PaymentMethod(
+                method = PaymentMethods.valueOf(it),
+                financialAccount = FinancialAccount.createBlankFromId(id = financialAccountId)
+            ).apply {
+                if (this.method == PaymentMethods.CREDIT) {
+                    this.creditCard = this@PaymentMethodRequest.creditCard?.toDomain(this)
+                }
+            }
+        }
     }
 }
