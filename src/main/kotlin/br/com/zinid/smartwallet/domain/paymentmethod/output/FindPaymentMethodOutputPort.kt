@@ -6,4 +6,6 @@ interface FindPaymentMethodOutputPort {
 
     fun findById(id: Long): PaymentMethod?
 
+    fun findByFinancialAccountId(financialAccountId: Long): List<PaymentMethod>
+
 }

@@ -6,4 +6,6 @@ interface FindFinancialAccountOutputPort {
 
     fun findById(id: Long): FinancialAccount?
 
+    fun findByUserId(userId: Long): List<FinancialAccount>
+
 }

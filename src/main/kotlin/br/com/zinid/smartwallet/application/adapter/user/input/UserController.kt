@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.user.input
 
+import br.com.zinid.smartwallet.application.adapter.user.output.FindUserAdapter
 import br.com.zinid.smartwallet.application.adapter.user.output.UserResponse
 import br.com.zinid.smartwallet.domain.user.input.CreateUserInputPort
 import jakarta.validation.Valid
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/users")
 class UserController(
-    private val createUserUseCase: CreateUserInputPort
+    private val createUserUseCase: CreateUserInputPort,
+    private val findUserAdapter: FindUserAdapter
 ) {
 
     @PostMapping
