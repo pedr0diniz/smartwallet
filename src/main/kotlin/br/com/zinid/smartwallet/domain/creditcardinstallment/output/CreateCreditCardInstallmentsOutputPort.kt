@@ -5,5 +5,4 @@ import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallme
 interface CreateCreditCardInstallmentsOutputPort {
 
     fun create(creditCardInstallments: CreditCardInstallments): CreditCardInstallments?
-
 }

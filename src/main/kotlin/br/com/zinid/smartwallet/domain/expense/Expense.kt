@@ -19,11 +19,17 @@ data class Expense(
 ) {
     fun isCreditPurchase() = paymentMethod.isCredit()
 
-    fun wasPurchasedWithinDateRange(startDate: LocalDate, endDate: LocalDate): Boolean {
-        return (date.isEqual(startDate) || date.isAfter(startDate)) && (date.isBefore(endDate))
-    }
+    fun wasPurchasedWithinDateRange(startDate: LocalDate, endDate: LocalDate): Boolean =
+        (date.isEqual(startDate) || date.isAfter(startDate)) && (date.isBefore(endDate))
 
     fun hasInstallments() = (creditCardInstallments != null)
+
+    fun fitsInCreditCardLimit() = paymentMethod.hasCreditCardLimit(price)
+
+    fun buildInstallments() = CreditCardInstallments.createFromExpenseAndCreditCard(
+        expense = this,
+        creditCard = this.paymentMethod.creditCard!!
+    )
 
     companion object {
         fun createBlank() = Expense(

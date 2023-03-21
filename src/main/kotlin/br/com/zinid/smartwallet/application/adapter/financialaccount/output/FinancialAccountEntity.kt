@@ -4,7 +4,14 @@ import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.Payment
 import br.com.zinid.smartwallet.application.adapter.user.output.UserEntity
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.user.User
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import java.math.BigDecimal
 
 @Entity

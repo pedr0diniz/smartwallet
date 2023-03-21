@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration
 class UserConfig {
 
     @Bean
-    fun createUserInputPort(createUserAdapter: CreateUserAdapter) : CreateUserInputPort {
-        return CreateUserUseCase(createUserAdapter)
-    }
+    fun createUserInputPort(createUserAdapter: CreateUserAdapter): CreateUserInputPort =
+        CreateUserUseCase(createUserAdapter)
 }

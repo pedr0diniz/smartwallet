@@ -16,35 +16,53 @@ class CreateExpenseUseCase(
     private val createExpenseAdapter: CreateExpenseOutputPort
 ) : CreateExpenseInputPort {
     override fun execute(expense: Expense): Expense? {
-        val possiblePaymentMethod = findPaymentMethodAdapter.findById(expense.paymentMethod.id!!) ?: return null
-        val possibleFinancialAccount = findFinancialAccountAdapter.findById(possiblePaymentMethod.financialAccount.id!!)
+        val currentExpense = attachPaymentMethodToExpense(expense) ?: return null
+
+        return processExpense(currentExpense)
+    }
+
+    private fun attachPaymentMethodToExpense(expense: Expense): Expense? {
+        val possiblePaymentMethod = findPaymentMethodAdapter.findById(expense.paymentMethod.id!!)
             ?: return null
 
-        val currentExpense = expense.copy(paymentMethod = possiblePaymentMethod)
-        if (currentExpense.isCreditPurchase()) {
-            if (possiblePaymentMethod.hasCreditCardLimit(currentExpense.price)) {
-                val createdExpense = createExpenseAdapter.create(currentExpense)
-                if (currentExpense.hasInstallments()) {
-                    val installments = CreditCardInstallments.createFromExpenseAndCreditCard(
-                        currentExpense.copy(id = createdExpense?.id),
-                        possiblePaymentMethod.creditCard!!
-                    )
-                    val createdInstallments = createCreditCardInstallmentsAdapter.create(installments)
-                    return createdExpense?.copy(creditCardInstallments = createdInstallments)
-                }
-                return createdExpense
-            }
-            println("Insufficient card limit")
-            return null
+        return expense.copy(paymentMethod = possiblePaymentMethod)
+    }
+
+    private fun processExpense(expense: Expense): Expense? {
+        if (expense.isCreditPurchase()) {
+            return processCreditExpense(expense)
         }
 
-        if (possibleFinancialAccount.hasBalance(expense.price)) {
+        return processCashExpense(expense)
+    }
+
+    private fun processCreditExpense(expense: Expense): Expense? {
+        return if (expense.fitsInCreditCardLimit()) {
+            val createdExpense = createExpenseAdapter.create(expense) ?: return null
+
+            var createdInstallments: CreditCardInstallments? = null
+            if (expense.hasInstallments()) {
+                createdInstallments = createCreditCardInstallmentsAdapter.create(
+                    createdExpense.buildInstallments()
+                )
+            }
+            createdExpense.copy(creditCardInstallments = createdInstallments)
+        } else {
+            println("Insufficient card limit")
+            null
+        }
+    }
+    private fun processCashExpense(expense: Expense): Expense? {
+        val possibleFinancialAccount = findFinancialAccountAdapter.findById(expense.paymentMethod.financialAccount.id!!)
+            ?: return null
+
+        return if (possibleFinancialAccount.hasBalance(expense.price)) {
             possibleFinancialAccount.deductFromBalance(expense.price)
             updateFinancialAccountAdapter.update(possibleFinancialAccount)
-            return createExpenseAdapter.create(expense.copy(paymentMethod = possiblePaymentMethod))
+            createExpenseAdapter.create(expense.copy(paymentMethod = expense.paymentMethod))
+        } else {
+            println("Insufficient account balance")
+            null
         }
-
-        println("Insufficient account balance")
-        return null
     }
 }

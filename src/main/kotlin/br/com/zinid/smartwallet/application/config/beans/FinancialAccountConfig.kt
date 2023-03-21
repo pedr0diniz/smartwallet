@@ -14,7 +14,6 @@ class FinancialAccountConfig {
     fun createFinancialAccountInputPort(
         findUserAdapter: FindUserAdapter,
         createFinancialAccountAdapter: CreateFinancialAccountAdapter
-    ): CreateFinancialAccountInputPort {
-        return CreateFinancialAccountUseCase(findUserAdapter, createFinancialAccountAdapter)
-    }
+    ): CreateFinancialAccountInputPort =
+        CreateFinancialAccountUseCase(findUserAdapter, createFinancialAccountAdapter)
 }

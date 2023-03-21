@@ -14,7 +14,6 @@ class CreditCardConfig {
     fun createCreditCardInputPort(
         findPaymentMethodAdapter: FindPaymentMethodAdapter,
         createCreditCardAdapter: CreateCreditCardAdapter
-    ): CreateCreditCardInputPort {
-        return CreateCreditCardUseCase(findPaymentMethodAdapter, createCreditCardAdapter)
-    }
+    ): CreateCreditCardInputPort =
+        CreateCreditCardUseCase(findPaymentMethodAdapter, createCreditCardAdapter)
 }

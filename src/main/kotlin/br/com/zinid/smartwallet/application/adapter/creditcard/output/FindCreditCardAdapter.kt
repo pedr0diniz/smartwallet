@@ -9,11 +9,9 @@ import org.springframework.stereotype.Service
 class FindCreditCardAdapter(
     val creditCardRepository: CreditCardRepository
 ) : FindCreditCardOutputPort {
-    override fun findById(id: Long): CreditCard? {
-        return creditCardRepository.findByIdOrNull(id)?.toDomain()
-    }
+    override fun findById(id: Long): CreditCard? =
+        creditCardRepository.findByIdOrNull(id)?.toDomain()
 
-    override fun findByPaymentMethodId(id: Long): CreditCard? {
-        return creditCardRepository.findByPaymentMethodId(id)?.toDomain()
-    }
+    override fun findByPaymentMethodId(id: Long): CreditCard? =
+        creditCardRepository.findByPaymentMethodId(id)?.toDomain()
 }

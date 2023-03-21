@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface ExpenseRepository : JpaRepository<ExpenseEntity, Long> {
 
     fun findByPaymentMethodId(paymentMethodId: Long): List<ExpenseEntity>
-
 }

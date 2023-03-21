@@ -15,7 +15,6 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.util.function.Consumer
 
-
 @RestControllerAdvice
 class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
@@ -42,23 +41,27 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     fun buildValidationErrors(
-        globalErrors: List<ObjectError?>, fieldErrors: List<FieldError>
+        globalErrors: List<ObjectError?>,
+        fieldErrors: List<FieldError>
     ): ValidationErrorOutputDto {
 
         val validationErrors = ValidationErrorOutputDto()
 
-        globalErrors.forEach(Consumer { error: ObjectError? ->
-            validationErrors.globalErrorMessages.add(getErrorMessage(error))
-        })
+        globalErrors.forEach(
+            Consumer { error: ObjectError? ->
+                validationErrors.globalErrorMessages.add(getErrorMessage(error))
+            }
+        )
 
-        fieldErrors.forEach(Consumer { error: FieldError ->
-            val errorMessage = getErrorMessage(error)
-            validationErrors.fieldErrors.add(FieldErrorOutputDto(error.field, errorMessage))
-        })
+        fieldErrors.forEach(
+            Consumer { error: FieldError ->
+                val errorMessage = getErrorMessage(error)
+                validationErrors.fieldErrors.add(FieldErrorOutputDto(error.field, errorMessage))
+            }
+        )
         return validationErrors
     }
 
-    fun getErrorMessage(error: ObjectError?): String {
-        return messageSource!!.getMessage(error!!, LocaleContextHolder.getLocale())
-    }
+    fun getErrorMessage(error: ObjectError?): String =
+        messageSource!!.getMessage(error!!, LocaleContextHolder.getLocale())
 }

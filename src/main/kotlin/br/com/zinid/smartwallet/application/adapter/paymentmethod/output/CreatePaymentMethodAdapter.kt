@@ -9,7 +9,6 @@ class CreatePaymentMethodAdapter(
     private val paymentMethodRepository: PaymentMethodRepository
 ) : CreatePaymentMethodOutputPort {
 
-    override fun create(paymentMethod: PaymentMethod): PaymentMethod? {
-        return paymentMethodRepository.save(PaymentMethodEntity.fromDomain(paymentMethod)).toDomain()
-    }
+    override fun create(paymentMethod: PaymentMethod): PaymentMethod? =
+        paymentMethodRepository.save(PaymentMethodEntity.fromDomain(paymentMethod)).toDomain()
 }

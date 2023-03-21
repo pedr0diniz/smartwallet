@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface FinancialAccountRepository : JpaRepository<FinancialAccountEntity, Long> {
 
     fun findByUserId(userId: Long): List<FinancialAccountEntity>
-
 }

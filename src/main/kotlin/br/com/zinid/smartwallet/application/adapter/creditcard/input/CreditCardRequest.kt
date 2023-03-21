@@ -1,6 +1,5 @@
 package br.com.zinid.smartwallet.application.adapter.creditcard.input
 
-import br.com.zinid.smartwallet.application.adapter.paymentmethod.input.PaymentMethodRequest
 import br.com.zinid.smartwallet.domain.creditcard.CreditCard
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import com.fasterxml.jackson.annotation.JsonFormat
@@ -13,7 +12,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 data class CreditCardRequest(
-    @field:Pattern(regexp="[\\d]{4}")
+    @field:Pattern(regexp = "[\\d]{4}")
     @field:NotBlank
     val last4Digits: String,
 
@@ -25,8 +24,8 @@ data class CreditCardRequest(
     val cardLimit: BigDecimal,
 
     @field:NotNull
-    @field:Min(1)
-    @field:Max(31)
+    @field:Min(value = 1)
+    @field:Max(value = 31)
     val invoiceClosingDayOfMonth: Int
 ) {
     fun toDomain(paymentMethod: PaymentMethod) = CreditCard(

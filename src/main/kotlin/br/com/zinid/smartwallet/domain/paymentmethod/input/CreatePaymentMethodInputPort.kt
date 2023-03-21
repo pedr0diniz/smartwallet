@@ -5,5 +5,4 @@ import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 interface CreatePaymentMethodInputPort {
 
     fun execute(paymentMethod: PaymentMethod): PaymentMethod?
-
 }

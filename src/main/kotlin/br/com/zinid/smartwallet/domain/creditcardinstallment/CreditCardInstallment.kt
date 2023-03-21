@@ -44,28 +44,26 @@ data class CreditCardInstallments(
         return installments
     }
 
-    private fun getClosingDate(currentDate: LocalDate? = LocalDate.now()): LocalDate {
-        val closingDay = invoiceClosingDayOfMonth + 10
-        val lastDayOfMonth = getLastDayOfMonth(currentDate!!)
+    private fun getClosingDate(currentDate: LocalDate): LocalDate {
+        val closingDay = invoiceClosingDayOfMonth + CLOSING_TO_DUE_DATE_DELAY_IN_DAYS
 
         if (closingDay > currentDate.dayOfMonth) {
-            if (closingDay > lastDayOfMonth) {
-                return currentDate.withDayOfMonth(lastDayOfMonth)
-            }
-            return currentDate.withDayOfMonth(closingDay)
+            return getClosingDateWithValidDay(currentDate, closingDay)
         }
 
-        val nextMonthDate = currentDate.withDayOfMonth(1).plusMonths(1)
-        val lastDayOfNextMonth = getLastDayOfMonth(nextMonthDate)
-        if (closingDay > lastDayOfNextMonth) {
-            return nextMonthDate.withDayOfMonth(lastDayOfNextMonth)
-        }
-        return nextMonthDate.withDayOfMonth(closingDay)
+        return getClosingDateWithValidDay(currentDate.plusMonths(1), closingDay)
     }
 
-    private fun getLastDayOfMonth(date: LocalDate) = date.month.length(date.isLeapYear)
+    private fun getClosingDateWithValidDay(date: LocalDate, possibleClosingDay: Int): LocalDate {
+        val lastDayOfMonth = date.month.length(date.isLeapYear)
+        if (possibleClosingDay > lastDayOfMonth) {
+            return date.withDayOfMonth(lastDayOfMonth)
+        }
+        return date.withDayOfMonth(possibleClosingDay)
+    }
 
     companion object {
+        private const val CLOSING_TO_DUE_DATE_DELAY_IN_DAYS = 10
 
         fun createBlankFromNumberOfInstallments(numberOfMonths: Int) = CreditCardInstallments(
             id = 0L,

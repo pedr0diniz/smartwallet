@@ -1,7 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.paymentmethod.input
 
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodResponse
-import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.input.CreatePaymentMethodInputPort
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus

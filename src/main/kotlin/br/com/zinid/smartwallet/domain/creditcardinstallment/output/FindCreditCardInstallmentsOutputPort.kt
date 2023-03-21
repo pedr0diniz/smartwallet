@@ -5,5 +5,4 @@ import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallme
 interface FindCreditCardInstallmentsOutputPort {
 
     fun findByExpenseId(expenseId: Long): CreditCardInstallments?
-
 }

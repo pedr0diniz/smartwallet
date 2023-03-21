@@ -4,7 +4,6 @@ import jakarta.validation.Constraint
 import jakarta.validation.Payload
 import kotlin.reflect.KClass
 
-
 @MustBeDocumented
 @Constraint(validatedBy = [ValueOfEnumValidator::class]) //
 @Target(AnnotationTarget.FIELD) // aplicável em atributos

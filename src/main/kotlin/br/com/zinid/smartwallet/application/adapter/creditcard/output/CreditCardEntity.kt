@@ -3,7 +3,13 @@ package br.com.zinid.smartwallet.application.adapter.creditcard.output
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodEntity
 import br.com.zinid.smartwallet.domain.creditcard.CreditCard
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.LocalDate
 

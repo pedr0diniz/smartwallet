@@ -2,8 +2,7 @@ package br.com.zinid.smartwallet.application.config.validation
 
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
-import java.util.*
-
+import java.util.Locale
 
 class ValueOfEnumValidator : ConstraintValidator<ValueOfEnum, String?> {
     private var acceptedValues: List<String>? = null
@@ -16,7 +15,7 @@ class ValueOfEnumValidator : ConstraintValidator<ValueOfEnum, String?> {
             return acceptedValues!!
                 .contains(
                     value.toString().trim() { it <= ' ' }
-                    .uppercase(Locale.getDefault())
+                        .uppercase(Locale.getDefault())
                 )
         }
         return false

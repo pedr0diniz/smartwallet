@@ -1,6 +1,5 @@
 package br.com.zinid.smartwallet.domain.creditcard
 
-import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallment
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -14,52 +13,38 @@ data class CreditCard(
     val paymentMethod: PaymentMethod
 ) {
     val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate()
-    val previousInvoiceClosingDate: LocalDate = getLastClosingDate()
+    val previousInvoiceClosingDate: LocalDate = getPreviousClosingDate()
 
     fun hasLimit(
         consumedLimit: BigDecimal,
         expenseValue: BigDecimal
     ): Boolean = (cardLimit >= consumedLimit.add(expenseValue))
 
-    private fun getLastClosingDate(): LocalDate {
+    private fun getPreviousClosingDate(): LocalDate {
         val today = LocalDate.now()
-        val closingDay = invoiceClosingDayOfMonth
-        val lastDayOfMonth = getLastDayOfMonth(today)
 
-        if (closingDay > today.dayOfMonth) {
-            val previousMonthDate = today.withDayOfMonth(1).minusMonths(1)
-            val lastDayOfPreviousMonth = getLastDayOfMonth(previousMonthDate)
-            if (closingDay > lastDayOfPreviousMonth) {
-                return previousMonthDate.withDayOfMonth(lastDayOfPreviousMonth)
-            }
-            return previousMonthDate.withDayOfMonth(closingDay)
+        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
+            return getClosingDateWithValidDay(today.minusMonths(1), invoiceClosingDayOfMonth)
         }
 
-        if (closingDay > lastDayOfMonth) {
-            return today.withDayOfMonth(lastDayOfMonth)
-        }
-        return today.withDayOfMonth(closingDay)
+        return getClosingDateWithValidDay(today, invoiceClosingDayOfMonth)
     }
 
     private fun getCurrentClosingDate(): LocalDate {
         val today = LocalDate.now()
-        val closingDay = invoiceClosingDayOfMonth
-        val lastDayOfMonth = getLastDayOfMonth(today)
 
-        if (closingDay > today.dayOfMonth) {
-            if (closingDay > lastDayOfMonth) {
-                return today.withDayOfMonth(lastDayOfMonth)
-            }
-            return today.withDayOfMonth(closingDay)
+        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
+            return getClosingDateWithValidDay(today, invoiceClosingDayOfMonth)
         }
 
-        val nextMonthDate = today.withDayOfMonth(1).plusMonths(1)
-        val lastDayOfNextMonth = getLastDayOfMonth(nextMonthDate)
-        if (closingDay > lastDayOfNextMonth) {
-            return nextMonthDate.withDayOfMonth(lastDayOfNextMonth)
-        }
-        return nextMonthDate.withDayOfMonth(closingDay)
+        return getClosingDateWithValidDay(today.plusMonths(1), invoiceClosingDayOfMonth)
     }
 
-    private fun getLastDayOfMonth(date: LocalDate) = date.month.length(date.isLeapYear)
+    private fun getClosingDateWithValidDay(date: LocalDate, possibleClosingDay: Int): LocalDate {
+        val lastDayOfMonth = date.month.length(date.isLeapYear)
+        if (possibleClosingDay > lastDayOfMonth) {
+            return date.withDayOfMonth(lastDayOfMonth)
+        }
+        return date.withDayOfMonth(possibleClosingDay)
+    }
 }

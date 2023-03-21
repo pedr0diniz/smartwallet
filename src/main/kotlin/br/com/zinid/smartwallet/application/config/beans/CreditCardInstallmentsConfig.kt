@@ -14,7 +14,6 @@ class CreditCardInstallmentsConfig {
     fun createCreditCardInstallmentsInputPort(
         findExpenseAdapter: FindExpenseAdapter,
         createCreditCardInstallmentsAdapter: CreateCreditCardInstallmentsAdapter
-    ): CreateCreditCardInstallmentsInputPort {
-        return CreateCreditCardInstallmentsUseCase(findExpenseAdapter, createCreditCardInstallmentsAdapter)
-    }
+    ): CreateCreditCardInstallmentsInputPort =
+        CreateCreditCardInstallmentsUseCase(findExpenseAdapter, createCreditCardInstallmentsAdapter)
 }

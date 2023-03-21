@@ -9,7 +9,6 @@ class FindCreditCardInstallmentsAdapter(
     private val creditCardInstallmentsRepository: CreditCardInstallmentsRepository
 ) : FindCreditCardInstallmentsOutputPort {
 
-    override fun findByExpenseId(expenseId: Long): CreditCardInstallments? {
-        return creditCardInstallmentsRepository.findByExpenseId(expenseId)?.toDomain()
-    }
+    override fun findByExpenseId(expenseId: Long): CreditCardInstallments? =
+        creditCardInstallmentsRepository.findByExpenseId(expenseId)?.toDomain()
 }

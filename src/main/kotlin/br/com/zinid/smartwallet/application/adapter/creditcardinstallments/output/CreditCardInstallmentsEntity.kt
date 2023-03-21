@@ -3,7 +3,13 @@ package br.com.zinid.smartwallet.application.adapter.creditcardinstallments.outp
 import br.com.zinid.smartwallet.application.adapter.expense.output.ExpenseEntity
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
 import br.com.zinid.smartwallet.domain.expense.Expense
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 import java.math.BigDecimal
 
 @Entity

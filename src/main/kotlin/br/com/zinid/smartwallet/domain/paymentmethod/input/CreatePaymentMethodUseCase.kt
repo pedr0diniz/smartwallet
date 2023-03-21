@@ -12,11 +12,7 @@ class CreatePaymentMethodUseCase(
 ) : CreatePaymentMethodInputPort {
 
     override fun execute(paymentMethod: PaymentMethod): PaymentMethod? {
-        val possibleFinancialAccount = findFinancialAccountAdapter.findById(paymentMethod.financialAccount.id!!)
-            ?: return null
-
-        val createdPaymentMethod = createPaymentMethodAdapter
-            .create(paymentMethod.copy(financialAccount = possibleFinancialAccount)) ?: return null
+        val createdPaymentMethod = createPaymentMethod(paymentMethod) ?: return null
 
         val createdCreditCard = if (paymentMethod.creditCard != null) {
             createCreditCardAdapter
@@ -30,5 +26,12 @@ class CreatePaymentMethodUseCase(
         }
 
         return createdPaymentMethod.copy(creditCard = createdCreditCard)
+    }
+
+    private fun createPaymentMethod(paymentMethod: PaymentMethod): PaymentMethod? {
+        val possibleFinancialAccount = findFinancialAccountAdapter.findById(paymentMethod.financialAccount.id!!)
+            ?: return null
+
+        return createPaymentMethodAdapter.create(paymentMethod.copy(financialAccount = possibleFinancialAccount))
     }
 }

@@ -9,17 +9,21 @@ class CollectionOfEnumValuesValidator : ConstraintValidator<CollectionOfEnumValu
         acceptedValues = toValidate.enumClass.java.enumConstants.map { it.name }
     }
 
-    override fun isValid(value: Collection<String>, context: ConstraintValidatorContext): Boolean {
-        if (value.isEmpty()) {
+    override fun isValid(collection: Collection<String>, context: ConstraintValidatorContext): Boolean {
+        if (collection.isEmpty() || hasAnInvalidValueIn(collection)) {
             return false
         }
 
-        for (method in value) {
+        return true
+    }
+
+    private fun hasAnInvalidValueIn(collection: Collection<String>): Boolean {
+        for (method in collection) {
             if (!acceptedValues.contains(method.trim().uppercase())) {
-                return false
+                return true
             }
         }
 
-        return true
+        return false
     }
 }
