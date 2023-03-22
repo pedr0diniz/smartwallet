@@ -327,7 +327,7 @@ naming:
     excludes: "**/test/**, **/componentTest/**, **/archTest/**, **/*.Test.kt, **/*.Spec.kt, **/*.Spek.kt"
     constantPattern: '[A-Za-z][_A-Za-z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
-    privatePropertyPattern: '(_)?[A-Za-][_A-Za-20-9]*'
+    privatePropertyPattern: '(_)?[A-Za-z][_A-Za-z0-9]*'
   PackageNaming:
     active: true
     excludes: "**/test/**, **/componentTest/**, **/archTest/**, **/*.Test.kt, **/*.Spec.kt, **/*.Spek.kt"
@@ -337,7 +337,7 @@ naming:
     excludes: "**/test/**, **/componentTest/**, **/archTest/**, **/*.Test.kt, **/*.Spec.kt, **/*.Spek.kt"
     constantPattern: '[A-Z][_A-Z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
-    privatePropertyPattern: '_?[A-Za-z][_A-Za-20-9]*'
+    privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
   VariableMaxLength:
     active: false
     excludes: "**/test/**, **/componentTest/**, **/archTest/**, **/*.Test.kt, **/*.Spec.kt, **/*.Spek.kt"
@@ -518,7 +518,7 @@ style:
     acceptableDecimalLength: 5
   UnnecessaryAbstractClass:
     active: true
-    excludeAnnotatedClasses:
+    excludeAnnotatedClasses: ""
   UnnecessaryApply:
     active: true
   UnnecessaryInheritance:
