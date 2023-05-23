@@ -3,7 +3,7 @@ package br.com.zinid.smartwallet.application.adapter.user
 import br.com.zinid.smartwallet.application.adapter.user.output.CreateUserAdapter
 import br.com.zinid.smartwallet.application.adapter.user.output.UserEntity
 import br.com.zinid.smartwallet.application.adapter.user.output.UserRepository
-import br.com.zinid.smartwallet.domain.user.User
+import br.com.zinid.smartwallet.fixtures.UserFixtures
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,13 +17,7 @@ internal class CreateUserAdapterTest {
 
     @Test
     fun `should create user`() {
-        val user = User(
-            id = 1L,
-            firstname = "User",
-            lastname = "from Test",
-            email = "user@user.com",
-            phone = "+551199999-6666"
-        )
+        val user = UserFixtures.mockUser()
         val userEntity = UserEntity.fromDomain(user)
 
         every { userRepository.save(userEntity) } returns userEntity

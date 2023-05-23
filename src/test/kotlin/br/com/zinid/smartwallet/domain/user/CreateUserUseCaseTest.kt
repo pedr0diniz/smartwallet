@@ -2,6 +2,7 @@ package br.com.zinid.smartwallet.domain.user
 
 import br.com.zinid.smartwallet.domain.user.input.CreateUserUseCase
 import br.com.zinid.smartwallet.domain.user.output.CreateUserOutputPort
+import br.com.zinid.smartwallet.fixtures.UserFixtures
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -15,13 +16,7 @@ internal class CreateUserUseCaseTest {
 
     @Test
     fun `should create user`() {
-        val user = User(
-            id = 1L,
-            firstname = "User",
-            lastname = "from Test",
-            email = "user@user.com",
-            phone = "+551199999-6666"
-        )
+        val user = UserFixtures.mockUser()
 
         every { createUserAdapter.create(user) } returns user
 
@@ -31,5 +26,4 @@ internal class CreateUserUseCaseTest {
 
         assertEquals(user, createdUser)
     }
-
 }

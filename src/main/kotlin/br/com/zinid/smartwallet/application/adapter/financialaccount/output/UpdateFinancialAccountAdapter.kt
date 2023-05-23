@@ -6,8 +6,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class UpdateFinancialAccountAdapter(
-    val financialAccountRepository: FinancialAccountRepository
+    private val financialAccountRepository: FinancialAccountRepository
 ) : UpdateFinancialAccountOutputPort {
+
     override fun update(financialAccount: FinancialAccount): FinancialAccount? =
         financialAccountRepository.save(FinancialAccountEntity.fromDomain(financialAccount)).toDomain()
 }

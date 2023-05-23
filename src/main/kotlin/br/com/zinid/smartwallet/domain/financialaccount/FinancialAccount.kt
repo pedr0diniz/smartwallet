@@ -12,17 +12,11 @@ data class FinancialAccount(
     var overdraft: BigDecimal,
     val user: User
 ) {
-    fun hasBalance(value: BigDecimal): Boolean {
-        if (balance.subtract(value) >= overdraft.negate()) {
-            balance -= value
-            return true
-        }
-
-        return false
-    }
+    fun hasBalance(value: BigDecimal): Boolean =
+        balance.subtract(value) >= overdraft.negate()
 
     fun deductFromBalance(value: BigDecimal) {
-        balance.subtract(value)
+        if (hasBalance(value)) balance = balance.subtract(value)
     }
 
     companion object {

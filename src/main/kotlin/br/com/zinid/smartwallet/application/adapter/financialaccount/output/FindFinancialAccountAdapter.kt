@@ -11,6 +11,7 @@ class FindFinancialAccountAdapter(
     val financialAccountRepository: FinancialAccountRepository,
     val findPaymentMethodAdapter: FindPaymentMethodOutputPort
 ) : FindFinancialAccountOutputPort {
+
     override fun findById(id: Long): FinancialAccount? {
         val possibleFinancialAccount = financialAccountRepository.findByIdOrNull(id)?.toDomain()
 
