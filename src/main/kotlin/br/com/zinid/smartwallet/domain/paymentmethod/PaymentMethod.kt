@@ -13,7 +13,7 @@ data class PaymentMethod(
     val financialAccount: FinancialAccount,
     val expenses: List<Expense>? = listOf()
 ) {
-    fun isCredit() = (method == PaymentMethods.CREDIT)
+    fun isCredit() = (method == PaymentMethods.CREDIT) && (creditCard != null)
 
     fun hasCreditCardLimit(expenseValue: BigDecimal): Boolean {
         if (isCredit()) {
