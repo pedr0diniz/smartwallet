@@ -25,10 +25,15 @@ data class PaymentMethod(
         return false
     }
 
-    private fun getCurrentMonthNonInstallmentCreditExpenses() = getNonInstallmentCreditExpensesWithinDateRange(
-        creditCard!!.previousInvoiceClosingDate,
-        creditCard!!.currentInvoiceClosingDate
-    ).sumOf { it.price }
+    fun getCurrentMonthExpenses(): BigDecimal =
+        if (isCredit()) getCurrentMonthNonInstallmentCreditExpenses().add(getCurrentMonthInstallmentsValue())
+        else expenses?.sumOf { it.price } ?: BigDecimal.ZERO
+
+    private fun getCurrentMonthNonInstallmentCreditExpenses() =
+        getNonInstallmentCreditExpensesWithinDateRange(
+            creditCard!!.previousInvoiceClosingDate,
+            creditCard!!.currentInvoiceClosingDate
+        ).sumOf { it.price }
 
     private fun getNonInstallmentCreditExpensesWithinDateRange(
         startDate: LocalDate,
@@ -39,6 +44,19 @@ data class PaymentMethod(
                     && it.wasPurchasedWithinDateRange(startDate, endDate)
                     && it.creditCardInstallments == null
         } ?: listOf()
+
+    private fun getCurrentMonthInstallments() =
+        expenses
+            ?.filter { it.isCreditPurchase() && it.creditCardInstallments != null }
+            ?.map {
+                it.getCreditCardInstallmentsByPeriod(
+                    creditCard!!.previousInvoiceClosingDate,
+                    creditCard!!.currentInvoiceClosingDate
+                ).first()
+            } ?: listOf()
+
+    private fun getCurrentMonthInstallmentsValue() =
+        getCurrentMonthInstallments().sumOf { it.installmentValue }
 
 
     private fun getOngoingInstallmentsValue() = expenses?.sumOf {

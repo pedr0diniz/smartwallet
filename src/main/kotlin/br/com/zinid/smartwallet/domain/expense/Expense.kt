@@ -1,6 +1,7 @@
 package br.com.zinid.smartwallet.domain.expense
 
 import br.com.zinid.smartwallet.domain.acquaintance.Acquaintance
+import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallment
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import java.math.BigDecimal
@@ -30,6 +31,16 @@ data class Expense(
         expense = this,
         creditCard = paymentMethod.creditCard!!
     )
+
+    fun getCreditCardInstallmentsByPeriod(startDate: LocalDate, endDate: LocalDate): List<CreditCardInstallment> {
+        if (paymentMethod.isCredit()) {
+            return creditCardInstallments?.installments?.filter {
+                it.dueDate > startDate && it.dueDate <= endDate
+            } ?: emptyList()
+        }
+
+        return emptyList()
+    }
 
     companion object {
         fun createBlank() = Expense(

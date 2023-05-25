@@ -34,7 +34,8 @@ data class CreditCardInstallments(
         installments.add(
             CreditCardInstallment(
                 dueDate = getClosingDate(expense.date),
-                installmentValue = firstInstallmentValue
+                installmentValue = firstInstallmentValue,
+                content = expense.content
             )
         )
 
@@ -42,7 +43,8 @@ data class CreditCardInstallments(
             installments.add(
                 CreditCardInstallment(
                     dueDate = getClosingDate(expense.date.plusMonths(i - 1L)),
-                    installmentValue = installmentValue
+                    installmentValue = installmentValue,
+                    content = expense.content
                 )
             )
         }
@@ -111,5 +113,6 @@ data class CreditCardInstallments(
 
 data class CreditCardInstallment(
     val dueDate: LocalDate,
-    val installmentValue: BigDecimal
+    val installmentValue: BigDecimal,
+    val content: String
 )
