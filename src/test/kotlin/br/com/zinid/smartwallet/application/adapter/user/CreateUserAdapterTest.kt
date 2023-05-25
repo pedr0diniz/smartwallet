@@ -17,7 +17,7 @@ internal class CreateUserAdapterTest {
 
     @Test
     fun `should create user`() {
-        val user = UserFixtures.mockUser()
+        val user = UserFixtures.getUser()
         val userEntity = UserEntity.fromDomain(user)
 
         every { userRepository.save(userEntity) } returns userEntity

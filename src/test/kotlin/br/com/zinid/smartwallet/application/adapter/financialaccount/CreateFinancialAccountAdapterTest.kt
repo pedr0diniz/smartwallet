@@ -18,8 +18,8 @@ internal class CreateFinancialAccountAdapterTest {
 
     @Test
     fun `should create financial account`() {
-        val financialAccount = FinancialAccountFixtures.mockFinancialAccount(
-            user = UserFixtures.mockUser()
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount(
+            user = UserFixtures.getUser()
         )
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
 

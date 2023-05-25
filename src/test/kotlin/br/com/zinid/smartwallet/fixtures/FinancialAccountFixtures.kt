@@ -7,7 +7,7 @@ import java.math.BigDecimal
 
 object FinancialAccountFixtures {
 
-    fun mockFinancialAccount(user: User) = FinancialAccount(
+    fun getFinancialAccount(user: User) = FinancialAccount(
         id = 1L,
         institution = Institutions.ITI.name,
         balance = BigDecimal.ZERO,

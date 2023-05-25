@@ -4,7 +4,7 @@ import br.com.zinid.smartwallet.domain.user.User
 
 object UserFixtures {
 
-    fun mockUser() = User(
+    fun getUser() = User(
         id = 2L,
         firstname = "User",
         lastname = "from Test",

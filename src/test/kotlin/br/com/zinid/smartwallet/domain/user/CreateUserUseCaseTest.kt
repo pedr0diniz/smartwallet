@@ -16,7 +16,7 @@ internal class CreateUserUseCaseTest {
 
     @Test
     fun `should create user`() {
-        val user = UserFixtures.mockUser()
+        val user = UserFixtures.getUser()
 
         every { createUserAdapter.create(user) } returns user
 

@@ -9,6 +9,7 @@ import br.com.zinid.smartwallet.fixtures.PaymentMethodFixtures
 import br.com.zinid.smartwallet.fixtures.UserFixtures
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import kotlin.test.assertEquals
@@ -26,10 +27,10 @@ internal class FindFinancialAccountAdapterTest {
     @Test
     fun `should find financial accounts with payment methods by id`() {
         val financialAccountId = 1L
-        val user = UserFixtures.mockUser()
-        val financialAccount = FinancialAccountFixtures.mockFinancialAccount(user).copy(id = financialAccountId)
+        val user = UserFixtures.getUser()
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount(user).copy(id = financialAccountId)
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
-        val paymentMethods = listOf(PaymentMethodFixtures.mockPaymentMethod(financialAccount))
+        val paymentMethods = listOf(PaymentMethodFixtures.getPaymentMethod(financialAccount))
 
         every { financialAccountRepository.findByIdOrNull(financialAccountId) } returns financialAccountEntity
         every { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountId) } returns paymentMethods
@@ -37,20 +38,26 @@ internal class FindFinancialAccountAdapterTest {
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(financialAccountId)
         val expectedResponse = financialAccount.copy(paymentMethods = paymentMethods)
 
+        verify(exactly = 1) { financialAccountRepository.findByIdOrNull(financialAccountId) }
+        verify(exactly = 1) { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountId) }
+
         assertEquals(expectedResponse, possibleFinancialAccount)
     }
 
     @Test
     fun `should find financial accounts with no payment methods by id`() {
         val financialAccountId = 1L
-        val user = UserFixtures.mockUser()
-        val financialAccount = FinancialAccountFixtures.mockFinancialAccount(user).copy(id = financialAccountId)
+        val user = UserFixtures.getUser()
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount(user).copy(id = financialAccountId)
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
 
         every { financialAccountRepository.findByIdOrNull(financialAccountId) } returns financialAccountEntity
         every { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountId) } returns emptyList()
 
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(financialAccountId)
+
+        verify(exactly = 1) { financialAccountRepository.findByIdOrNull(financialAccountId) }
+        verify(exactly = 1) { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountId) }
 
         assertEquals(financialAccount, possibleFinancialAccount)
     }
@@ -62,15 +69,17 @@ internal class FindFinancialAccountAdapterTest {
         every { financialAccountRepository.findByIdOrNull(financialAccountId) } returns null
 
         assertNull(findFinancialAccountAdapter.findById(financialAccountId))
+
+        verify(exactly = 1) { financialAccountRepository.findByIdOrNull(financialAccountId) }
     }
 
     @Test
     fun `should find financial accounts with payment methods by user id`() {
         val userId = 2L
-        val user = UserFixtures.mockUser().copy(id = userId)
-        val financialAccount = FinancialAccountFixtures.mockFinancialAccount(user)
+        val user = UserFixtures.getUser().copy(id = userId)
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount(user)
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
-        val paymentMethods = listOf(PaymentMethodFixtures.mockPaymentMethod(financialAccount))
+        val paymentMethods = listOf(PaymentMethodFixtures.getPaymentMethod(financialAccount))
 
         every { financialAccountRepository.findByUserId(userId) } returns listOf(financialAccountEntity)
         every { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountEntity.id!!) } returns paymentMethods
@@ -78,20 +87,26 @@ internal class FindFinancialAccountAdapterTest {
         val possibleFinancialAccount = findFinancialAccountAdapter.findByUserId(userId)
         val expectedResponse = listOf(financialAccount.copy(paymentMethods = paymentMethods))
 
+        verify(exactly = 1) { financialAccountRepository.findByUserId(userId) }
+        verify(exactly = 1) { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountEntity.id!!) }
+
         assertEquals(expectedResponse, possibleFinancialAccount)
     }
 
     @Test
     fun `should find financial accounts with no payment methods by user id`() {
         val userId = 2L
-        val user = UserFixtures.mockUser().copy(id = userId)
-        val financialAccount = FinancialAccountFixtures.mockFinancialAccount(user)
+        val user = UserFixtures.getUser().copy(id = userId)
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount(user)
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
 
         every { financialAccountRepository.findByUserId(userId) } returns listOf(financialAccountEntity)
         every { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountEntity.id!!) } returns emptyList()
 
         val possibleFinancialAccount = findFinancialAccountAdapter.findByUserId(userId)
+
+        verify(exactly = 1) { financialAccountRepository.findByUserId(userId) }
+        verify(exactly = 1) { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountEntity.id!!) }
 
         assertEquals(listOf(financialAccount), possibleFinancialAccount)
     }
@@ -103,5 +118,7 @@ internal class FindFinancialAccountAdapterTest {
         every { financialAccountRepository.findByUserId(userId) } returns emptyList()
 
         assert(findFinancialAccountAdapter.findByUserId(userId).isEmpty())
+
+        verify(exactly = 1) { financialAccountRepository.findByUserId(userId) }
     }
 }

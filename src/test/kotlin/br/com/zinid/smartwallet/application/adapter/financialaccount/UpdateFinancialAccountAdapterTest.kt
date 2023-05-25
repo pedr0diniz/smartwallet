@@ -18,8 +18,8 @@ internal class UpdateFinancialAccountAdapterTest {
 
     @Test
     fun `should update financial account`() {
-        val financialAccount = FinancialAccountFixtures.mockFinancialAccount(
-            user = UserFixtures.mockUser()
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount(
+            user = UserFixtures.getUser()
         )
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
 

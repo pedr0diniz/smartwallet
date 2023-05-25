@@ -6,6 +6,7 @@ import br.com.zinid.smartwallet.domain.user.User
 import br.com.zinid.smartwallet.domain.user.output.FindUserOutputPort
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -20,18 +21,7 @@ internal class CreateFinancialAccountUseCaseTest {
     )
 
     @Test
-    fun `should find user and create financial account`() {
-        val id = 1L
-        val userId = 2L
-        val financialAccount = FinancialAccount.createBlankFromIdAndUserId(id, userId)
-
-        every { findUserAdapter.findById(userId) } returns null
-
-        assertNull(createFinancialAccountUseCase.execute(financialAccount))
-    }
-
-    @Test
-    fun `should not find user and fail to create financial account`() {
+    fun `should find user and fail to create financial account`() {
         val id = 1L
         val userId = 2L
         val financialAccount = FinancialAccount.createBlankFromIdAndUserId(id, userId)
@@ -40,5 +30,20 @@ internal class CreateFinancialAccountUseCaseTest {
         every { createFinancialAccountAdapter.create(financialAccount) } returns financialAccount
 
         assertEquals(financialAccount, createFinancialAccountUseCase.execute(financialAccount))
+
+        verify(exactly = 1) { findUserAdapter.findById(userId) }
+        verify(exactly = 1) { createFinancialAccountAdapter.create(financialAccount) }
+    }
+    @Test
+    fun `should not find user and create financial account`() {
+        val id = 1L
+        val userId = 2L
+        val financialAccount = FinancialAccount.createBlankFromIdAndUserId(id, userId)
+
+        every { findUserAdapter.findById(userId) } returns null
+
+        assertNull(createFinancialAccountUseCase.execute(financialAccount))
+
+        verify(exactly = 1) { findUserAdapter.findById(userId) }
     }
 }

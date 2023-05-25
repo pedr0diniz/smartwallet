@@ -6,7 +6,7 @@ import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethods
 
 object PaymentMethodFixtures {
 
-    fun mockPaymentMethod(financialAccount: FinancialAccount) =
+    fun getPaymentMethod(financialAccount: FinancialAccount) =
         PaymentMethod(
             id = 3L,
             method = PaymentMethods.DEBIT,
