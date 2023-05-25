@@ -18,14 +18,14 @@ data class PaymentMethod(
     fun hasCreditCardLimit(expenseValue: BigDecimal): Boolean {
         if (isCredit()) {
             return creditCard?.hasLimit(
-                getMonthlyExpensesValue().add(getOngoingInstallmentsValue()),
+                getCurrentMonthNonInstallmentCreditExpenses().add(getOngoingInstallmentsValue()),
                 expenseValue
             )!!
         }
         return false
     }
 
-    private fun getMonthlyExpensesValue() = getNonInstallmentCreditExpensesWithinDateRange(
+    private fun getCurrentMonthNonInstallmentCreditExpenses() = getNonInstallmentCreditExpensesWithinDateRange(
         creditCard!!.previousInvoiceClosingDate,
         creditCard!!.currentInvoiceClosingDate
     ).sumOf { it.price }
@@ -34,10 +34,12 @@ data class PaymentMethod(
         startDate: LocalDate,
         endDate: LocalDate
     ) = expenses
-        ?.filter { it.isCreditPurchase() }
-        ?.filter { it.wasPurchasedWithinDateRange(startDate, endDate) }
-        ?.filter { it.creditCardInstallments == null }
-        ?: listOf()
+        ?.filter {
+            it.isCreditPurchase()
+                    && it.wasPurchasedWithinDateRange(startDate, endDate)
+                    && it.creditCardInstallments == null
+        } ?: listOf()
+
 
     private fun getOngoingInstallmentsValue() = expenses?.sumOf {
         it.creditCardInstallments
@@ -52,6 +54,7 @@ data class PaymentMethod(
             method = PaymentMethods.BLANK,
             financialAccount = FinancialAccount.createBlank()
         )
+
         fun createBlankFromId(id: Long) = PaymentMethod(
             id = id,
             method = PaymentMethods.BLANK,

@@ -28,7 +28,7 @@ data class Expense(
 
     fun buildInstallments() = CreditCardInstallments.createFromExpenseAndCreditCard(
         expense = this,
-        creditCard = this.paymentMethod.creditCard!!
+        creditCard = paymentMethod.creditCard!!
     )
 
     companion object {
