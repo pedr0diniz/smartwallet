@@ -1,7 +1,7 @@
 package br.com.zinid.smartwallet.application.config.beans
 
 import br.com.zinid.smartwallet.application.adapter.creditcardinstallments.output.CreateCreditCardInstallmentsAdapter
-import br.com.zinid.smartwallet.application.adapter.expense.output.FindExpenseAdapter
+import br.com.zinid.smartwallet.application.adapter.expense.credit.output.FindCreditExpenseAdapter
 import br.com.zinid.smartwallet.domain.creditcardinstallment.input.CreateCreditCardInstallmentsInputPort
 import br.com.zinid.smartwallet.domain.creditcardinstallment.input.CreateCreditCardInstallmentsUseCase
 import org.springframework.context.annotation.Bean
@@ -12,8 +12,8 @@ class CreditCardInstallmentsConfig {
 
     @Bean
     fun createCreditCardInstallmentsInputPort(
-        findExpenseAdapter: FindExpenseAdapter,
+        findCreditExpenseAdapter: FindCreditExpenseAdapter,
         createCreditCardInstallmentsAdapter: CreateCreditCardInstallmentsAdapter
     ): CreateCreditCardInstallmentsInputPort =
-        CreateCreditCardInstallmentsUseCase(findExpenseAdapter, createCreditCardInstallmentsAdapter)
+        CreateCreditCardInstallmentsUseCase(findCreditExpenseAdapter, createCreditCardInstallmentsAdapter)
 }

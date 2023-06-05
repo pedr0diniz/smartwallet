@@ -2,7 +2,7 @@ package br.com.zinid.smartwallet.application.adapter.financialaccount.output
 
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.financialaccount.output.FindFinancialAccountOutputPort
-import br.com.zinid.smartwallet.domain.paymentmethod.output.FindPaymentMethodOutputPort
+import br.com.zinid.smartwallet.domain.paymentmethod.FindPaymentMethodOutputPort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 

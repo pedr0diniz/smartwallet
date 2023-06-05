@@ -1,7 +1,8 @@
 package br.com.zinid.smartwallet.domain.creditcardinstallment
 
-import br.com.zinid.smartwallet.domain.creditcard.CreditCard
-import br.com.zinid.smartwallet.domain.expense.Expense
+import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
+import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
+import br.com.zinid.smartwallet.domain.utils.DateHelper.getClosingDateWithValidDay
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -14,7 +15,7 @@ data class CreditCardInstallments(
     val installmentValue: BigDecimal,
     val invoiceClosingDayOfMonth: Int,
     val installments: List<CreditCardInstallment>? = listOf(),
-    val expense: Expense
+    val expense: CreditExpense
 ) {
     private fun getOngoingInstallments(lastClosingDate: LocalDate): List<CreditCardInstallment> = installments
         ?.filter {
@@ -61,14 +62,6 @@ data class CreditCardInstallments(
         return getClosingDateWithValidDay(currentDate.plusMonths(1), closingDay)
     }
 
-    private fun getClosingDateWithValidDay(date: LocalDate, possibleClosingDay: Int): LocalDate {
-        val lastDayOfMonth = date.month.length(date.isLeapYear)
-        if (possibleClosingDay > lastDayOfMonth) {
-            return date.withDayOfMonth(lastDayOfMonth)
-        }
-        return date.withDayOfMonth(possibleClosingDay)
-    }
-
     companion object {
         private const val CLOSING_TO_DUE_DATE_DELAY_IN_DAYS = 10
 
@@ -79,10 +72,10 @@ data class CreditCardInstallments(
             firstInstallmentValue = BigDecimal.ZERO,
             installmentValue = BigDecimal.ZERO,
             invoiceClosingDayOfMonth = 1,
-            expense = Expense.createBlank()
+            expense = CreditExpense.createBlank()
         )
 
-        fun createFromExpenseAndCreditCard(expense: Expense, creditCard: CreditCard): CreditCardInstallments {
+        fun createFromExpenseAndCreditCard(expense: CreditExpense, creditCard: CreditCard): CreditCardInstallments {
             val numberOfInstallments = expense.creditCardInstallments!!.numberOfMonths
             val installmentValue = expense.price
                 .divide(

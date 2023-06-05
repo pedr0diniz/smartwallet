@@ -1,6 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.financialaccount.output
 
-import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodEntity
+import br.com.zinid.smartwallet.application.adapter.paymentmethod.PaymentMethodEntity
 import br.com.zinid.smartwallet.application.adapter.user.output.UserEntity
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.user.User

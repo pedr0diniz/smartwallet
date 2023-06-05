@@ -1,8 +1,8 @@
 package br.com.zinid.smartwallet.application.adapter.creditcardinstallments.output
 
-import br.com.zinid.smartwallet.application.adapter.expense.output.ExpenseEntity
+import br.com.zinid.smartwallet.application.adapter.expense.credit.output.CreditExpenseEntity
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
-import br.com.zinid.smartwallet.domain.expense.Expense
+import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -27,8 +27,8 @@ class CreditCardInstallmentsEntity(
     val invoiceClosingDayOfMonth: Int? = null,
 
     @OneToOne
-    @JoinColumn(name = "expense_id", referencedColumnName = "id", nullable = false)
-    val expense: ExpenseEntity? = null
+    @JoinColumn(name = "credit_expense_id", referencedColumnName = "id", nullable = false)
+    val expense: CreditExpenseEntity? = null
 ) {
 
     fun toDomain(): CreditCardInstallments {
@@ -39,7 +39,7 @@ class CreditCardInstallmentsEntity(
             firstInstallmentValue = firstInstallmentValue ?: BigDecimal.ZERO,
             installmentValue = installmentValue ?: BigDecimal.ZERO,
             invoiceClosingDayOfMonth = invoiceClosingDayOfMonth ?: 1,
-            expense = expense?.toDomain() ?: Expense.createBlank()
+            expense = expense?.toDomain() ?: CreditExpense.createBlank()
         )
 
         return creditCardInstallments.copy(installments = creditCardInstallments.buildInstallmentsList())
@@ -53,7 +53,7 @@ class CreditCardInstallmentsEntity(
             firstInstallmentValue = creditCardInstallments?.firstInstallmentValue,
             installmentValue = creditCardInstallments?.installmentValue,
             invoiceClosingDayOfMonth = creditCardInstallments?.invoiceClosingDayOfMonth,
-            expense = ExpenseEntity.fromDomain(creditCardInstallments?.expense)
+            expense = CreditExpenseEntity.fromDomain(creditCardInstallments?.expense)
         )
     }
 }

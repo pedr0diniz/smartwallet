@@ -1,6 +1,6 @@
 package br.com.zinid.smartwallet.application.adapter.financialaccount.output
 
-import br.com.zinid.smartwallet.application.adapter.paymentmethod.output.PaymentMethodResponse
+import br.com.zinid.smartwallet.application.adapter.paymentmethod.PaymentMethodResponse
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import java.math.BigDecimal
 

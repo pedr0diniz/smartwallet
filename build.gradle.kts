@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 val excludesPaths: Iterable<String> = listOf()
 
@@ -84,6 +85,20 @@ dependencies {
     testImplementation("io.mockk:mockk:1.12.0")
 }
 
+fun loadEnv(environment: MutableMap<String, Any>, file: File) {
+    if (!file.exists()) throw IllegalArgumentException("failed to load envs from file, ${file.name} not found")
+
+    file.readLines().forEach {line ->
+        if (line.isBlank() || line.startsWith("#")) return@forEach
+        line.split("=", limit=2)
+            .takeIf { it.size == 2 && !it[0].isBlank() }
+            ?.run { Pair(this[0].trim(), this[1].trim()) }
+            ?.run {
+                environment[this.first] = this.second
+            }
+    }
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -93,6 +108,10 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<BootRun> {
+    loadEnv(environment, file("variables.local.env"))
 }
 
 detekt {

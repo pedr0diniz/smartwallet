@@ -3,7 +3,7 @@ package br.com.zinid.smartwallet.application.adapter.financialaccount
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FinancialAccountEntity
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FinancialAccountRepository
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FindFinancialAccountAdapter
-import br.com.zinid.smartwallet.domain.paymentmethod.output.FindPaymentMethodOutputPort
+import br.com.zinid.smartwallet.domain.paymentmethod.FindPaymentMethodOutputPort
 import br.com.zinid.smartwallet.fixtures.FinancialAccountFixtures
 import br.com.zinid.smartwallet.fixtures.PaymentMethodFixtures
 import br.com.zinid.smartwallet.fixtures.UserFixtures
@@ -30,7 +30,7 @@ internal class FindFinancialAccountAdapterTest {
         val user = UserFixtures.getUser()
         val financialAccount = FinancialAccountFixtures.getFinancialAccount(user).copy(id = financialAccountId)
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
-        val paymentMethods = listOf(PaymentMethodFixtures.getPaymentMethod(financialAccount))
+        val paymentMethods = listOf(PaymentMethodFixtures.getCreditPaymentMethod(financialAccount))
 
         every { financialAccountRepository.findByIdOrNull(financialAccountId) } returns financialAccountEntity
         every { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountId) } returns paymentMethods
@@ -79,7 +79,7 @@ internal class FindFinancialAccountAdapterTest {
         val user = UserFixtures.getUser().copy(id = userId)
         val financialAccount = FinancialAccountFixtures.getFinancialAccount(user)
         val financialAccountEntity = FinancialAccountEntity.fromDomain(financialAccount)
-        val paymentMethods = listOf(PaymentMethodFixtures.getPaymentMethod(financialAccount))
+        val paymentMethods = listOf(PaymentMethodFixtures.getDebitPaymentMethod(financialAccount))
 
         every { financialAccountRepository.findByUserId(userId) } returns listOf(financialAccountEntity)
         every { findPaymentMethodAdapter.findByFinancialAccountId(financialAccountEntity.id!!) } returns paymentMethods
