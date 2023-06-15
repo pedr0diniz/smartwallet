@@ -88,9 +88,9 @@ dependencies {
 fun loadEnv(environment: MutableMap<String, Any>, file: File) {
     if (!file.exists()) throw IllegalArgumentException("failed to load envs from file, ${file.name} not found")
 
-    file.readLines().forEach {line ->
+    file.readLines().forEach { line ->
         if (line.isBlank() || line.startsWith("#")) return@forEach
-        line.split("=", limit=2)
+        line.split("=", limit = 2)
             .takeIf { it.size == 2 && !it[0].isBlank() }
             ?.run { Pair(this[0].trim(), this[1].trim()) }
             ?.run {

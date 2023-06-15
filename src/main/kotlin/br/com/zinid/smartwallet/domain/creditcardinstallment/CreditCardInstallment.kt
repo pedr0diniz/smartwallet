@@ -17,12 +17,12 @@ data class CreditCardInstallments(
     val installments: List<CreditCardInstallment>? = listOf(),
     val expense: CreditExpense
 ) {
-    private fun getOngoingInstallments(lastClosingDate: LocalDate): List<CreditCardInstallment> = installments
+    fun getOngoingInstallments(lastClosingDate: LocalDate): List<CreditCardInstallment> = installments
         ?.filter {
             it.dueDate > lastClosingDate
         } ?: listOf()
 
-    private fun getInstallmentsByPeriod(startDate: LocalDate, endDate: LocalDate) =
+    fun getInstallmentsByPeriod(startDate: LocalDate, endDate: LocalDate) =
         installments?.filter {
             (it.dueDate > startDate) && (it.dueDate <= endDate)
         } ?: listOf()
@@ -76,10 +76,10 @@ data class CreditCardInstallments(
         )
 
         fun createFromExpenseAndCreditCard(expense: CreditExpense, creditCard: CreditCard): CreditCardInstallments {
-            val numberOfInstallments = expense.creditCardInstallments!!.numberOfMonths
+            val numberOfInstallments = expense.numberOfInstallments ?: throw IllegalStateException("Must have number of months")
             val installmentValue = expense.price
                 .divide(
-                    BigDecimal.valueOf(expense.creditCardInstallments.numberOfMonths.toLong()),
+                    BigDecimal.valueOf(expense.numberOfInstallments.toLong()),
                     2,
                     RoundingMode.DOWN
                 )
@@ -87,12 +87,12 @@ data class CreditCardInstallments(
             val firstInstallmentValue = expense.price.minus(
                 installmentValue
                     .multiply(
-                        BigDecimal.valueOf(expense.creditCardInstallments.numberOfMonths.toLong())
+                        BigDecimal.valueOf(expense.numberOfInstallments.toLong())
                             .minus(BigDecimal.ONE)
                     )
             )
 
-            return CreditCardInstallments(
+            val creditCardInstallments = CreditCardInstallments(
                 numberOfMonths = numberOfInstallments,
                 totalValue = expense.price,
                 firstInstallmentValue = firstInstallmentValue,
@@ -100,6 +100,9 @@ data class CreditCardInstallments(
                 invoiceClosingDayOfMonth = creditCard.invoiceClosingDayOfMonth,
                 expense = expense
             )
+            val installmentsList = creditCardInstallments.buildInstallmentsList()
+
+            return creditCardInstallments.copy(installments = installmentsList)
         }
     }
 }

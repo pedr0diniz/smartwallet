@@ -2,6 +2,9 @@ package br.com.zinid.smartwallet.domain.paymentmethod.credit
 
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
+import br.com.zinid.smartwallet.domain.expense.credit.filterWithinDateRange
+import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsAsExpenses
+import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsValue
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
@@ -27,6 +30,7 @@ data class CreditCard(
     override fun getRemainingSpendableValue(): BigDecimal = cardLimit
         .minus(getMonthlyExpensesValue())
         .minus(getOngoingInstallmentsValue())
+        .add(getCurrentMonthInstallmentsAsExpenses().sumOf { it.price })
 
     override fun canPurchase(expenseValue: BigDecimal): Boolean =
         cardLimit
@@ -38,21 +42,22 @@ data class CreditCard(
 
     override fun getMonthlyExpensesValue(): BigDecimal = getMonthlyExpenses().sumOf { it.price }
 
-    override fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> = expenses
-        ?.filter {
-            it.wasPurchasedWithinDateRange(startDate, endDate) &&
-                it.creditCardInstallments == null
-        } ?: listOf()
+    override fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> {
+        val creditExpenses = mutableListOf<CreditExpense>()
+        creditExpenses.addAll(expenses?.filterWithinDateRange(startDate, endDate) ?: listOf())
+        creditExpenses.addAll(getCurrentMonthInstallmentsAsExpenses())
+
+        return creditExpenses
+    }
 
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
     private fun getOngoingInstallmentsValue(): BigDecimal =
-        expenses?.sumOf {
-            it.creditCardInstallments
-                ?.getOngoingInstallmentsValue(previousInvoiceClosingDate)
-                ?: BigDecimal.ZERO
-        }!!
+        expenses?.getOngoingInstallmentsValue(previousInvoiceClosingDate) ?: BigDecimal.ZERO
+
+    private fun getCurrentMonthInstallmentsAsExpenses(): List<CreditExpense> =
+        expenses?.getOngoingInstallmentsAsExpenses() ?: emptyList()
 
     private fun getPreviousClosingDate(invoiceClosingDayOfMonth: Int): LocalDate {
         val today = LocalDate.now()

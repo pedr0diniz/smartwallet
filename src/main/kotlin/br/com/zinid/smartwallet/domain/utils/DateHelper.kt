@@ -7,7 +7,7 @@ object DateHelper {
     fun getClosingDateWithValidDay(date: LocalDate, possibleClosingDay: Int): LocalDate {
         val lastDayOfMonth = date.month.length(date.isLeapYear)
         if (possibleClosingDay > lastDayOfMonth) {
-            return date.withDayOfMonth(lastDayOfMonth)
+            return date.plusMonths(1).withDayOfMonth(possibleClosingDay - lastDayOfMonth)
         }
         return date.withDayOfMonth(possibleClosingDay)
     }
