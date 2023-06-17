@@ -19,7 +19,8 @@ data class CreditCard(
     val cardLimit: BigDecimal,
     override val financialAccount: FinancialAccount,
     override val expenses: List<CreditExpense>? = listOf(),
-    val invoiceClosingDayOfMonth: Int,
+    val invoiceClosingDayOfMonth: Int // TODO - allow users to add the due date of their card rather than the closing day
+//    val dueDayOfMonth: Int
 ) : PaymentMethod {
 
     override val type: PaymentType = PaymentType.CREDIT

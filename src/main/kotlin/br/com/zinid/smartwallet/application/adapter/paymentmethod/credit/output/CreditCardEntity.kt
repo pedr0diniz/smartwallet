@@ -11,12 +11,13 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import java.math.BigDecimal
 import java.time.LocalDate
 
 @Entity
 @Table(name = "credit_card")
-class CreditCardEntity(
+data class CreditCardEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -30,7 +31,7 @@ class CreditCardEntity(
     @JoinColumn(name = "financial_account_id", referencedColumnName = "id", nullable = false)
     val financialAccount: FinancialAccountEntity? = null,
 ) {
-    fun toDomain(creditExpenses: List<CreditExpense>? = null) = CreditCard(
+    fun toDomain(creditExpenses: List<CreditExpense>? = emptyList()) = CreditCard(
         id = id,
         last4Digits = last4Digits ?: "",
         expirationDate = expirationDate ?: LocalDate.now(),
@@ -50,4 +51,20 @@ class CreditCardEntity(
             financialAccount = FinancialAccountEntity.fromDomain(creditCard?.financialAccount)
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as CreditCardEntity
+
+        return (id != null) && (id == other.id)
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    @Override
+    override fun toString(): String =
+        this::class.simpleName + "(" +
+            "id = $id , last4Digits = $last4Digits , expirationDate = $expirationDate , cardLimit = $cardLimit , " +
+            "invoiceClosingDayOfMonth = $invoiceClosingDayOfMonth , financialAccount = $financialAccount )"
 }

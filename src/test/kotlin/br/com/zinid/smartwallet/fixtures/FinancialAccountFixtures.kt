@@ -7,11 +7,13 @@ import java.math.BigDecimal
 
 object FinancialAccountFixtures {
 
-    fun getFinancialAccount(user: User) = FinancialAccount(
+    private val fixtureUser = UserFixtures.getUser()
+
+    fun getFinancialAccount(user: User? = fixtureUser) = FinancialAccount(
         id = 1L,
         institution = Institutions.ITI.name,
         balance = BigDecimal.ZERO,
         overdraft = BigDecimal.ZERO,
-        user = user
+        user = user!!
     )
 }

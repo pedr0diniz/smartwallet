@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -56,4 +57,19 @@ data class DebitExpenseEntity(
             paymentMethod = DebitPaymentMethodEntity.fromDomain(debitExpense?.paymentMethod)
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as DebitExpenseEntity
+
+        return (id != null) && (id == other.id)
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    @Override
+    override fun toString(): String =
+        this::class.simpleName + "(id = $id , content = $content , date = $date , price = $price , " +
+            "essential = $essential , monthlySubscription = $monthlySubscription , paymentMethod = $paymentMethod )"
 }

@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import java.math.BigDecimal
 
 @Entity
@@ -50,4 +51,19 @@ data class FinancialAccountEntity(
             user = UserEntity.fromDomain(financialAccount?.user)
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as FinancialAccountEntity
+
+        return (id != null) && (id == other.id)
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    @Override
+    override fun toString(): String =
+        this::class.simpleName + "(id = $id , institution = $institution , balance = $balance , " +
+            "overdraft = $overdraft , user = $user )"
 }

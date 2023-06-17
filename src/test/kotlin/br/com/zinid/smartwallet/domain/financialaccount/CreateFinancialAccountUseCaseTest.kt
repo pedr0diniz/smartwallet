@@ -35,7 +35,7 @@ internal class CreateFinancialAccountUseCaseTest {
         verify(exactly = 1) { createFinancialAccountAdapter.create(financialAccount) }
     }
     @Test
-    fun `should not find user and create financial account`() {
+    fun `should not find user and not create financial account`() {
         val id = 1L
         val userId = 2L
         val financialAccount = FinancialAccount.createBlankFromIdAndUserId(id, userId)

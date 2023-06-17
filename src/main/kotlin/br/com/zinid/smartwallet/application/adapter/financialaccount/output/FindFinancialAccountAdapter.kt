@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service
 
 @Service
 class FindFinancialAccountAdapter(
-    val financialAccountRepository: FinancialAccountRepository,
-    val findPaymentMethodAdapter: FindPaymentMethodOutputPort
+    private val financialAccountRepository: FinancialAccountRepository,
+    private val findPaymentMethodAdapter: FindPaymentMethodOutputPort
 ) : FindFinancialAccountOutputPort {
 
     override fun findById(id: Long): FinancialAccount? {
         val possibleFinancialAccount = financialAccountRepository.findByIdOrNull(id)?.toDomain()
+        // TODO - receber os paymentMethods como parâmetro do toDomain()
+        // Tirar o .toDomain() da chamada acima
 
+        // Colocar o .toDomain() no lugar do copy na chamada abaixo recebendo o mesmo parâmetro
+        // Igual ao findCreditCardAdapter
         return possibleFinancialAccount?.copy(
             paymentMethods = getPaymentMethods(id)
         )

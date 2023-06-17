@@ -12,10 +12,11 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 
 @Entity
 @Table(name = "debit_payment_method")
-class DebitPaymentMethodEntity(
+data class DebitPaymentMethodEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -40,4 +41,18 @@ class DebitPaymentMethodEntity(
             financialAccount = FinancialAccountEntity.fromDomain(debitPaymentMethod?.financialAccount)
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as DebitPaymentMethodEntity
+
+        return (id != null) && (id == other.id)
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    @Override
+    override fun toString(): String =
+        this::class.simpleName + "(id = $id , type = $type , financialAccount = $financialAccount )"
 }
