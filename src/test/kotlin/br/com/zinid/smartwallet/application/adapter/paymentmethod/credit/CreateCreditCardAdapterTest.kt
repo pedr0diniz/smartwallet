@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class CreateCreditCardAdapterTest {
+
     private val creditCardRepository = mockk<CreditCardRepository>()
     private val createCreditCardAdapter = CreateCreditCardAdapter(creditCardRepository)
 

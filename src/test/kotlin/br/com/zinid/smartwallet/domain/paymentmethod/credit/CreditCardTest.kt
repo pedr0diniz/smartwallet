@@ -81,6 +81,18 @@ internal class CreditCardTest {
     }
 
     @Test
+    fun `should not find any expense within date range`() {
+        val creditCard = CreditCardFixtures.getCreditCard()
+
+        val expenses = creditCard.getExpensesWithinDateRange(
+            creditCard.previousInvoiceClosingDate,
+            creditCard.currentInvoiceClosingDate
+        )
+
+        assertTrue(expenses.isEmpty())
+    }
+
+    @Test
     fun `should get expenses value within date range`() {
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(expenses = CreditExpenseFixtures.getCreditExpenseList(tempCard))
@@ -103,7 +115,7 @@ internal class CreditCardTest {
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(expenses = CreditExpenseFixtures.getCreditExpenseList(tempCard))
 
-        assertThrows<RuntimeException> {
+        assertThrows<IllegalStateException> {
             creditCard.getExpensesWithinDateRange(
                 creditCard.currentInvoiceClosingDate,
                 creditCard.previousInvoiceClosingDate

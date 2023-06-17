@@ -1,11 +1,10 @@
 package br.com.zinid.smartwallet.domain.paymentmethod.debit
 
 import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
+import br.com.zinid.smartwallet.domain.expense.debit.filterWithinDateRange
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
-import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
-import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -31,10 +30,16 @@ data class DebitPaymentMethod(
         getMonthlyExpenses().sumOf { it.price }
 
     override fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<DebitExpense> =
-        expenses?.filter {
-            it.date.isAfterOrEqual(startDate) && it.date.isBeforeOrEqual(endDate)
-        } ?: emptyList()
+        expenses?.filterWithinDateRange(startDate, endDate) ?: emptyList()
 
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
+
+    companion object {
+        fun createBlank() = DebitPaymentMethod(
+            id = 0L,
+            PaymentType.BLANK,
+            financialAccount = FinancialAccount.createBlank()
+        )
+    }
 }

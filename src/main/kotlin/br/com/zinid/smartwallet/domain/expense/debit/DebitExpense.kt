@@ -19,3 +19,6 @@ data class DebitExpense(
 ) : Expense {
     override fun getPaymentType(): PaymentType = paymentMethod.type
 }
+
+fun List<DebitExpense>.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<DebitExpense> =
+    this.filter { it.wasPurchasedWithinDateRange(startDate, endDate) }

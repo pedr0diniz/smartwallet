@@ -6,7 +6,6 @@ import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallme
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
-import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -75,14 +74,11 @@ data class CreditExpense(
     override fun getPaymentType(): PaymentType = paymentMethod.type
 }
 
-fun List<CreditExpense>.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> {
-    if (startDate.isAfterOrEqual(endDate)) throw IllegalStateException("Invalid date range")
-
-    return this.filter {
+fun List<CreditExpense>.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> =
+    this.filter {
         it.wasPurchasedWithinDateRange(startDate, endDate) &&
             it.creditCardInstallments == null
     }
-}
 
 fun List<CreditExpense>.getOngoingInstallments(previousInvoiceClosingDate: LocalDate): List<CreditCardInstallment> {
     val installments = mutableListOf<CreditCardInstallment>()

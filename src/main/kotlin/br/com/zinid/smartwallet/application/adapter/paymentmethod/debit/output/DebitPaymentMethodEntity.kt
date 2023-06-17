@@ -27,7 +27,7 @@ data class DebitPaymentMethodEntity(
     @JoinColumn(name = "financial_account_id", referencedColumnName = "id", nullable = false)
     val financialAccount: FinancialAccountEntity? = null,
 ) {
-    fun toDomain(debitExpenses: List<DebitExpense>? = null) = DebitPaymentMethod(
+    fun toDomain(debitExpenses: List<DebitExpense>? = emptyList()) = DebitPaymentMethod(
         id = id,
         type = PaymentType.valueOf(type!!),
         financialAccount = financialAccount?.toDomain() ?: FinancialAccount.createBlank(),

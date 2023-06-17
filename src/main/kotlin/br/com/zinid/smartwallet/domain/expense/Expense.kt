@@ -16,8 +16,11 @@ interface Expense {
     val monthlySubscription: Boolean?
     val paymentMethod: PaymentMethod
 
-    fun wasPurchasedWithinDateRange(startDate: LocalDate, endDate: LocalDate): Boolean =
-        (date.isAfterOrEqual(startDate)) && (date.isBeforeOrEqual(endDate))
+    fun wasPurchasedWithinDateRange(startDate: LocalDate, endDate: LocalDate): Boolean {
+        if (startDate.isAfterOrEqual(endDate)) throw IllegalStateException("Invalid date range")
+
+        return (date.isAfterOrEqual(startDate)) && (date.isBeforeOrEqual(endDate))
+    }
 
     fun getPaymentType(): PaymentType
 
