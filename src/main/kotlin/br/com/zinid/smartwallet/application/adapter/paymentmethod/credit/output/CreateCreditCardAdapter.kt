@@ -9,6 +9,7 @@ class CreateCreditCardAdapter(
     private val creditCardRepository: CreditCardRepository
 ) : CreateCreditCardOutputPort {
 
+    // TODO - create payment method entity from here
     override fun create(creditCard: CreditCard): CreditCard? =
         creditCardRepository.save(CreditCardEntity.fromDomain(creditCard)).toDomain()
 }
