@@ -19,6 +19,9 @@ data class FinancialAccount(
         if (hasBalance(value)) balance = balance.subtract(value)
     }
 
+    fun getRemainingSpendableValue(): BigDecimal =
+        balance.add(overdraft)
+
     companion object {
         fun createBlank() = FinancialAccount(
             id = 0L,

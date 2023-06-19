@@ -117,4 +117,16 @@ internal class FinancialAccountTest {
         assertFalse(financialAccount.hasBalance(withdrawalValue))
         assertEquals(originalBalance, financialAccount.balance)
     }
+
+    @Test
+    fun `should get remaining spendable value`() {
+        val balance = BigDecimal.valueOf(100.00)
+        val overdraft = BigDecimal.valueOf(50.00)
+        val financialAccount = FinancialAccount.createBlank().copy(
+            balance = balance,
+            overdraft = overdraft
+        )
+
+        assertEquals(balance.add(overdraft), financialAccount.getRemainingSpendableValue())
+    }
 }

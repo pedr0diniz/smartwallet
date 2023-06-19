@@ -72,6 +72,9 @@ data class CreditExpense(
     }
 
     override fun getPaymentType(): PaymentType = paymentMethod.type
+    override fun process() {
+        TODO("Not yet implemented")
+    }
 }
 
 fun List<CreditExpense>.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> =

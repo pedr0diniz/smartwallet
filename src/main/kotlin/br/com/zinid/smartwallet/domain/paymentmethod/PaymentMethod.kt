@@ -22,4 +22,6 @@ interface PaymentMethod {
     fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<Expense>
 
     fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal
+
+    fun processExpense(expense: Expense)
 }

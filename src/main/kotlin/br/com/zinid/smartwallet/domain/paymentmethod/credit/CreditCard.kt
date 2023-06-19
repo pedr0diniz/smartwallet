@@ -54,6 +54,10 @@ data class CreditCard(
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
+    override fun processExpense(expense: Expense) {
+        TODO("Not yet implemented")
+    }
+
     private fun getOngoingInstallmentsValue(): BigDecimal =
         expenses?.getOngoingInstallmentsValue(previousInvoiceClosingDate) ?: BigDecimal.ZERO
 

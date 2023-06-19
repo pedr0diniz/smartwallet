@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.paymentmethod.debit
 
+import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
 import br.com.zinid.smartwallet.domain.expense.debit.filterWithinDateRange
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
@@ -16,10 +17,10 @@ data class DebitPaymentMethod(
 ) : PaymentMethod {
 
     override fun getRemainingSpendableValue(): BigDecimal =
-        financialAccount.balance.add(financialAccount.overdraft)
+        financialAccount.getRemainingSpendableValue()
 
     override fun canPurchase(expenseValue: BigDecimal): Boolean =
-        getRemainingSpendableValue().minus(expenseValue) >= BigDecimal.ZERO
+        financialAccount.hasBalance(expenseValue)
 
     override fun getMonthlyExpenses(): List<DebitExpense> =
         expenses?.filter {
@@ -35,9 +36,19 @@ data class DebitPaymentMethod(
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
+    override fun processExpense(expense: Expense) {
+        financialAccount.deductFromBalance(expense.price)
+    }
+
     companion object {
         fun createBlank() = DebitPaymentMethod(
             id = 0L,
+            PaymentType.BLANK,
+            financialAccount = FinancialAccount.createBlank()
+        )
+
+        fun createBlankFromId(id: Long) = DebitPaymentMethod(
+            id = id,
             PaymentType.BLANK,
             financialAccount = FinancialAccount.createBlank()
         )

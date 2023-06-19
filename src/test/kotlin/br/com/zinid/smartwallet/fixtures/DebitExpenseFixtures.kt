@@ -24,7 +24,7 @@ object DebitExpenseFixtures {
     )
 
     fun getWaterBillDebitExpense(debitPaymentMethod: DebitPaymentMethod) = DebitExpense(
-        id = 1L,
+        id = 2L,
         content = "CAERN",
         date = LocalDate.now().withDayOfMonth(18),
         price = BigDecimal.valueOf(130.00),
@@ -34,12 +34,22 @@ object DebitExpenseFixtures {
     )
 
     fun getElectricalPowerBillDebitExpense(debitPaymentMethod: DebitPaymentMethod) = DebitExpense(
-        id = 1L,
+        id = 3L,
         content = "Neoenergia Cosern",
         date = LocalDate.now().withDayOfMonth(25),
         price = BigDecimal.valueOf(250.00),
         essential = true,
         monthlySubscription = true,
         paymentMethod = debitPaymentMethod
+    )
+
+    fun getExpenseWithBlankPaymentMethod(id: Long) = DebitExpense(
+        id = 4L,
+        content = "Detran - IPVA",
+        date = LocalDate.now(),
+        price = BigDecimal.valueOf(227.79),
+        essential = true,
+        monthlySubscription = false,
+        paymentMethod = DebitPaymentMethod.createBlankFromId(id)
     )
 }

@@ -26,6 +26,17 @@ internal class DebitPaymentMethodTest {
     }
 
     @Test
+    fun `should create blank debit payment method from id`() {
+        val id = 9L
+        val debitPaymentMethod = DebitPaymentMethod.createBlankFromId(id)
+
+        assertEquals(id, debitPaymentMethod.id)
+        assertEquals(PaymentType.BLANK, debitPaymentMethod.type)
+        assertEquals(FinancialAccount.createBlank(), debitPaymentMethod.financialAccount)
+        assertEquals(emptyList(), debitPaymentMethod.expenses)
+    }
+
+    @Test
     fun `should get remaining spendable value`() {
         val financialAccount = FinancialAccountFixtures.getFinancialAccount().copy(
             balance = BigDecimal.valueOf(1000.00),

@@ -14,9 +14,15 @@ class CreateDebitExpenseUseCase(
 ) : CreateDebitExpenseInputPort {
 
     override fun execute(debitExpense: DebitExpense): DebitExpense? {
-        val currentExpense = attachPaymentMethodToExpense(debitExpense) ?: return null
+        val enrichedExpense = enrichExpense(debitExpense) ?: return null
 
-        return processDebitExpense(currentExpense)
+        return processDebitExpense(enrichedExpense)
+    }
+
+    private fun enrichExpense(debitExpense: DebitExpense): DebitExpense? {
+        val expenseWithPaymentMethod = attachPaymentMethodToExpense(debitExpense) ?: return null
+
+        return attachFinancialAccountToExpense(expenseWithPaymentMethod)
     }
 
     private fun attachPaymentMethodToExpense(debitExpense: DebitExpense): DebitExpense? {
@@ -26,14 +32,22 @@ class CreateDebitExpenseUseCase(
         return debitExpense.copy(paymentMethod = possiblePaymentMethod)
     }
 
-    private fun processDebitExpense(debitExpense: DebitExpense): DebitExpense? {
+    private fun attachFinancialAccountToExpense(debitExpense: DebitExpense): DebitExpense? {
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(debitExpense.paymentMethod.financialAccount.id!!)
             ?: return null
 
-        return if (possibleFinancialAccount.hasBalance(debitExpense.price)) {
-            possibleFinancialAccount.deductFromBalance(debitExpense.price)
-            updateFinancialAccountAdapter.update(possibleFinancialAccount)
-            createDebitExpenseAdapter.create(debitExpense.copy(paymentMethod = debitExpense.paymentMethod))
+        return debitExpense.copy(
+            paymentMethod = debitExpense.paymentMethod.copy(
+                financialAccount = possibleFinancialAccount
+            )
+        )
+    }
+
+    private fun processDebitExpense(debitExpense: DebitExpense): DebitExpense? {
+        return if (debitExpense.canBeMade()) {
+            debitExpense.process()
+            updateFinancialAccountAdapter.updateByDebitExpense(debitExpense)
+            createDebitExpenseAdapter.create(debitExpense)
         } else {
             println("Insufficient account balance")
             null
