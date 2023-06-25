@@ -18,16 +18,28 @@ data class CreditExpense(
     override val monthlySubscription: Boolean? = false,
     override val paymentMethod: CreditCard,
     val numberOfInstallments: Int? = null,
-    val creditCardInstallments: CreditCardInstallments? = null,
     val expenseFor: Acquaintance? = null
 ) : Expense {
+
+    // TODO - try to make this have a private set
+    var creditCardInstallments: CreditCardInstallments? = null
+
+    override fun getPaymentType(): PaymentType = paymentMethod.type
+    override fun process(): Boolean {
+        buildInstallments()
+        return paymentMethod.processExpense(this)
+    }
+
     fun hasInstallments() = (creditCardInstallments != null)
 
-    fun buildInstallments(): CreditCardInstallments =
-        CreditCardInstallments.createFromExpenseAndCreditCard(
-            expense = this,
-            creditCard = paymentMethod
-        )
+    private fun buildInstallments() {
+        if (numberOfInstallments != null) {
+            creditCardInstallments = CreditCardInstallments.createFromExpenseAndCreditCard(
+                expense = this,
+                creditCard = paymentMethod
+            )
+        }
+    }
 
     fun getCreditCardInstallmentsByPeriod(startDate: LocalDate, endDate: LocalDate): List<CreditCardInstallment> {
         return creditCardInstallments?.installments?.filter {
@@ -53,6 +65,7 @@ data class CreditExpense(
         return null
     }
 
+    // TODO - fix this after credit card due day update
     private fun getCurrentInstallment(): CreditCardInstallment? =
         creditCardInstallments?.getInstallmentsByPeriod(
             paymentMethod.currentInvoiceClosingDate,
@@ -70,20 +83,17 @@ data class CreditExpense(
             paymentMethod = CreditCard.createBlank()
         )
     }
-
-    override fun getPaymentType(): PaymentType = paymentMethod.type
-    override fun process() {
-        TODO("Not yet implemented")
-    }
 }
 
-fun List<CreditExpense>.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> =
+typealias CreditExpenses = List<CreditExpense>
+
+fun CreditExpenses.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> =
     this.filter {
         it.wasPurchasedWithinDateRange(startDate, endDate) &&
             it.creditCardInstallments == null
     }
 
-fun List<CreditExpense>.getOngoingInstallments(previousInvoiceClosingDate: LocalDate): List<CreditCardInstallment> {
+fun CreditExpenses.getOngoingInstallments(previousInvoiceClosingDate: LocalDate): List<CreditCardInstallment> {
     val installments = mutableListOf<CreditCardInstallment>()
     this.forEach { expense ->
         expense.creditCardInstallments?.getOngoingInstallments(previousInvoiceClosingDate)
@@ -95,10 +105,10 @@ fun List<CreditExpense>.getOngoingInstallments(previousInvoiceClosingDate: Local
     return installments
 }
 
-fun List<CreditExpense>.getOngoingInstallmentsValue(previousInvoiceClosingDate: LocalDate): BigDecimal =
+fun CreditExpenses.getOngoingInstallmentsValue(previousInvoiceClosingDate: LocalDate): BigDecimal =
     this.getOngoingInstallments(previousInvoiceClosingDate).sumOf { it.installmentValue }
 
-fun List<CreditExpense>.getOngoingInstallmentsAsExpenses(): List<CreditExpense> {
+fun CreditExpenses.getCurrentMonthInstallmentsAsExpenses(): List<CreditExpense> {
     val expenses = mutableListOf<CreditExpense>()
     this.forEach { expense ->
         expense.getCurrentMonthInstallmentAsExpense()

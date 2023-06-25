@@ -15,8 +15,12 @@ data class FinancialAccount(
     fun hasBalance(value: BigDecimal): Boolean =
         balance.subtract(value) >= overdraft.negate()
 
-    fun deductFromBalance(value: BigDecimal) {
-        if (hasBalance(value)) balance = balance.subtract(value)
+    fun deductFromBalance(value: BigDecimal): Boolean {
+        if (hasBalance(value)) {
+            balance = balance.subtract(value)
+            return true
+        }
+        return false
     }
 
     fun getRemainingSpendableValue(): BigDecimal =

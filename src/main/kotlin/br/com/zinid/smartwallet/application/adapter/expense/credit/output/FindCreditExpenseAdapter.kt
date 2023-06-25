@@ -15,16 +15,16 @@ class FindCreditExpenseAdapter(
     override fun findById(id: Long): CreditExpense? {
         val possibleCreditExpense = creditExpenseRepository.findByIdOrNull(id)?.toDomain()
 
-        return possibleCreditExpense?.copy(
+        return possibleCreditExpense?.apply {
             creditCardInstallments = getCreditCardInstallments(id)
-        )
+        }
     }
 
     override fun findByCreditCardId(creditCardId: Long): List<CreditExpense> =
         creditExpenseRepository.findByPaymentMethodId(creditCardId).map {
-            it.toDomain().copy(
+            it.toDomain().apply {
                 creditCardInstallments = getCreditCardInstallments(it.id!!)
-            )
+            }
         }
 
     private fun getCreditCardInstallments(id: Long) = findCreditCardInstallmentsAdapter.findByCreditExpenseId(id)

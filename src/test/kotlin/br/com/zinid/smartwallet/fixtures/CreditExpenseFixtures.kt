@@ -8,30 +8,29 @@ import java.time.LocalDate
 object CreditExpenseFixtures {
 
     fun getCreditExpenseList(creditCard: CreditCard) = listOf(
-        getVacuumCleanerCreditExpense(creditCard),
+        getVacuumCleanerCreditExpenseWithInstallments(creditCard),
         getFoodDeliveryCreditExpense(creditCard),
         getSubscriptionCreditExpense(creditCard)
     )
 
-    fun getVacuumCleanerCreditExpense(creditCard: CreditCard): CreditExpense {
-        val expense = CreditExpense(
-            id = 3L,
-            content = "Aspirador Robô Kabum Smart 700",
-            date = LocalDate.now().withDayOfMonth(5),
-            price = BigDecimal.valueOf(1399.72),
-            essential = false,
-            monthlySubscription = false,
-            paymentMethod = creditCard,
-            numberOfInstallments = 10
-        )
+    fun getVacuumCleanerCreditExpenseWithInstallments(creditCard: CreditCard): CreditExpense =
+        getVacuumCleanerCreditExpense(creditCard).apply { this.process() }
 
-        return expense.copy(creditCardInstallments = expense.buildInstallments())
-    }
+    fun getVacuumCleanerCreditExpense(creditCard: CreditCard): CreditExpense = CreditExpense(
+        id = 3L,
+        content = "Aspirador Robô Kabum Smart 700",
+        date = LocalDate.now().withDayOfMonth(5),
+        price = BigDecimal.valueOf(1399.72),
+        essential = false,
+        monthlySubscription = false,
+        paymentMethod = creditCard,
+        numberOfInstallments = 10
+    )
 
     fun getFoodDeliveryCreditExpense(creditCard: CreditCard): CreditExpense = CreditExpense(
         id = 4L,
         content = "iFood - Pizzaria Reis Magos",
-        date = LocalDate.now().minusDays(3L),
+        date = LocalDate.now().withDayOfMonth(15),
         price = BigDecimal.valueOf(99.72),
         essential = false,
         monthlySubscription = false,

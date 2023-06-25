@@ -13,6 +13,6 @@ class CreateCreditCardInstallmentsUseCase(
         val possibleCreditExpense = findCreditExpenseAdapter.findById(creditCardInstallments.expense.id!!)
             ?: return null
 
-        return createCreditCardInstallmentsAdapter.create(creditCardInstallments.copy(expense = possibleCreditExpense))
+        return createCreditCardInstallmentsAdapter.createFromExpense(possibleCreditExpense)
     }
 }

@@ -1,6 +1,6 @@
 package br.com.zinid.smartwallet.domain.paymentmethod.credit
 
-import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsAsExpenses
+import br.com.zinid.smartwallet.domain.expense.credit.getCurrentMonthInstallmentsAsExpenses
 import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsValue
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.utils.DateHelper
@@ -37,7 +37,7 @@ internal class CreditCardTest {
         val monthlyExpensesValue = creditCard.getMonthlyExpensesValue()
         val ongoingInstallmentsValue = creditCard.expenses
             ?.getOngoingInstallmentsValue(creditCard.previousInvoiceClosingDate) ?: BigDecimal.ZERO
-        val currentMonthInstallmentsValue = creditCard.expenses!!.getOngoingInstallmentsAsExpenses().sumOf { it.price }
+        val currentMonthInstallmentsValue = creditCard.expenses!!.getCurrentMonthInstallmentsAsExpenses().sumOf { it.price }
         val calculatedValue = creditCard.cardLimit
             .minus(monthlyExpensesValue)
             .minus(ongoingInstallmentsValue)
@@ -103,7 +103,7 @@ internal class CreditCardTest {
         )
 
         val expectedValue =
-            CreditExpenseFixtures.getVacuumCleanerCreditExpense(creditCard).creditCardInstallments!!.firstInstallmentValue
+            CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard).creditCardInstallments!!.firstInstallmentValue
                 .add(CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard).price)
                 .add(CreditExpenseFixtures.getSubscriptionCreditExpense(creditCard).price)
 

@@ -1,6 +1,5 @@
 package br.com.zinid.smartwallet.domain.expense.credit.input
 
-import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
 import br.com.zinid.smartwallet.domain.creditcardinstallment.output.CreateCreditCardInstallmentsOutputPort
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.credit.output.CreateCreditExpenseOutputPort
@@ -27,15 +26,11 @@ class CreateCreditExpenseUseCase(
 
     private fun processCreditExpense(creditExpense: CreditExpense): CreditExpense? {
         return if (creditExpense.canBeMade()) {
-            val createdExpense = createCreditExpenseAdapter.create(creditExpense) ?: return null
+            creditExpense.process()
+            createCreditExpenseAdapter.create(creditExpense)
+            createCreditCardInstallmentsAdapter.createFromExpense(creditExpense)
 
-            var createdInstallments: CreditCardInstallments? = null
-            if (creditExpense.hasInstallments()) {
-                createdInstallments = createCreditCardInstallmentsAdapter.create(
-                    createdExpense.buildInstallments()
-                )
-            }
-            createdExpense.copy(creditCardInstallments = createdInstallments)
+            creditExpense
         } else {
             println("Insufficient card limit")
             null

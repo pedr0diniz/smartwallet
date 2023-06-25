@@ -3,7 +3,7 @@ package br.com.zinid.smartwallet.domain.paymentmethod.credit
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.credit.filterWithinDateRange
-import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsAsExpenses
+import br.com.zinid.smartwallet.domain.expense.credit.getCurrentMonthInstallmentsAsExpenses
 import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsValue
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
@@ -34,8 +34,7 @@ data class CreditCard(
         .add(getCurrentMonthInstallmentsAsExpenses().sumOf { it.price })
 
     override fun canPurchase(expenseValue: BigDecimal): Boolean =
-        cardLimit
-            .minus(getRemainingSpendableValue())
+        getRemainingSpendableValue()
             .minus(expenseValue) >= BigDecimal.ZERO
 
     override fun getMonthlyExpenses(): List<Expense> =
@@ -54,15 +53,13 @@ data class CreditCard(
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
-    override fun processExpense(expense: Expense) {
-        TODO("Not yet implemented")
-    }
+    override fun processExpense(expense: Expense): Boolean = canPurchase(expense.price)
 
     private fun getOngoingInstallmentsValue(): BigDecimal =
         expenses?.getOngoingInstallmentsValue(previousInvoiceClosingDate) ?: BigDecimal.ZERO
 
     private fun getCurrentMonthInstallmentsAsExpenses(): List<CreditExpense> =
-        expenses?.getOngoingInstallmentsAsExpenses() ?: emptyList()
+        expenses?.getCurrentMonthInstallmentsAsExpenses() ?: emptyList()
 
     private fun getPreviousClosingDate(invoiceClosingDayOfMonth: Int): LocalDate {
         val today = LocalDate.now()

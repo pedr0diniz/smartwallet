@@ -135,4 +135,32 @@ internal class DebitPaymentMethodTest {
             )
         }
     }
+
+    @Test
+    fun `should process expense`() {
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount().copy(
+            balance = BigDecimal.valueOf(1000.00)
+        )
+        val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
+        val debitExpense = DebitExpenseFixtures.getTelecomBillDebitExpense(debitPaymentMethod)
+
+        val expectedBalance = financialAccount.balance.minus(debitExpense.price)
+
+        val hasProcessed = debitPaymentMethod.processExpense(debitExpense)
+
+        assertTrue(hasProcessed)
+        assertEquals(expectedBalance, debitPaymentMethod.financialAccount.balance)
+    }
+
+    @Test
+    fun `should not process expense`() {
+        val financialAccount = FinancialAccountFixtures.getFinancialAccount().copy(
+            balance = BigDecimal.ZERO,
+            overdraft = BigDecimal.ZERO
+        )
+        val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
+        val debitExpense = DebitExpenseFixtures.getTelecomBillDebitExpense(debitPaymentMethod)
+
+        assertFalse(debitPaymentMethod.processExpense(debitExpense))
+    }
 }

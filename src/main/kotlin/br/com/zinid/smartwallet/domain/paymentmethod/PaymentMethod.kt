@@ -23,5 +23,5 @@ interface PaymentMethod {
 
     fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal
 
-    fun processExpense(expense: Expense)
+    fun processExpense(expense: Expense): Boolean
 }
