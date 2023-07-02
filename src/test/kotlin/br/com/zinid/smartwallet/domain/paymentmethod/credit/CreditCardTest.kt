@@ -129,9 +129,9 @@ internal class CreditCardTest {
         val today = LocalDate.now()
 
         val previousClosingDate = if (tempCard.invoiceClosingDayOfMonth > today.dayOfMonth) {
-            DateHelper.getClosingDateWithValidDay(today.minusMonths(1), tempCard.invoiceClosingDayOfMonth)
+            DateHelper.getDateWithValidDay(today.minusMonths(1), tempCard.invoiceClosingDayOfMonth)
         } else {
-            DateHelper.getClosingDateWithValidDay(today, tempCard.invoiceClosingDayOfMonth)
+            DateHelper.getDateWithValidDay(today, tempCard.invoiceClosingDayOfMonth)
         }
 
         assertEquals(previousClosingDate, tempCard.previousInvoiceClosingDate)
@@ -143,9 +143,9 @@ internal class CreditCardTest {
         val today = LocalDate.now()
 
         val previousClosingDate = if (tempCard.invoiceClosingDayOfMonth > today.dayOfMonth) {
-            DateHelper.getClosingDateWithValidDay(today, tempCard.invoiceClosingDayOfMonth)
+            DateHelper.getDateWithValidDay(today, tempCard.invoiceClosingDayOfMonth)
         } else {
-            DateHelper.getClosingDateWithValidDay(today.plusMonths(1), tempCard.invoiceClosingDayOfMonth)
+            DateHelper.getDateWithValidDay(today.plusMonths(1), tempCard.invoiceClosingDayOfMonth)
         }
 
         assertEquals(previousClosingDate, tempCard.currentInvoiceClosingDate)

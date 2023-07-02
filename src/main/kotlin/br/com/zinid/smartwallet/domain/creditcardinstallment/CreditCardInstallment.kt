@@ -2,7 +2,7 @@ package br.com.zinid.smartwallet.domain.creditcardinstallment
 
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
-import br.com.zinid.smartwallet.domain.utils.DateHelper.getClosingDateWithValidDay
+import br.com.zinid.smartwallet.domain.utils.DateHelper.getDateWithValidDay
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -56,10 +56,10 @@ data class CreditCardInstallments(
         val closingDay = invoiceClosingDayOfMonth + CLOSING_TO_DUE_DATE_DELAY_IN_DAYS
 
         if (closingDay > currentDate.dayOfMonth) {
-            return getClosingDateWithValidDay(currentDate, closingDay)
+            return getDateWithValidDay(currentDate, closingDay)
         }
 
-        return getClosingDateWithValidDay(currentDate.plusMonths(1), closingDay)
+        return getDateWithValidDay(currentDate.plusMonths(1), closingDay)
     }
 
     companion object {

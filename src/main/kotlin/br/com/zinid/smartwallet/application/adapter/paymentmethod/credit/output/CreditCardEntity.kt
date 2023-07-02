@@ -37,6 +37,7 @@ data class CreditCardEntity(
         expirationDate = expirationDate ?: LocalDate.now(),
         cardLimit = cardLimit ?: BigDecimal.ZERO,
         invoiceClosingDayOfMonth = invoiceClosingDayOfMonth ?: 1,
+        invoiceDueDayOfMonth = invoiceClosingDayOfMonth ?: 1, // TODO - fix this
         financialAccount = financialAccount?.toDomain() ?: FinancialAccount.createBlank(),
         expenses = creditExpenses
     )

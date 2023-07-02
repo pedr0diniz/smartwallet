@@ -30,6 +30,11 @@ data class CreditCardRequest(
     val invoiceClosingDayOfMonth: Int,
 
     @field:NotNull
+    @field:Min(value = 1)
+    @field:Max(value = 31)
+    val invoiceDueDayOfMonth: Int,
+
+    @field:NotNull
     @field:Positive
     val financialAccountId: Long,
 ) {
@@ -39,6 +44,7 @@ data class CreditCardRequest(
         expirationDate = LocalDate.parse(expirationDate),
         cardLimit = cardLimit,
         invoiceClosingDayOfMonth = invoiceClosingDayOfMonth,
+        invoiceDueDayOfMonth = invoiceDueDayOfMonth,
         financialAccount = FinancialAccount.createBlankFromId(id = financialAccountId)
     )
 }

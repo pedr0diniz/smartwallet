@@ -8,7 +8,7 @@ import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsValu
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
-import br.com.zinid.smartwallet.domain.utils.DateHelper.getClosingDateWithValidDay
+import br.com.zinid.smartwallet.domain.utils.DateHelper.getDateWithValidDay
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -19,14 +19,18 @@ data class CreditCard(
     val cardLimit: BigDecimal,
     override val financialAccount: FinancialAccount,
     override val expenses: List<CreditExpense>? = listOf(),
-    val invoiceClosingDayOfMonth: Int // TODO - allow users to add the due date of their card rather than the closing day
-//    val dueDayOfMonth: Int
+    val invoiceClosingDayOfMonth: Int, // TODO - allow users to add the due date of their card rather than the closing day
+    val invoiceDueDayOfMonth: Int
 ) : PaymentMethod {
 
     override val type: PaymentType = PaymentType.CREDIT
+    private val today = LocalDate.now()
 
-    val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate(invoiceClosingDayOfMonth)
+    val previousInvoiceDueDate: LocalDate = getPreviousDueDate()
+    val currentInvoiceDueDate: LocalDate = getCurrentDueDate()
+
     val previousInvoiceClosingDate: LocalDate = getPreviousClosingDate(invoiceClosingDayOfMonth)
+    val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate(invoiceClosingDayOfMonth)
 
     override fun getRemainingSpendableValue(): BigDecimal = cardLimit
         .minus(getMonthlyExpensesValue())
@@ -62,33 +66,42 @@ data class CreditCard(
         expenses?.getCurrentMonthInstallmentsAsExpenses() ?: emptyList()
 
     private fun getPreviousClosingDate(invoiceClosingDayOfMonth: Int): LocalDate {
-        val today = LocalDate.now()
-
-        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
-            return getClosingDateWithValidDay(today.minusMonths(1), invoiceClosingDayOfMonth)
+        return when (invoiceClosingDayOfMonth > today.dayOfMonth) {
+            true -> getDateWithValidDay(today.minusMonths(1), invoiceClosingDayOfMonth)
+            false -> getDateWithValidDay(today, invoiceClosingDayOfMonth)
         }
-
-        return getClosingDateWithValidDay(today, invoiceClosingDayOfMonth)
     }
 
     private fun getCurrentClosingDate(invoiceClosingDayOfMonth: Int): LocalDate {
-        val today = LocalDate.now()
-
-        if (invoiceClosingDayOfMonth > today.dayOfMonth) {
-            return getClosingDateWithValidDay(today, invoiceClosingDayOfMonth)
+        return when (invoiceClosingDayOfMonth > today.dayOfMonth) {
+            true -> getDateWithValidDay(today, invoiceClosingDayOfMonth)
+            false -> getDateWithValidDay(today.plusMonths(1), invoiceClosingDayOfMonth)
         }
+    }
 
-        return getClosingDateWithValidDay(today.plusMonths(1), invoiceClosingDayOfMonth)
+    private fun getPreviousDueDate(): LocalDate {
+        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
+            true -> getDateWithValidDay(today.minusMonths(1), invoiceDueDayOfMonth)
+            false -> getDateWithValidDay(today, invoiceDueDayOfMonth)
+        }
+    }
+    private fun getCurrentDueDate(): LocalDate {
+        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
+            true -> getDateWithValidDay(today, invoiceDueDayOfMonth)
+            false -> getDateWithValidDay(today.plusMonths(1), invoiceDueDayOfMonth)
+        }
     }
 
     companion object {
+        private const val DELAY_BETWEEN_CLOSING_AND_DUE_DAYS = 10
         fun createBlank() = CreditCard(
             id = 0L,
             last4Digits = "",
             expirationDate = LocalDate.MAX,
             cardLimit = BigDecimal.valueOf(Double.MAX_VALUE),
             financialAccount = FinancialAccount.createBlank(),
-            invoiceClosingDayOfMonth = 1
+            invoiceClosingDayOfMonth = 1,
+            invoiceDueDayOfMonth = 10
         )
     }
 }

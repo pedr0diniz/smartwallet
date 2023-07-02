@@ -4,12 +4,12 @@ import java.time.LocalDate
 
 object DateHelper {
 
-    fun getClosingDateWithValidDay(date: LocalDate, possibleClosingDay: Int): LocalDate {
+    fun getDateWithValidDay(date: LocalDate, possibleDay: Int): LocalDate {
         val lastDayOfMonth = date.month.length(date.isLeapYear)
-        if (possibleClosingDay > lastDayOfMonth) {
-            return date.plusMonths(1).withDayOfMonth(possibleClosingDay - lastDayOfMonth)
+        if (possibleDay > lastDayOfMonth) {
+            return date.withDayOfMonth(lastDayOfMonth)
         }
-        return date.withDayOfMonth(possibleClosingDay)
+        return date.withDayOfMonth(possibleDay)
     }
 
     fun LocalDate.isBeforeOrEqual(date: LocalDate): Boolean =
