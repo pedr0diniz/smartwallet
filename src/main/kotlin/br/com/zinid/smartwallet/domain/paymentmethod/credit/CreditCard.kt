@@ -9,6 +9,7 @@ import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.utils.DateHelper.getDateWithValidDay
+import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -65,6 +66,19 @@ data class CreditCard(
     private fun getCurrentMonthInstallmentsAsExpenses(): List<CreditExpense> =
         expenses?.getCurrentMonthInstallmentsAsExpenses() ?: emptyList()
 
+    private fun getPreviousDueDate(): LocalDate {
+        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
+            true -> getDateWithValidDay(today.minusMonths(1), invoiceDueDayOfMonth)
+            false -> getDateWithValidDay(today, invoiceDueDayOfMonth)
+        }
+    }
+    private fun getCurrentDueDate(): LocalDate {
+        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
+            true -> getDateWithValidDay(today, invoiceDueDayOfMonth)
+            false -> getDateWithValidDay(today.plusMonths(1), invoiceDueDayOfMonth)
+        }
+    }
+
     private fun getPreviousClosingDate(invoiceClosingDayOfMonth: Int): LocalDate {
         return when (invoiceClosingDayOfMonth > today.dayOfMonth) {
             true -> getDateWithValidDay(today.minusMonths(1), invoiceClosingDayOfMonth)
@@ -79,21 +93,11 @@ data class CreditCard(
         }
     }
 
-    private fun getPreviousDueDate(): LocalDate {
-        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
-            true -> getDateWithValidDay(today.minusMonths(1), invoiceDueDayOfMonth)
-            false -> getDateWithValidDay(today, invoiceDueDayOfMonth)
-        }
-    }
-    private fun getCurrentDueDate(): LocalDate {
-        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
-            true -> getDateWithValidDay(today, invoiceDueDayOfMonth)
-            false -> getDateWithValidDay(today.plusMonths(1), invoiceDueDayOfMonth)
-        }
-    }
+    private fun todayIsBetweenClosingDayAndDueDay(): Boolean =
+        currentInvoiceDueDate.minusDays(DELAY_BETWEEN_CLOSING_AND_DUE_DAYS).isBeforeOrEqual(today)
 
     companion object {
-        private const val DELAY_BETWEEN_CLOSING_AND_DUE_DAYS = 10
+        private const val DELAY_BETWEEN_CLOSING_AND_DUE_DAYS = 10L
         fun createBlank() = CreditCard(
             id = 0L,
             last4Digits = "",
