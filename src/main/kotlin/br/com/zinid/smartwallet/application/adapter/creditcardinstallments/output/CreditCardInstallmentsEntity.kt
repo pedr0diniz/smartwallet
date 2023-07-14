@@ -25,7 +25,7 @@ data class CreditCardInstallmentsEntity(
     val totalValue: BigDecimal? = null,
     val firstInstallmentValue: BigDecimal? = null,
     val installmentValue: BigDecimal? = null,
-    val invoiceClosingDayOfMonth: Int? = null,
+    val invoiceDueDayOfMonth: Int? = null,
 
     @OneToOne
     @JoinColumn(name = "credit_expense_id", referencedColumnName = "id", nullable = false)
@@ -39,7 +39,7 @@ data class CreditCardInstallmentsEntity(
             totalValue = totalValue ?: BigDecimal.ZERO,
             firstInstallmentValue = firstInstallmentValue ?: BigDecimal.ZERO,
             installmentValue = installmentValue ?: BigDecimal.ZERO,
-            invoiceClosingDayOfMonth = invoiceClosingDayOfMonth ?: 1,
+            invoiceDueDayOfMonth = invoiceDueDayOfMonth ?: 1,
             expense = expense?.toDomain() ?: CreditExpense.createBlank()
         )
 
@@ -53,7 +53,7 @@ data class CreditCardInstallmentsEntity(
             totalValue = creditCardInstallments?.totalValue,
             firstInstallmentValue = creditCardInstallments?.firstInstallmentValue,
             installmentValue = creditCardInstallments?.installmentValue,
-            invoiceClosingDayOfMonth = creditCardInstallments?.invoiceClosingDayOfMonth,
+            invoiceDueDayOfMonth = creditCardInstallments?.invoiceDueDayOfMonth,
             expense = CreditExpenseEntity.fromDomain(creditCardInstallments?.expense)
         )
     }
@@ -72,5 +72,5 @@ data class CreditCardInstallmentsEntity(
     override fun toString(): String =
         this::class.simpleName + "(id = $id , numberOfMonths = $numberOfMonths , totalValue = $totalValue , " +
             "firstInstallmentValue = $firstInstallmentValue , installmentValue = $installmentValue , " +
-            "invoiceClosingDayOfMonth = $invoiceClosingDayOfMonth , expense = $expense )"
+            "invoiceDueDayOfMonth = $invoiceDueDayOfMonth , expense = $expense )"
 }

@@ -11,7 +11,7 @@ data class CreditCardInstallmentsResponse(
     val totalValue: BigDecimal,
     val firstInstallmentValue: BigDecimal,
     val installmentValue: BigDecimal,
-    val invoiceClosingDayOfMonth: Int,
+    val invoiceDueDayOfMonth: Int,
     val installments: List<CreditCardInstallmentResponse>? = listOf()
 ) {
     companion object {
@@ -21,7 +21,7 @@ data class CreditCardInstallmentsResponse(
             totalValue = creditCardInstallments.totalValue,
             firstInstallmentValue = creditCardInstallments.firstInstallmentValue,
             installmentValue = creditCardInstallments.installmentValue,
-            invoiceClosingDayOfMonth = creditCardInstallments.invoiceClosingDayOfMonth,
+            invoiceDueDayOfMonth = creditCardInstallments.invoiceDueDayOfMonth,
             installments = creditCardInstallments.installments?.map { CreditCardInstallmentResponse.fromDomain(it) }
         )
     }

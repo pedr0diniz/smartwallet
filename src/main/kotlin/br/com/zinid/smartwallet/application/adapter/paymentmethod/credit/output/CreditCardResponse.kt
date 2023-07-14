@@ -11,9 +11,11 @@ data class CreditCardResponse(
     val last4Digits: String,
     val expirationDate: LocalDate,
     val cardLimit: BigDecimal,
-    val invoiceClosingDayOfMonth: Int,
-    val currentInvoiceClosingDate: LocalDate,
+    val invoiceDueDayOfMonth: Int,
     val previousInvoiceClosingDate: LocalDate,
+    val previousInvoiceDueDate: LocalDate,
+    val currentInvoiceClosingDate: LocalDate,
+    val currentInvoiceDueDate: LocalDate,
     val expenses: List<CreditExpenseResponse>
 ) : PaymentMethodResponse {
 
@@ -23,9 +25,11 @@ data class CreditCardResponse(
             last4Digits = creditCard.last4Digits,
             expirationDate = creditCard.expirationDate,
             cardLimit = creditCard.cardLimit,
-            invoiceClosingDayOfMonth = creditCard.invoiceClosingDayOfMonth,
-            currentInvoiceClosingDate = creditCard.currentInvoiceClosingDate,
+            invoiceDueDayOfMonth = creditCard.invoiceDueDayOfMonth,
             previousInvoiceClosingDate = creditCard.previousInvoiceClosingDate,
+            previousInvoiceDueDate = creditCard.previousInvoiceDueDate,
+            currentInvoiceClosingDate = creditCard.currentInvoiceClosingDate,
+            currentInvoiceDueDate = creditCard.currentInvoiceDueDate,
             expenses = creditCard.expenses?.map { CreditExpenseResponse.fromDomain(it) } ?: emptyList()
         )
     }

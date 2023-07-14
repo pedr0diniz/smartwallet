@@ -9,6 +9,7 @@ import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.utils.DateHelper.getDateWithValidDay
+import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
 import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -20,18 +21,17 @@ data class CreditCard(
     val cardLimit: BigDecimal,
     override val financialAccount: FinancialAccount,
     override val expenses: List<CreditExpense>? = listOf(),
-    val invoiceClosingDayOfMonth: Int, // TODO - allow users to add the due date of their card rather than the closing day
-    val invoiceDueDayOfMonth: Int
+    val invoiceDueDayOfMonth: Int,
+    val today: LocalDate = LocalDate.now()
 ) : PaymentMethod {
 
     override val type: PaymentType = PaymentType.CREDIT
-    private val today = LocalDate.now()
 
     val previousInvoiceDueDate: LocalDate = getPreviousDueDate()
     val currentInvoiceDueDate: LocalDate = getCurrentDueDate()
 
-    val previousInvoiceClosingDate: LocalDate = getPreviousClosingDate(invoiceClosingDayOfMonth)
-    val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate(invoiceClosingDayOfMonth)
+    val previousInvoiceClosingDate: LocalDate = getPreviousClosingDate()
+    val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate()
 
     override fun getRemainingSpendableValue(): BigDecimal = cardLimit
         .minus(getMonthlyExpensesValue())
@@ -58,7 +58,8 @@ data class CreditCard(
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
-    override fun processExpense(expense: Expense): Boolean = canPurchase(expense.price)
+    override fun processExpense(expense: Expense): Boolean =
+        canPurchase(expense.price) && expirationDate.isAfterOrEqual(expense.date)
 
     private fun getOngoingInstallmentsValue(): BigDecimal =
         expenses?.getOngoingInstallmentsValue(previousInvoiceClosingDate) ?: BigDecimal.ZERO
@@ -79,17 +80,29 @@ data class CreditCard(
         }
     }
 
-    private fun getPreviousClosingDate(invoiceClosingDayOfMonth: Int): LocalDate {
-        return when (invoiceClosingDayOfMonth > today.dayOfMonth) {
-            true -> getDateWithValidDay(today.minusMonths(1), invoiceClosingDayOfMonth)
-            false -> getDateWithValidDay(today, invoiceClosingDayOfMonth)
+    private fun getPreviousClosingDate(): LocalDate {
+        val invoiceDueDate = when (todayIsBetweenClosingDayAndDueDay()) {
+            true -> currentInvoiceDueDate
+            false -> previousInvoiceDueDate
+        }
+        val invoiceClosingDay = invoiceDueDate.minusDays(DELAY_BETWEEN_CLOSING_AND_DUE_DAYS).dayOfMonth
+
+        return when (invoiceClosingDay > invoiceDueDate.dayOfMonth) {
+            true -> getDateWithValidDay(invoiceDueDate.minusMonths(1), invoiceClosingDay)
+            false -> getDateWithValidDay(invoiceDueDate, invoiceClosingDay)
         }
     }
 
-    private fun getCurrentClosingDate(invoiceClosingDayOfMonth: Int): LocalDate {
-        return when (invoiceClosingDayOfMonth > today.dayOfMonth) {
-            true -> getDateWithValidDay(today, invoiceClosingDayOfMonth)
-            false -> getDateWithValidDay(today.plusMonths(1), invoiceClosingDayOfMonth)
+    private fun getCurrentClosingDate(): LocalDate {
+        val invoiceDueDate = when (todayIsBetweenClosingDayAndDueDay()) {
+            true -> currentInvoiceDueDate.plusMonths(1)
+            false -> currentInvoiceDueDate
+        }
+        val invoiceClosingDay = invoiceDueDate.minusDays(DELAY_BETWEEN_CLOSING_AND_DUE_DAYS).dayOfMonth
+
+        return when (invoiceClosingDay > invoiceDueDate.dayOfMonth) {
+            true -> getDateWithValidDay(invoiceDueDate.minusMonths(1), invoiceClosingDay)
+            false -> getDateWithValidDay(invoiceDueDate, invoiceClosingDay)
         }
     }
 
@@ -104,8 +117,7 @@ data class CreditCard(
             expirationDate = LocalDate.MAX,
             cardLimit = BigDecimal.valueOf(Double.MAX_VALUE),
             financialAccount = FinancialAccount.createBlank(),
-            invoiceClosingDayOfMonth = 1,
-            invoiceDueDayOfMonth = 10
+            invoiceDueDayOfMonth = 11
         )
     }
 }

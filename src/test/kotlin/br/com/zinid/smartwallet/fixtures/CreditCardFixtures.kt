@@ -17,6 +17,6 @@ object CreditCardFixtures {
         cardLimit = BigDecimal.valueOf(10000L),
         financialAccount = financialAccount!!,
         expenses = emptyList(),
-        invoiceClosingDayOfMonth = LocalDate.now().plusDays(1).dayOfMonth
+        invoiceDueDayOfMonth = 11
     )
 }

@@ -13,7 +13,7 @@ data class CreditCardInstallments(
     val totalValue: BigDecimal,
     val firstInstallmentValue: BigDecimal,
     val installmentValue: BigDecimal,
-    val invoiceClosingDayOfMonth: Int,
+    val invoiceDueDayOfMonth: Int,
     val installments: List<CreditCardInstallment>? = listOf(),
     val expense: CreditExpense
 ) {
@@ -53,7 +53,7 @@ data class CreditCardInstallments(
     }
 
     private fun getClosingDate(currentDate: LocalDate): LocalDate {
-        val closingDay = invoiceClosingDayOfMonth + CLOSING_TO_DUE_DATE_DELAY_IN_DAYS
+        val closingDay = invoiceDueDayOfMonth
 
         if (closingDay > currentDate.dayOfMonth) {
             return getDateWithValidDay(currentDate, closingDay)
@@ -71,7 +71,7 @@ data class CreditCardInstallments(
             totalValue = BigDecimal.ZERO,
             firstInstallmentValue = BigDecimal.ZERO,
             installmentValue = BigDecimal.ZERO,
-            invoiceClosingDayOfMonth = 1,
+            invoiceDueDayOfMonth = 11,
             expense = CreditExpense.createBlank()
         )
 
@@ -97,7 +97,7 @@ data class CreditCardInstallments(
                 totalValue = expense.price,
                 firstInstallmentValue = firstInstallmentValue,
                 installmentValue = installmentValue,
-                invoiceClosingDayOfMonth = creditCard.invoiceClosingDayOfMonth,
+                invoiceDueDayOfMonth = creditCard.invoiceDueDayOfMonth,
                 expense = expense
             )
             val installmentsList = creditCardInstallments.buildInstallmentsList()

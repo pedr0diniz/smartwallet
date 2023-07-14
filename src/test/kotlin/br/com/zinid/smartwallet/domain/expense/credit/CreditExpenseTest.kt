@@ -67,7 +67,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should get installments by period`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard)
 
         val installments = creditExpense.getCreditCardInstallmentsByPeriod(today, nextMonth)
@@ -77,7 +77,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should not find any installments for given period`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getSubscriptionCreditExpense(creditCard)
 
         val installments = creditExpense.getCreditCardInstallmentsByPeriod(today, nextMonth)
@@ -87,7 +87,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should get current month installment as expense`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard)
 
         val currentInstallmentAsExpense = creditExpense.getCurrentMonthInstallmentAsExpense()
@@ -96,7 +96,7 @@ internal class CreditExpenseTest {
         val expectedExpense = CreditExpense(
             content = "Parcela de ${creditExpense.content}",
             date = creditExpense.date,
-            price = expectedInstallment.firstInstallmentValue, // TODO - fix this after credit card due day update
+            price = expectedInstallment.installmentValue,
             paymentMethod = creditExpense.paymentMethod,
             essential = creditExpense.essential,
             monthlySubscription = creditExpense.monthlySubscription,
@@ -109,7 +109,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should not find a current month installment to convert to expense`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard)
 
         assertNull(creditExpense.getCurrentMonthInstallmentAsExpense())
@@ -117,7 +117,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should process`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getVacuumCleanerCreditExpense(creditCard)
 
         assertTrue(creditExpense.process())
@@ -125,7 +125,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should not process`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getRenovationsCreditExpense(creditCard)
 
         assertFalse(creditExpense.process())
@@ -133,7 +133,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should find expenses when filtering within date range`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard)
 
         assertTrue(
@@ -146,7 +146,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should not find expenses when filtering within date range`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard)
 
         assertTrue(
@@ -159,7 +159,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should get ongoing installments`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard)
 
         assertTrue(creditExpenses.getOngoingInstallments(creditCard.previousInvoiceClosingDate).isNotEmpty())
@@ -167,7 +167,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should not find any ongoing installments`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = listOf(
             CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard),
             CreditExpenseFixtures.getSubscriptionCreditExpense(creditCard)
@@ -178,7 +178,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should get ongoing installments value`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard)
 
         val expectedValue = creditExpenses
@@ -190,7 +190,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should get current month installments as expenses`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = listOf(CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard))
 
         val expectedExpense = creditExpenses.first().getCurrentMonthInstallmentAsExpense()
@@ -202,7 +202,7 @@ internal class CreditExpenseTest {
 
     @Test
     fun `should not find any ongoing installments to return as expense`() {
-        val creditCard = CreditCardFixtures.getCreditCard()
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = listOf(
             CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard),
             CreditExpenseFixtures.getSubscriptionCreditExpense(creditCard)

@@ -25,7 +25,7 @@ data class CreditCardEntity(
     val last4Digits: String? = null,
     val expirationDate: LocalDate? = null,
     val cardLimit: BigDecimal? = null,
-    val invoiceClosingDayOfMonth: Int? = null,
+    val invoiceDueDayOfMonth: Int? = null,
 
     @OneToOne
     @JoinColumn(name = "financial_account_id", referencedColumnName = "id", nullable = false)
@@ -36,8 +36,7 @@ data class CreditCardEntity(
         last4Digits = last4Digits ?: "",
         expirationDate = expirationDate ?: LocalDate.now(),
         cardLimit = cardLimit ?: BigDecimal.ZERO,
-        invoiceClosingDayOfMonth = invoiceClosingDayOfMonth ?: 1,
-        invoiceDueDayOfMonth = invoiceClosingDayOfMonth ?: 1, // TODO - fix this
+        invoiceDueDayOfMonth = invoiceDueDayOfMonth ?: 1,
         financialAccount = financialAccount?.toDomain() ?: FinancialAccount.createBlank(),
         expenses = creditExpenses
     )
@@ -48,7 +47,7 @@ data class CreditCardEntity(
             last4Digits = creditCard?.last4Digits,
             expirationDate = creditCard?.expirationDate,
             cardLimit = creditCard?.cardLimit,
-            invoiceClosingDayOfMonth = creditCard?.invoiceClosingDayOfMonth,
+            invoiceDueDayOfMonth = creditCard?.invoiceDueDayOfMonth,
             financialAccount = FinancialAccountEntity.fromDomain(creditCard?.financialAccount)
         )
     }
@@ -67,5 +66,5 @@ data class CreditCardEntity(
     override fun toString(): String =
         this::class.simpleName + "(" +
             "id = $id , last4Digits = $last4Digits , expirationDate = $expirationDate , cardLimit = $cardLimit , " +
-            "invoiceClosingDayOfMonth = $invoiceClosingDayOfMonth , financialAccount = $financialAccount )"
+            "invoiceDueDayOfMonth = $invoiceDueDayOfMonth , financialAccount = $financialAccount )"
 }

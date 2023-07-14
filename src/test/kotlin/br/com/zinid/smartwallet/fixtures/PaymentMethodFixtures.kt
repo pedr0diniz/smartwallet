@@ -16,7 +16,7 @@ object PaymentMethodFixtures {
             last4Digits = "1234",
             expirationDate = LocalDate.parse("2031-10-01"),
             cardLimit = BigDecimal.valueOf(10000L),
-            invoiceClosingDayOfMonth = 1
+            invoiceDueDayOfMonth = 1
         )
 
     fun getDebitPaymentMethod(financialAccount: FinancialAccount) =

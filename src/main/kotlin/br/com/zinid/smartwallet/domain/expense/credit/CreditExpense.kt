@@ -65,12 +65,10 @@ data class CreditExpense(
         return null
     }
 
-    // TODO - fix this after credit card due day update
-    // change the date interval to pick between due days rather than closing dates
     private fun getCurrentInstallment(): CreditCardInstallment? =
         creditCardInstallments?.getInstallmentsByPeriod(
-            paymentMethod.currentInvoiceClosingDate,
-            paymentMethod.currentInvoiceClosingDate.plusMonths(1)
+            paymentMethod.previousInvoiceDueDate,
+            paymentMethod.currentInvoiceDueDate
         )?.firstOrNull()
 
     companion object {
