@@ -7,6 +7,7 @@ import br.com.zinid.smartwallet.fixtures.DebitExpenseFixtures
 import br.com.zinid.smartwallet.fixtures.DebitPaymentMethodFixtures
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -26,5 +27,7 @@ internal class CreateDebitExpenseAdapterTest {
         val createdDebitExpense = createDebitExpenseAdapter.create(debitExpense)
 
         assertEquals(debitExpense, createdDebitExpense)
+
+        verify(exactly = 1) { debitExpenseRepository.save(debitExpenseEntity) }
     }
 }

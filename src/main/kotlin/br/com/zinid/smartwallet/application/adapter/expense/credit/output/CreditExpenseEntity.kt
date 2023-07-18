@@ -29,7 +29,9 @@ data class CreditExpenseEntity(
 
     @ManyToOne
     @JoinColumn(name = "credit_card_id", referencedColumnName = "id", nullable = false)
-    val paymentMethod: CreditCardEntity
+    val paymentMethod: CreditCardEntity,
+
+    val numberOfInstallments: Int? = null
 
     //    @ManyToOne
 //    @JoinColumn(name = "payment_method_id", referencedColumnName = "id", nullable = false)
@@ -43,7 +45,8 @@ data class CreditExpenseEntity(
         price = price ?: BigDecimal.ZERO,
         essential = essential,
         monthlySubscription = monthlySubscription,
-        paymentMethod = paymentMethod.toDomain()
+        paymentMethod = paymentMethod.toDomain(),
+        numberOfInstallments = numberOfInstallments
     )
 
     companion object {
@@ -54,7 +57,8 @@ data class CreditExpenseEntity(
             price = creditExpense?.price,
             essential = creditExpense?.essential,
             monthlySubscription = creditExpense?.monthlySubscription,
-            paymentMethod = CreditCardEntity.fromDomain(creditExpense?.paymentMethod)
+            paymentMethod = CreditCardEntity.fromDomain(creditExpense?.paymentMethod),
+            numberOfInstallments = creditExpense?.numberOfInstallments
         )
     }
 
