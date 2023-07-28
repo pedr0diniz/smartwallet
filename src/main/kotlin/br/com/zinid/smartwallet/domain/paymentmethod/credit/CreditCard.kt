@@ -38,9 +38,9 @@ data class CreditCard(
         .minus(getOngoingInstallmentsValue())
         .add(getCurrentMonthInstallmentsAsExpenses().sumOf { it.price })
 
-    override fun canPurchase(expenseValue: BigDecimal): Boolean =
-        getRemainingSpendableValue()
-            .minus(expenseValue) >= BigDecimal.ZERO
+    override fun canPurchase(expense: Expense): Boolean =
+        getRemainingSpendableValue().minus(expense.price) >= BigDecimal.ZERO &&
+            expirationDate.isAfterOrEqual(expense.date)
 
     override fun getMonthlyExpenses(): List<Expense> =
         getExpensesWithinDateRange(previousInvoiceClosingDate, currentInvoiceClosingDate)
@@ -58,9 +58,6 @@ data class CreditCard(
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
-    override fun processExpense(expense: Expense): Boolean =
-        canPurchase(expense.price) && expirationDate.isAfterOrEqual(expense.date)
-
     private fun getOngoingInstallmentsValue(): BigDecimal =
         expenses?.getOngoingInstallmentsValue(previousInvoiceClosingDate) ?: BigDecimal.ZERO
 
@@ -73,6 +70,7 @@ data class CreditCard(
             false -> getDateWithValidDay(today, invoiceDueDayOfMonth)
         }
     }
+
     private fun getCurrentDueDate(): LocalDate {
         return when (invoiceDueDayOfMonth > today.dayOfMonth) {
             true -> getDateWithValidDay(today, invoiceDueDayOfMonth)

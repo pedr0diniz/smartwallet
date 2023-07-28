@@ -24,7 +24,7 @@ interface Expense {
 
     fun getPaymentType(): PaymentType
 
-    fun canBeMade() = paymentMethod.canPurchase(price)
+    fun canBeMade() = paymentMethod.canPurchase(this)
 
     fun process(): Boolean
 }

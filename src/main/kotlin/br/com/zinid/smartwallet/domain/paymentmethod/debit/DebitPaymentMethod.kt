@@ -19,8 +19,8 @@ data class DebitPaymentMethod(
     override fun getRemainingSpendableValue(): BigDecimal =
         financialAccount.getRemainingSpendableValue()
 
-    override fun canPurchase(expenseValue: BigDecimal): Boolean =
-        financialAccount.hasBalance(expenseValue)
+    override fun canPurchase(expense: Expense): Boolean =
+        financialAccount.hasBalance(expense.price)
 
     override fun getMonthlyExpenses(): List<DebitExpense> =
         expenses?.filter {
@@ -36,7 +36,7 @@ data class DebitPaymentMethod(
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
-    override fun processExpense(expense: Expense): Boolean =
+    fun processExpense(expense: Expense): Boolean =
         financialAccount.deductFromBalance(expense.price)
 
     companion object {

@@ -57,8 +57,10 @@ internal class DebitPaymentMethodTest {
             overdraft = BigDecimal.valueOf(500.00)
         )
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
+        val expense = DebitExpenseFixtures.getWaterBillDebitExpense(debitPaymentMethod)
+            .copy(price = BigDecimal.valueOf(1500.00))
 
-        assertTrue(debitPaymentMethod.canPurchase(BigDecimal.valueOf(1500.00)))
+        assertTrue(debitPaymentMethod.canPurchase(expense))
     }
 
     @Test
@@ -68,8 +70,10 @@ internal class DebitPaymentMethodTest {
             overdraft = BigDecimal.valueOf(500.00)
         )
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
+        val expense = DebitExpenseFixtures.getWaterBillDebitExpense(debitPaymentMethod)
+            .copy(price = BigDecimal.valueOf(1500.01))
 
-        assertFalse(debitPaymentMethod.canPurchase(BigDecimal.valueOf(1500.01)))
+        assertFalse(debitPaymentMethod.canPurchase(expense))
     }
 
     @Test

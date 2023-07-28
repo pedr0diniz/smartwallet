@@ -56,7 +56,7 @@ internal class CreditCardTest {
     }
 
     @Test
-    fun `should be able to purchase and process expense`() {
+    fun `should be able to purchase`() {
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(
             expenses = CreditExpenseFixtures.getCreditExpenseList(tempCard),
@@ -65,12 +65,11 @@ internal class CreditCardTest {
 
         val foodDeliveryExpense = CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard)
 
-        assertTrue(creditCard.canPurchase(foodDeliveryExpense.price))
-        assertTrue(creditCard.processExpense(foodDeliveryExpense))
+        assertTrue(creditCard.canPurchase(foodDeliveryExpense))
     }
 
     @Test
-    fun `should not be able to purchase and therefore not be able to process expense`() {
+    fun `should not be able to purchase when the card has no limit`() {
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(
             expenses = CreditExpenseFixtures.getCreditExpenseList(tempCard),
@@ -79,12 +78,11 @@ internal class CreditCardTest {
 
         val hugeExpense = CreditExpenseFixtures.getRenovationsCreditExpense(creditCard)
 
-        assertFalse(creditCard.canPurchase(hugeExpense.price))
-        assertFalse(creditCard.processExpense(hugeExpense))
+        assertFalse(creditCard.canPurchase(hugeExpense))
     }
 
     @Test
-    fun `should be able to purchase but not be able to process expense when card is expired`() {
+    fun `should not be able to purchase when the card is expired`() {
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(
             expenses = CreditExpenseFixtures.getCreditExpenseList(tempCard),
@@ -94,8 +92,7 @@ internal class CreditCardTest {
 
         val foodDeliveryExpense = CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard)
 
-        assertTrue(creditCard.canPurchase(foodDeliveryExpense.price))
-        assertFalse(creditCard.processExpense(foodDeliveryExpense))
+        assertFalse(creditCard.canPurchase(foodDeliveryExpense))
     }
 
     @Test

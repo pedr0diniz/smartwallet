@@ -20,8 +20,7 @@ data class DebitExpense(
 ) : Expense {
     override fun getPaymentType(): PaymentType = paymentMethod.type
 
-    override fun process(): Boolean =
-        paymentMethod.processExpense(this)
+    override fun process() = paymentMethod.processExpense(this)
 
     fun getFinancialAccount(): FinancialAccount =
         paymentMethod.financialAccount

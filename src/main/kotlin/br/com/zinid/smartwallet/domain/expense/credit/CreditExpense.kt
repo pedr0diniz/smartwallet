@@ -27,7 +27,7 @@ data class CreditExpense(
     override fun getPaymentType(): PaymentType = paymentMethod.type
     override fun process(): Boolean {
         buildInstallments()
-        return paymentMethod.processExpense(this)
+        return creditCardInstallments != null
     }
 
     fun hasInstallments() = (creditCardInstallments != null)

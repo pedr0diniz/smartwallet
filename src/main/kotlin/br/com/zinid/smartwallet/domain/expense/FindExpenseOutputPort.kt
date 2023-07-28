@@ -7,6 +7,4 @@ interface FindExpenseOutputPort {
     fun findByCreditExpenseId(creditExpenseId: Long): Expense?
 
     fun findByDebitExpenseId(debitExpenseId: Long): Expense?
-
-    fun findByPaymentMethodId(paymentMethodId: Long): List<Expense>
 }

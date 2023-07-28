@@ -63,17 +63,6 @@ data class CreditCardInstallments(
     }
 
     companion object {
-        private const val CLOSING_TO_DUE_DATE_DELAY_IN_DAYS = 10
-
-        fun createBlankFromNumberOfInstallments(numberOfMonths: Int) = CreditCardInstallments(
-            id = 0L,
-            numberOfMonths = numberOfMonths,
-            totalValue = BigDecimal.ZERO,
-            firstInstallmentValue = BigDecimal.ZERO,
-            installmentValue = BigDecimal.ZERO,
-            invoiceDueDayOfMonth = 11,
-            expense = CreditExpense.createBlank()
-        )
 
         fun createFromExpenseAndCreditCard(expense: CreditExpense, creditCard: CreditCard): CreditCardInstallments {
             val numberOfInstallments = expense.numberOfInstallments ?: throw IllegalStateException("Must have number of months")
