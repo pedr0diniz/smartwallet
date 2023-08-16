@@ -1,6 +1,5 @@
 package br.com.zinid.smartwallet.domain.expense.credit
 
-import br.com.zinid.smartwallet.domain.acquaintance.Acquaintance
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallment
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
 import br.com.zinid.smartwallet.domain.expense.Expense
@@ -17,8 +16,7 @@ data class CreditExpense(
     override val essential: Boolean? = false,
     override val monthlySubscription: Boolean? = false,
     override val paymentMethod: CreditCard,
-    val numberOfInstallments: Int? = null,
-    val expenseFor: Acquaintance? = null
+    val numberOfInstallments: Int? = null
 ) : Expense {
 
     // TODO - try to make this have a private set
@@ -57,8 +55,7 @@ data class CreditExpense(
                 price = possibleInstallment.installmentValue,
                 paymentMethod = paymentMethod,
                 essential = essential,
-                monthlySubscription = monthlySubscription,
-                expenseFor = expenseFor
+                monthlySubscription = monthlySubscription
             )
         }
 

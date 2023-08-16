@@ -30,10 +30,6 @@ data class DebitExpenseEntity(
     @ManyToOne
     @JoinColumn(name = "debit_payment_method_id", referencedColumnName = "id", nullable = false)
     val paymentMethod: DebitPaymentMethodEntity,
-
-    //    @ManyToOne
-//    @JoinColumn(name = "payment_method_id", referencedColumnName = "id", nullable = false)
-//    val expenseFor: AcquaintanceEntity
 ) {
 
     fun toDomain() = DebitExpense(

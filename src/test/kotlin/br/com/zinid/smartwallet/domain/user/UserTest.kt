@@ -14,7 +14,6 @@ internal class UserTest {
         assert(user.email == "")
         assert(user.phone == "")
         assert(user.financialAccounts.isNullOrEmpty())
-        assert(user.acquaintances.isNullOrEmpty())
     }
 
     @Test
@@ -28,6 +27,5 @@ internal class UserTest {
         assert(user.email == "")
         assert(user.phone == "")
         assert(user.financialAccounts.isNullOrEmpty())
-        assert(user.acquaintances.isNullOrEmpty())
     }
 }

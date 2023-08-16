@@ -32,10 +32,6 @@ data class CreditExpenseEntity(
     val paymentMethod: CreditCardEntity,
 
     val numberOfInstallments: Int? = null
-
-    //    @ManyToOne
-//    @JoinColumn(name = "payment_method_id", referencedColumnName = "id", nullable = false)
-//    val expenseFor: AcquaintanceEntity
 ) {
 
     fun toDomain() = CreditExpense(

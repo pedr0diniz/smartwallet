@@ -99,8 +99,7 @@ internal class CreditExpenseTest {
             price = expectedInstallment.installmentValue,
             paymentMethod = creditExpense.paymentMethod,
             essential = creditExpense.essential,
-            monthlySubscription = creditExpense.monthlySubscription,
-            expenseFor = creditExpense.expenseFor
+            monthlySubscription = creditExpense.monthlySubscription
         )
 
         assertNotNull(currentInstallmentAsExpense)

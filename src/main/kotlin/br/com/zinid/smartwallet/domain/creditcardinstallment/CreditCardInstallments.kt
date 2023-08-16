@@ -34,7 +34,7 @@ data class CreditCardInstallments(
         val installments: MutableList<CreditCardInstallment> = mutableListOf()
         installments.add(
             CreditCardInstallment(
-                dueDate = getClosingDate(expense.date),
+                dueDate = getDueDate(expense.date),
                 installmentValue = firstInstallmentValue,
                 content = expense.content
             )
@@ -43,7 +43,7 @@ data class CreditCardInstallments(
         for (i in 2..numberOfMonths) {
             installments.add(
                 CreditCardInstallment(
-                    dueDate = getClosingDate(expense.date.plusMonths(i - 1L)),
+                    dueDate = getDueDate(expense.date.plusMonths(i - 1L)),
                     installmentValue = installmentValue,
                     content = expense.content
                 )
@@ -52,14 +52,14 @@ data class CreditCardInstallments(
         return installments
     }
 
-    private fun getClosingDate(currentDate: LocalDate): LocalDate {
-        val closingDay = invoiceDueDayOfMonth
+    private fun getDueDate(currentDate: LocalDate): LocalDate {
+        val dueDay = invoiceDueDayOfMonth
 
-        if (closingDay > currentDate.dayOfMonth) {
-            return getDateWithValidDay(currentDate, closingDay)
+        if (dueDay > currentDate.dayOfMonth) {
+            return getDateWithValidDay(currentDate, dueDay)
         }
 
-        return getDateWithValidDay(currentDate.plusMonths(1), closingDay)
+        return getDateWithValidDay(currentDate.plusMonths(1), dueDay)
     }
 
     companion object {

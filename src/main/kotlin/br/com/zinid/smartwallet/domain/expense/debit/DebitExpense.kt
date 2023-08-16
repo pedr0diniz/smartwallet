@@ -1,6 +1,5 @@
 package br.com.zinid.smartwallet.domain.expense.debit
 
-import br.com.zinid.smartwallet.domain.acquaintance.Acquaintance
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
@@ -15,15 +14,13 @@ data class DebitExpense(
     override val price: BigDecimal,
     override val essential: Boolean? = false,
     override val monthlySubscription: Boolean? = false,
-    override val paymentMethod: DebitPaymentMethod,
-    val expenseFor: Acquaintance? = null
+    override val paymentMethod: DebitPaymentMethod
 ) : Expense {
     override fun getPaymentType(): PaymentType = paymentMethod.type
 
     override fun process() = paymentMethod.processExpense(this)
 
-    fun getFinancialAccount(): FinancialAccount =
-        paymentMethod.financialAccount
+    fun getFinancialAccount(): FinancialAccount = paymentMethod.financialAccount
 }
 
 typealias DebitExpenses = List<DebitExpense>
