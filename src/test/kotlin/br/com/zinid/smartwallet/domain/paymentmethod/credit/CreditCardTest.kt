@@ -31,6 +31,20 @@ internal class CreditCardTest {
     }
 
     @Test
+    fun `should create blank credit card from id`() {
+        val id = 100L
+        val creditCard = CreditCard.createBlankFromId(id)
+
+        assertEquals(id, creditCard.id)
+        assertEquals("", creditCard.last4Digits)
+        assertEquals(LocalDate.MAX, creditCard.expirationDate)
+        assertEquals(BigDecimal.valueOf(Double.MAX_VALUE), creditCard.cardLimit)
+        assertEquals(FinancialAccount.createBlank(), creditCard.financialAccount)
+        assertEquals(11, creditCard.invoiceDueDayOfMonth)
+        assertEquals(LocalDate.now(), creditCard.today)
+    }
+
+    @Test
     fun `should get remaining spendable value`() {
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(

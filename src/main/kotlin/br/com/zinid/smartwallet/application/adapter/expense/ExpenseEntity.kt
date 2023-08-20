@@ -2,6 +2,7 @@ package br.com.zinid.smartwallet.application.adapter.expense
 
 import br.com.zinid.smartwallet.application.adapter.expense.credit.output.CreditExpenseEntity
 import br.com.zinid.smartwallet.application.adapter.expense.debit.output.DebitExpenseEntity
+import br.com.zinid.smartwallet.application.adapter.paymentmethod.PaymentMethodEntity
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
@@ -27,7 +29,8 @@ data class ExpenseEntity(
 
     @OneToOne
     @JoinColumn(name = "debit_expense_id", referencedColumnName = "id", nullable = true)
-    val debitExpense: DebitExpenseEntity? = null
+    val debitExpense: DebitExpenseEntity? = null,
+
 ) {
     fun toDomain(): Expense {
         if (creditExpense != null) {
@@ -40,11 +43,13 @@ data class ExpenseEntity(
     }
 
     companion object {
-        fun fromCreditDomain(creditExpense: CreditExpense?) =
-            CreditExpenseEntity.fromDomain(creditExpense)
+        fun from(creditExpenseEntity: CreditExpenseEntity) = ExpenseEntity(
+            creditExpense = creditExpenseEntity
+        )
 
-        fun fromDebitDomain(debitExpense: DebitExpense?) =
-            DebitExpenseEntity.fromDomain(debitExpense)
+        fun from(debitExpenseEntity: DebitExpenseEntity) = ExpenseEntity(
+            debitExpense = debitExpenseEntity
+        )
     }
 
     override fun equals(other: Any?): Boolean {

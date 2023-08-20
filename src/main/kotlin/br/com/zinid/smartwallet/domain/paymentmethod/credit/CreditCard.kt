@@ -117,5 +117,14 @@ data class CreditCard(
             financialAccount = FinancialAccount.createBlank(),
             invoiceDueDayOfMonth = 11
         )
+
+        fun createBlankFromId(id: Long) = CreditCard(
+            id = id,
+            last4Digits = "",
+            expirationDate = LocalDate.MAX,
+            cardLimit = BigDecimal.valueOf(Double.MAX_VALUE),
+            financialAccount = FinancialAccount.createBlank(),
+            invoiceDueDayOfMonth = 11
+        )
     }
 }

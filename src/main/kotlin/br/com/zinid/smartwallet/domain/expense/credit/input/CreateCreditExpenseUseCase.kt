@@ -27,10 +27,18 @@ class CreateCreditExpenseUseCase(
     private fun processCreditExpense(creditExpense: CreditExpense): CreditExpense? {
         return if (creditExpense.canBeMade()) {
             creditExpense.process()
-            createCreditExpenseAdapter.create(creditExpense)
-            createCreditCardInstallmentsAdapter.createFromExpense(creditExpense)
 
-            creditExpense
+            // TODO - fix this
+                // either create installments from installments domain
+                // or update the savedExpense in another way
+            val savedExpense = createCreditExpenseAdapter.create(creditExpense)
+                .apply { this?.creditCardInstallments = creditExpense.creditCardInstallments?.copy(expense = this!!) }
+
+            if (savedExpense != null) {
+                createCreditCardInstallmentsAdapter.createFromExpense(savedExpense)
+            }
+
+            savedExpense
         } else {
             println("Insufficient card limit")
             null
