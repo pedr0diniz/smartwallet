@@ -7,8 +7,6 @@ import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
-import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
-import br.com.zinid.smartwallet.domain.paymentmethod.debit.DebitPaymentMethod
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -40,6 +38,7 @@ data class PaymentMethodEntity(
     @JoinColumn(name = "financial_account_id", referencedColumnName = "id", nullable = false)
     val financialAccount: FinancialAccountEntity? = null
 ) {
+
     fun toDomain(expenses: List<Expense>? = emptyList()): PaymentMethod {
         if (creditCard != null) {
             return creditCard.toDomain(expenses?.map { it as CreditExpense })
@@ -51,11 +50,15 @@ data class PaymentMethodEntity(
     }
 
     companion object {
-        fun fromCreditDomain(creditCard: CreditCard?) =
-            CreditCardEntity.fromDomain(creditCard)
+        fun from(creditCard: CreditCardEntity) = PaymentMethodEntity(
+            creditCard = creditCard,
+            financialAccount = creditCard.financialAccount
+        )
 
-        fun fromDebitDomain(debitPaymentMethod: DebitPaymentMethod?) =
-            DebitPaymentMethodEntity.fromDomain(debitPaymentMethod)
+        fun from(debitPaymentMethod: DebitPaymentMethodEntity) = PaymentMethodEntity(
+            debitPaymentMethod = debitPaymentMethod,
+            financialAccount = debitPaymentMethod.financialAccount
+        )
     }
 
     override fun equals(other: Any?): Boolean {

@@ -1,6 +1,5 @@
 package br.com.zinid.smartwallet.domain.expense.debit
 
-import br.com.zinid.smartwallet.domain.paymentmethod.debit.DebitPaymentMethod
 import br.com.zinid.smartwallet.fixtures.DebitExpenseFixtures
 import br.com.zinid.smartwallet.fixtures.DebitPaymentMethodFixtures
 import br.com.zinid.smartwallet.fixtures.FinancialAccountFixtures
