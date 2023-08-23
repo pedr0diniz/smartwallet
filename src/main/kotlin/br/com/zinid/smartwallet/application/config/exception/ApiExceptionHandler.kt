@@ -43,24 +43,10 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
     fun buildValidationErrors(
         globalErrors: List<ObjectError?>,
         fieldErrors: List<FieldError>
-    ): ValidationErrorOutputDto {
-
-        val validationErrors = ValidationErrorOutputDto()
-
-        globalErrors.forEach(
-            Consumer { error: ObjectError? ->
-                validationErrors.globalErrorMessages.add(getErrorMessage(error))
-            }
+    ): ValidationErrorOutputDto = ValidationErrorOutputDto(
+            globalErrorMessages = globalErrors.map { getErrorMessage(it) },
+            fieldErrors = fieldErrors.map { FieldErrorOutputDto(it.field, getErrorMessage(it)) }
         )
-
-        fieldErrors.forEach(
-            Consumer { error: FieldError ->
-                val errorMessage = getErrorMessage(error)
-                validationErrors.fieldErrors.add(FieldErrorOutputDto(error.field, errorMessage))
-            }
-        )
-        return validationErrors
-    }
 
     fun getErrorMessage(error: ObjectError?): String =
         messageSource!!.getMessage(error!!, LocaleContextHolder.getLocale())
