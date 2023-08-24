@@ -1,7 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
-val excludesPaths: Iterable<String> = listOf()
+val excludesPaths: Iterable<String> = listOf(
+    "br/com/zinid/smartwallet/application/config/**"
+)
 
 plugins {
     kotlin("jvm") version "1.7.22"
@@ -112,6 +114,59 @@ tasks.withType<Test> {
 
 tasks.withType<BootRun> {
     loadEnv(environment, file("variables.local.env"))
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test, componentTestTask)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude(excludesPaths)
+        }
+    )
+    executionData(
+        file("${project.buildDir}/jacoco/test.exec"),
+        file("${project.buildDir}/jacoco/componentTest.exec")
+    )
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(
+        tasks.test,
+        componentTestTask,
+        tasks.jacocoTestReport
+    )
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude(excludesPaths)
+        }
+    )
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.6.toBigDecimal()
+                counter = "LINE"
+            }
+        }
+        rule {
+            includes = listOf("br.com.zinid.*")
+            limit {
+                minimum = 0.6.toBigDecimal()
+                counter = "BRANCH"
+            }
+        }
+    }
+    executionData(
+        file("${project.buildDir}/jacoco/test.exec"),
+        file("${project.buildDir}/jacoco/componentTest.exec")
+    )
+}
+
+tasks.test {
+    finalizedBy("jacocoTestReport", "jacocoTestCoverageVerification", "componentTest", "archTest")
 }
 
 detekt {
