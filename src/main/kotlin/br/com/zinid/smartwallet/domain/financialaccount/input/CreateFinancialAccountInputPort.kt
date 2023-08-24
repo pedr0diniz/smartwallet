@@ -4,5 +4,5 @@ import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 
 interface CreateFinancialAccountInputPort {
 
-    fun execute(financialAccount: FinancialAccount): FinancialAccount?
+    fun execute(financialAccount: FinancialAccount): FinancialAccount
 }

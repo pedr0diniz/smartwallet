@@ -1,6 +1,9 @@
 package br.com.zinid.smartwallet.domain.expense.debit.input
 
+import br.com.zinid.smartwallet.domain.exception.DomainClasses.DEBIT_PAYMENT_METHOD
+import br.com.zinid.smartwallet.domain.exception.DomainClasses.FINANCIAL_ACCOUNT
 import br.com.zinid.smartwallet.domain.exception.InsufficientBalanceException
+import br.com.zinid.smartwallet.domain.exception.NotFoundException
 import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
 import br.com.zinid.smartwallet.domain.expense.debit.output.CreateDebitExpenseOutputPort
 import br.com.zinid.smartwallet.domain.financialaccount.output.FindFinancialAccountOutputPort
@@ -14,29 +17,30 @@ class CreateDebitExpenseUseCase(
     private val createDebitExpenseAdapter: CreateDebitExpenseOutputPort
 ) : CreateDebitExpenseInputPort {
 
-    override fun execute(debitExpense: DebitExpense): DebitExpense? {
-        val enrichedExpense = enrichExpense(debitExpense) ?: return null
+    override fun execute(debitExpense: DebitExpense): DebitExpense {
+        val enrichedExpense = enrichExpense(debitExpense)
 
         return processDebitExpense(enrichedExpense)
     }
 
-    private fun enrichExpense(debitExpense: DebitExpense): DebitExpense? {
-        val expenseWithPaymentMethod = attachPaymentMethodToExpense(debitExpense) ?: return null
+    private fun enrichExpense(debitExpense: DebitExpense): DebitExpense {
+        val expenseWithPaymentMethod = attachPaymentMethodToExpense(debitExpense)
 
         return attachFinancialAccountToExpense(expenseWithPaymentMethod)
     }
 
-    private fun attachPaymentMethodToExpense(debitExpense: DebitExpense): DebitExpense? {
-        val possiblePaymentMethod = findDebitPaymentMethodAdapter.findById(debitExpense.paymentMethod.id!!)
-            ?: return null
+    private fun attachPaymentMethodToExpense(debitExpense: DebitExpense): DebitExpense {
+        val paymentMethodId = debitExpense.paymentMethod.id!!
+        val possiblePaymentMethod = findDebitPaymentMethodAdapter.findById(paymentMethodId)
+            ?: throw NotFoundException.buildFrom(DEBIT_PAYMENT_METHOD, "id", paymentMethodId)
 
         return debitExpense.copy(paymentMethod = possiblePaymentMethod)
     }
 
-    private fun attachFinancialAccountToExpense(debitExpense: DebitExpense): DebitExpense? {
-        val possibleFinancialAccount =
-            findFinancialAccountAdapter.findById(debitExpense.paymentMethod.financialAccount.id!!)
-                ?: return null
+    private fun attachFinancialAccountToExpense(debitExpense: DebitExpense): DebitExpense {
+        val financialAccountId = debitExpense.paymentMethod.financialAccount.id!!
+        val possibleFinancialAccount = findFinancialAccountAdapter.findById(financialAccountId)
+            ?: throw NotFoundException.buildFrom(FINANCIAL_ACCOUNT, "id", financialAccountId)
 
         return debitExpense.copy(
             paymentMethod = debitExpense.paymentMethod.copy(
@@ -45,7 +49,7 @@ class CreateDebitExpenseUseCase(
         )
     }
 
-    private fun processDebitExpense(debitExpense: DebitExpense): DebitExpense? {
+    private fun processDebitExpense(debitExpense: DebitExpense): DebitExpense {
         return if (debitExpense.canBeMade()) {
             debitExpense.process()
             updateFinancialAccountAdapter.updateByDebitExpense(debitExpense)

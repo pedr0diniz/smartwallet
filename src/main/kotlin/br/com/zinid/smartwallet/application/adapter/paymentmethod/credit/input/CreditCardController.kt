@@ -19,7 +19,6 @@ class CreditCardController(
     @PostMapping("/credit")
     fun create(@Valid @RequestBody creditCardRequest: CreditCardRequest): ResponseEntity<Any?> {
         val possibleCreditCard = createCreditCardUseCase.execute(creditCardRequest.toDomain())
-            ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             CreditCardResponse.fromDomain(possibleCreditCard)

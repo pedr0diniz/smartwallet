@@ -19,7 +19,6 @@ class DebitExpenseController(
     @PostMapping("/debit")
     fun create(@Valid @RequestBody debitExpenseRequest: DebitExpenseRequest): ResponseEntity<Any?> {
         val possibleDebitExpense = createDebitExpenseUseCase.execute(debitExpenseRequest.toDomain())
-            ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             DebitExpenseResponse.fromDomain(possibleDebitExpense)

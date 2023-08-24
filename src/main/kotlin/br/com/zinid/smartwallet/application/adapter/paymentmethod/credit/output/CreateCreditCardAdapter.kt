@@ -14,7 +14,7 @@ class CreateCreditCardAdapter(
 ) : CreateCreditCardOutputPort {
 
     @Transactional
-    override fun create(creditCard: CreditCard): CreditCard? {
+    override fun create(creditCard: CreditCard): CreditCard {
         val creditCardEntity = creditCardRepository.save(CreditCardEntity.fromDomain(creditCard))
 
         paymentMethodRepository.save(PaymentMethodEntity.from(creditCardEntity))

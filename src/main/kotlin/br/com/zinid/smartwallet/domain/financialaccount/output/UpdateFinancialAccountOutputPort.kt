@@ -5,7 +5,7 @@ import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 
 interface UpdateFinancialAccountOutputPort {
 
-    fun update(financialAccount: FinancialAccount): FinancialAccount?
+    fun update(financialAccount: FinancialAccount): FinancialAccount
 
-    fun updateByDebitExpense(debitExpense: DebitExpense): FinancialAccount?
+    fun updateByDebitExpense(debitExpense: DebitExpense): FinancialAccount
 }

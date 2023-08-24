@@ -10,9 +10,9 @@ class UpdateFinancialAccountAdapter(
     private val financialAccountRepository: FinancialAccountRepository
 ) : UpdateFinancialAccountOutputPort {
 
-    override fun update(financialAccount: FinancialAccount): FinancialAccount? =
+    override fun update(financialAccount: FinancialAccount): FinancialAccount =
         financialAccountRepository.save(FinancialAccountEntity.fromDomain(financialAccount)).toDomain()
 
-    override fun updateByDebitExpense(debitExpense: DebitExpense): FinancialAccount? =
+    override fun updateByDebitExpense(debitExpense: DebitExpense): FinancialAccount =
         update(debitExpense.getFinancialAccount())
 }

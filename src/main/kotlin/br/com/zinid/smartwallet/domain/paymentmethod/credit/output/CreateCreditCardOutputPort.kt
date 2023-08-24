@@ -4,5 +4,5 @@ import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
 
 interface CreateCreditCardOutputPort {
 
-    fun create(creditCard: CreditCard): CreditCard?
+    fun create(creditCard: CreditCard): CreditCard
 }

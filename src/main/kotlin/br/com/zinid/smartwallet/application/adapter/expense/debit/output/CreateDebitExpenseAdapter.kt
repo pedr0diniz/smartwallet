@@ -14,7 +14,7 @@ class CreateDebitExpenseAdapter(
 ) : CreateDebitExpenseOutputPort {
 
     @Transactional
-    override fun create(debitExpense: DebitExpense): DebitExpense? {
+    override fun create(debitExpense: DebitExpense): DebitExpense {
         val debitExpenseEntity = DebitExpenseEntity.fromDomain(debitExpense)
 
         expenseRepository.save(ExpenseEntity.from(debitExpenseEntity))

@@ -3,6 +3,7 @@ package br.com.zinid.smartwallet.domain.expense.credit
 import br.com.zinid.smartwallet.domain.creditcardinstallment.output.CreateCreditCardInstallmentsOutputPort
 import br.com.zinid.smartwallet.domain.exception.ExpiredCardException
 import br.com.zinid.smartwallet.domain.exception.InsufficientCardLimitException
+import br.com.zinid.smartwallet.domain.exception.NotFoundException
 import br.com.zinid.smartwallet.domain.expense.credit.input.CreateCreditExpenseUseCase
 import br.com.zinid.smartwallet.domain.expense.credit.output.CreateCreditExpenseOutputPort
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.output.FindCreditCardOutputPort
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 internal class CreateCreditExpenseUseCaseTest {
     private val findCreditCardAdapter = mockk<FindCreditCardOutputPort>()
@@ -61,7 +61,7 @@ internal class CreateCreditExpenseUseCaseTest {
 
         every { findCreditCardAdapter.findById(creditCardId) } returns null
 
-        assertNull(createCreditExpenseUseCase.execute(creditExpense))
+        assertThrows<NotFoundException> { createCreditExpenseUseCase.execute(creditExpense) }
 
         verify(exactly = 1) { findCreditCardAdapter.findById(creditCardId) }
     }

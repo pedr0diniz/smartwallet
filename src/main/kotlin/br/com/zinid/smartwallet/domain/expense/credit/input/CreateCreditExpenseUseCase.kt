@@ -1,7 +1,9 @@
 package br.com.zinid.smartwallet.domain.expense.credit.input
 
 import br.com.zinid.smartwallet.domain.creditcardinstallment.output.CreateCreditCardInstallmentsOutputPort
+import br.com.zinid.smartwallet.domain.exception.DomainClasses.CREDIT_CARD
 import br.com.zinid.smartwallet.domain.exception.InsufficientCardLimitException
+import br.com.zinid.smartwallet.domain.exception.NotFoundException
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.credit.output.CreateCreditExpenseOutputPort
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.output.FindCreditCardOutputPort
@@ -12,20 +14,21 @@ class CreateCreditExpenseUseCase(
     private val createCreditExpenseAdapter: CreateCreditExpenseOutputPort
 ) : CreateCreditExpenseInputPort {
 
-    override fun execute(creditExpense: CreditExpense): CreditExpense? {
-        val currentExpense = attachPaymentMethodToExpense(creditExpense) ?: return null
+    override fun execute(creditExpense: CreditExpense): CreditExpense {
+        val currentExpense = attachPaymentMethodToExpense(creditExpense)
 
         return processCreditExpense(currentExpense)
     }
 
-    private fun attachPaymentMethodToExpense(creditExpense: CreditExpense): CreditExpense? {
-        val possiblePaymentMethod = findCreditCardAdapter.findById(creditExpense.paymentMethod.id!!)
-            ?: return null
+    private fun attachPaymentMethodToExpense(creditExpense: CreditExpense): CreditExpense {
+        val creditCardId = creditExpense.paymentMethod.id!!
+        val possiblePaymentMethod = findCreditCardAdapter.findById(creditCardId)
+            ?: throw NotFoundException.buildFrom(CREDIT_CARD, "id", creditCardId)
 
         return creditExpense.copy(paymentMethod = possiblePaymentMethod)
     }
 
-    private fun processCreditExpense(creditExpense: CreditExpense): CreditExpense? {
+    private fun processCreditExpense(creditExpense: CreditExpense): CreditExpense {
         return if (creditExpense.canBeMade()) {
             creditExpense.process()
 
@@ -33,11 +36,9 @@ class CreateCreditExpenseUseCase(
             // either create installments from installments domain
             // or update the savedExpense in another way
             val savedExpense = createCreditExpenseAdapter.create(creditExpense)
-                .apply { this?.creditCardInstallments = creditExpense.creditCardInstallments?.copy(expense = this!!) }
+                .apply { this.creditCardInstallments = creditExpense.creditCardInstallments?.copy(expense = this) }
 
-            if (savedExpense != null) {
-                createCreditCardInstallmentsAdapter.createFromExpense(savedExpense)
-            }
+            createCreditCardInstallmentsAdapter.createFromExpense(savedExpense)
 
             savedExpense
         } else {

@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.financialaccount
 
+import br.com.zinid.smartwallet.domain.exception.NotFoundException
 import br.com.zinid.smartwallet.domain.financialaccount.input.CreateFinancialAccountUseCase
 import br.com.zinid.smartwallet.domain.financialaccount.output.CreateFinancialAccountOutputPort
 import br.com.zinid.smartwallet.domain.user.User
@@ -8,8 +9,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 internal class CreateFinancialAccountUseCaseTest {
 
@@ -42,7 +43,7 @@ internal class CreateFinancialAccountUseCaseTest {
 
         every { findUserAdapter.findById(userId) } returns null
 
-        assertNull(createFinancialAccountUseCase.execute(financialAccount))
+        assertThrows<NotFoundException> { createFinancialAccountUseCase.execute(financialAccount) }
 
         verify(exactly = 1) { findUserAdapter.findById(userId) }
     }

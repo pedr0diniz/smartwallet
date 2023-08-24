@@ -1,6 +1,7 @@
 package br.com.zinid.smartwallet.domain.paymentmethod.credit
 
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.credit.output.CreateCreditCardAdapter
+import br.com.zinid.smartwallet.domain.exception.NotFoundException
 import br.com.zinid.smartwallet.domain.financialaccount.output.FindFinancialAccountOutputPort
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.input.CreateCreditCardUseCase
 import br.com.zinid.smartwallet.fixtures.CreditCardFixtures
@@ -9,8 +10,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 internal class CreateCreditCardUseCaseTest {
 
@@ -46,7 +47,7 @@ internal class CreateCreditCardUseCaseTest {
 
         every { findFinancialAccountAdapter.findById(financialAccountId) } returns null
 
-        assertNull(createCreditCardUseCase.execute(creditCard))
+        assertThrows<NotFoundException> { createCreditCardUseCase.execute(creditCard) }
 
         verify(exactly = 1) { findFinancialAccountAdapter.findById(financialAccountId) }
     }

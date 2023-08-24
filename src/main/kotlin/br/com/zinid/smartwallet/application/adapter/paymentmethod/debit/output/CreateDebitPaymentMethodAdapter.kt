@@ -14,7 +14,7 @@ class CreateDebitPaymentMethodAdapter(
 ) : CreateDebitPaymentMethodOutputPort {
 
     @Transactional
-    override fun create(debitPaymentMethod: DebitPaymentMethod): DebitPaymentMethod? {
+    override fun create(debitPaymentMethod: DebitPaymentMethod): DebitPaymentMethod {
         val debitPaymentMethodEntity = debitPaymentMethodRepository.save(DebitPaymentMethodEntity.fromDomain(debitPaymentMethod))
 
         paymentMethodRepository.save(PaymentMethodEntity.from(debitPaymentMethodEntity))

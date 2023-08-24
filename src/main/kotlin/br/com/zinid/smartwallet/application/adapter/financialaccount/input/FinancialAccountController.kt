@@ -19,7 +19,6 @@ class FinancialAccountController(
     @PostMapping
     fun create(@Valid @RequestBody financialAccountRequest: FinancialAccountRequest): ResponseEntity<Any?> {
         val possibleFinancialAccount = createFinancialAccountUseCase.execute(financialAccountRequest.toDomain())
-            ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             FinancialAccountResponse.fromDomain(possibleFinancialAccount)

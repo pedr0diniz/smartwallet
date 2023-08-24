@@ -4,5 +4,5 @@ import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
 
 interface CreateDebitExpenseInputPort {
 
-    fun execute(debitExpense: DebitExpense): DebitExpense?
+    fun execute(debitExpense: DebitExpense): DebitExpense
 }

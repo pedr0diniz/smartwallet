@@ -4,5 +4,5 @@ import br.com.zinid.smartwallet.domain.paymentmethod.debit.DebitPaymentMethod
 
 interface CreateDebitPaymentMethodInputPort {
 
-    fun execute(debitPaymentMethod: DebitPaymentMethod): DebitPaymentMethod?
+    fun execute(debitPaymentMethod: DebitPaymentMethod): DebitPaymentMethod
 }

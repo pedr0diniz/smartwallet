@@ -14,7 +14,7 @@ class CreateCreditExpenseAdapter(
 ) : CreateCreditExpenseOutputPort {
 
     @Transactional
-    override fun create(creditExpense: CreditExpense): CreditExpense? {
+    override fun create(creditExpense: CreditExpense): CreditExpense {
         val creditExpenseEntity = creditExpenseRepository.save(CreditExpenseEntity.fromDomain(creditExpense))
 
         expenseRepository.save(ExpenseEntity.from(creditExpenseEntity))

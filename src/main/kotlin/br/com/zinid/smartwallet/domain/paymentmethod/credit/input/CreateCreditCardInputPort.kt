@@ -4,5 +4,5 @@ import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
 
 interface CreateCreditCardInputPort {
 
-    fun execute(creditCard: CreditCard): CreditCard?
+    fun execute(creditCard: CreditCard): CreditCard
 }

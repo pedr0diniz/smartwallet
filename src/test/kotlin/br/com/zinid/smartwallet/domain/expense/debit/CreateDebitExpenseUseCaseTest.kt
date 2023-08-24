@@ -1,6 +1,7 @@
 package br.com.zinid.smartwallet.domain.expense.debit
 
 import br.com.zinid.smartwallet.domain.exception.InsufficientBalanceException
+import br.com.zinid.smartwallet.domain.exception.NotFoundException
 import br.com.zinid.smartwallet.domain.expense.debit.input.CreateDebitExpenseUseCase
 import br.com.zinid.smartwallet.domain.expense.debit.output.CreateDebitExpenseOutputPort
 import br.com.zinid.smartwallet.domain.financialaccount.output.FindFinancialAccountOutputPort
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 internal class CreateDebitExpenseUseCaseTest {
 
@@ -71,7 +71,7 @@ internal class CreateDebitExpenseUseCaseTest {
 
         every { findDebitPaymentMethodAdapter.findById(debitPaymentMethodId) } returns null
 
-        assertNull(createDebitExpenseUseCase.execute(originalExpense))
+        assertThrows<NotFoundException> { createDebitExpenseUseCase.execute(originalExpense) }
 
         verify(exactly = 1) { findDebitPaymentMethodAdapter.findById(debitPaymentMethodId) }
     }
@@ -92,7 +92,7 @@ internal class CreateDebitExpenseUseCaseTest {
         every { findDebitPaymentMethodAdapter.findById(debitPaymentMethodId) } returns debitPaymentMethod
         every { findFinancialAccountAdapter.findById(financialAccountId) } returns null
 
-        assertNull(createDebitExpenseUseCase.execute(originalExpense))
+        assertThrows<NotFoundException> { createDebitExpenseUseCase.execute(originalExpense) }
 
         verify(exactly = 1) { findDebitPaymentMethodAdapter.findById(debitPaymentMethodId) }
         verify(exactly = 1) { findFinancialAccountAdapter.findById(financialAccountId) }

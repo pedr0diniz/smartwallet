@@ -19,7 +19,6 @@ class UserController(
     @PostMapping
     fun create(@Valid @RequestBody userRequest: UserRequest): ResponseEntity<Any?> {
         val possibleUser = createUserUseCase.execute(userRequest.toDomain())
-            ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
 
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromDomain(possibleUser))
     }
