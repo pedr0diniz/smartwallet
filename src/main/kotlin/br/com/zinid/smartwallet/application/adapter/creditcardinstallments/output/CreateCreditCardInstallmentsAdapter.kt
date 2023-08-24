@@ -10,7 +10,6 @@ class CreateCreditCardInstallmentsAdapter(
     private val creditCardInstallmentsRepository: CreditCardInstallmentsRepository
 ) : CreateCreditCardInstallmentsOutputPort {
 
-    // TODO - fix transient state when saving
     override fun createFromExpense(creditExpense: CreditExpense): CreditCardInstallments? {
         val creditCardInstallments = creditExpense.creditCardInstallments ?: return null
         return creditCardInstallmentsRepository.save(
