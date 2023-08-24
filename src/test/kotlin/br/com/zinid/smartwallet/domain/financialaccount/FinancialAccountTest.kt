@@ -1,7 +1,9 @@
 package br.com.zinid.smartwallet.domain.financialaccount
 
+import br.com.zinid.smartwallet.domain.exception.InsufficientBalanceException
 import br.com.zinid.smartwallet.domain.user.User
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import kotlin.random.Random
 import kotlin.test.assertEquals
@@ -112,10 +114,9 @@ internal class FinancialAccountTest {
             )
         val withdrawalValue = BigDecimal.valueOf(151.0)
 
-        financialAccount.deductFromBalance(withdrawalValue)
+        assertThrows<InsufficientBalanceException> { financialAccount.deductFromBalance(withdrawalValue) }
 
         assertFalse(financialAccount.hasBalance(withdrawalValue))
-        assertEquals(originalBalance, financialAccount.balance)
     }
 
     @Test

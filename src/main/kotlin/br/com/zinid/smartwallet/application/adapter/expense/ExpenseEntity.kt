@@ -2,16 +2,13 @@ package br.com.zinid.smartwallet.application.adapter.expense
 
 import br.com.zinid.smartwallet.application.adapter.expense.credit.output.CreditExpenseEntity
 import br.com.zinid.smartwallet.application.adapter.expense.debit.output.DebitExpenseEntity
-import br.com.zinid.smartwallet.application.adapter.paymentmethod.PaymentMethodEntity
+import br.com.zinid.smartwallet.domain.exception.NoExplicitClassException
 import br.com.zinid.smartwallet.domain.expense.Expense
-import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
-import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
@@ -39,7 +36,7 @@ data class ExpenseEntity(
             return debitExpense.toDomain()
         }
 
-        throw IllegalStateException("Expense must either be credit or debit")
+        throw NoExplicitClassException("Expense must either be credit or debit")
     }
 
     companion object {

@@ -1,11 +1,14 @@
 package br.com.zinid.smartwallet.domain.paymentmethod.debit
 
+import br.com.zinid.smartwallet.domain.exception.InsufficientBalanceException
+import br.com.zinid.smartwallet.domain.exception.InvalidDateRangeException
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.fixtures.DebitExpenseFixtures
 import br.com.zinid.smartwallet.fixtures.DebitPaymentMethodFixtures
 import br.com.zinid.smartwallet.fixtures.FinancialAccountFixtures
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -132,7 +135,7 @@ internal class DebitPaymentMethodTest {
         val tempMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod()
         val debitPaymentMethod = tempMethod.copy(expenses = DebitExpenseFixtures.getDebitExpenseList(tempMethod))
 
-        assertThrows<IllegalStateException> {
+        assertThrows<InvalidDateRangeException> {
             debitPaymentMethod.getExpensesWithinDateRange(
                 LocalDate.MAX,
                 LocalDate.now()
@@ -150,9 +153,8 @@ internal class DebitPaymentMethodTest {
 
         val expectedBalance = financialAccount.balance.minus(debitExpense.price)
 
-        val hasProcessed = debitPaymentMethod.processExpense(debitExpense)
+        assertDoesNotThrow { debitPaymentMethod.processExpense(debitExpense) }
 
-        assertTrue(hasProcessed)
         assertEquals(expectedBalance, debitPaymentMethod.financialAccount.balance)
     }
 
@@ -165,6 +167,6 @@ internal class DebitPaymentMethodTest {
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
         val debitExpense = DebitExpenseFixtures.getTelecomBillDebitExpense(debitPaymentMethod)
 
-        assertFalse(debitPaymentMethod.processExpense(debitExpense))
+        assertThrows<InsufficientBalanceException> { debitPaymentMethod.processExpense(debitExpense) }
     }
 }

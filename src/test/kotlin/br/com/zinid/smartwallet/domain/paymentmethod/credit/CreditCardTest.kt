@@ -1,5 +1,7 @@
 package br.com.zinid.smartwallet.domain.paymentmethod.credit
 
+import br.com.zinid.smartwallet.domain.exception.ExpiredCardException
+import br.com.zinid.smartwallet.domain.exception.InvalidDateRangeException
 import br.com.zinid.smartwallet.domain.expense.credit.getCurrentMonthInstallmentsAsExpenses
 import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsValue
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
@@ -106,7 +108,7 @@ internal class CreditCardTest {
 
         val foodDeliveryExpense = CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard)
 
-        assertFalse(creditCard.canPurchase(foodDeliveryExpense))
+        assertThrows<ExpiredCardException> { creditCard.canPurchase(foodDeliveryExpense) }
     }
 
     @Test
@@ -164,7 +166,7 @@ internal class CreditCardTest {
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(expenses = CreditExpenseFixtures.getCreditExpenseList(tempCard))
 
-        assertThrows<IllegalStateException> {
+        assertThrows<InvalidDateRangeException> {
             creditCard.getExpensesWithinDateRange(
                 creditCard.currentInvoiceClosingDate,
                 creditCard.previousInvoiceClosingDate

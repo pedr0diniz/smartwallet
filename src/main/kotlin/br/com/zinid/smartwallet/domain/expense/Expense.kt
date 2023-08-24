@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.expense
 
+import br.com.zinid.smartwallet.domain.exception.InvalidDateRangeException
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
@@ -17,7 +18,9 @@ interface Expense {
     val paymentMethod: PaymentMethod
 
     fun wasPurchasedWithinDateRange(startDate: LocalDate, endDate: LocalDate): Boolean {
-        if (startDate.isAfterOrEqual(endDate)) throw IllegalStateException("Invalid date range")
+        if (startDate.isAfter(endDate)) {
+            throw InvalidDateRangeException(INVALID_DATE_RANGE_MESSAGE.format(startDate, endDate))
+        }
 
         return (date.isAfterOrEqual(startDate)) && (date.isBeforeOrEqual(endDate))
     }
@@ -26,5 +29,9 @@ interface Expense {
 
     fun canBeMade() = paymentMethod.canPurchase(this)
 
-    fun process(): Boolean
+    fun process()
+
+    companion object {
+        private const val INVALID_DATE_RANGE_MESSAGE = "Date range is invalid with start date [%s] and end date [%s]"
+    }
 }

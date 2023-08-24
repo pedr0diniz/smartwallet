@@ -3,6 +3,7 @@ package br.com.zinid.smartwallet.application.adapter.paymentmethod
 import br.com.zinid.smartwallet.application.adapter.financialaccount.output.FinancialAccountEntity
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.credit.output.CreditCardEntity
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.debit.output.DebitPaymentMethodEntity
+import br.com.zinid.smartwallet.domain.exception.NoExplicitClassException
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
@@ -16,7 +17,6 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
-import java.lang.IllegalStateException
 
 @Entity
 @Table(name = "payment_method")
@@ -46,7 +46,7 @@ data class PaymentMethodEntity(
             return debitPaymentMethod.toDomain(expenses?.map { it as DebitExpense })
         }
 
-        throw IllegalStateException("Payment method must either be credit or debit")
+        throw NoExplicitClassException("Payment method must either be credit or debit")
     }
 
     companion object {

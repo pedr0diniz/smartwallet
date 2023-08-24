@@ -36,7 +36,7 @@ data class DebitPaymentMethod(
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
 
-    fun processExpense(expense: Expense): Boolean =
+    fun processExpense(expense: Expense) =
         financialAccount.deductFromBalance(expense.price)
 
     companion object {

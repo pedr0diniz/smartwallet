@@ -1,6 +1,7 @@
 package br.com.zinid.smartwallet.domain.creditcardinstallments
 
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
+import br.com.zinid.smartwallet.domain.exception.NoInstallmentsException
 import br.com.zinid.smartwallet.fixtures.CreditCardFixtures
 import br.com.zinid.smartwallet.fixtures.CreditExpenseFixtures
 import org.junit.jupiter.api.Test
@@ -98,7 +99,7 @@ internal class CreditCardInstallmentsTest {
         val creditCard = CreditCardFixtures.getCreditCard()
         val creditExpense = CreditExpenseFixtures.getSubscriptionCreditExpense(creditCard)
 
-        assertThrows<IllegalStateException> {
+        assertThrows<NoInstallmentsException> {
             CreditCardInstallments.createFromExpenseAndCreditCard(creditExpense, creditCard)
         }
     }

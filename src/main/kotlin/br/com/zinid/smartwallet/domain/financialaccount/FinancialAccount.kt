@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.financialaccount
 
+import br.com.zinid.smartwallet.domain.exception.InsufficientBalanceException
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.user.User
 import java.math.BigDecimal
@@ -15,16 +16,16 @@ data class FinancialAccount(
     fun hasBalance(value: BigDecimal): Boolean =
         balance.subtract(value) >= overdraft.negate()
 
-    fun deductFromBalance(value: BigDecimal): Boolean {
+    fun deductFromBalance(value: BigDecimal) {
         if (hasBalance(value)) {
             balance = balance.subtract(value)
-            return true
+            return
         }
-        return false
+
+        throw InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE.format(value, getRemainingSpendableValue()))
     }
 
-    fun getRemainingSpendableValue(): BigDecimal =
-        balance.add(overdraft)
+    fun getRemainingSpendableValue(): BigDecimal = balance.add(overdraft)
 
     companion object {
         fun createBlank() = FinancialAccount(
@@ -52,5 +53,7 @@ data class FinancialAccount(
             overdraft = BigDecimal.ZERO,
             user = User.createBlankFromId(userId)
         )
+
+        private const val INSUFFICIENT_BALANCE_MESSAGE = "Cannot deduct [R$ %s] from balance + overdraft of [R$ %s]"
     }
 }

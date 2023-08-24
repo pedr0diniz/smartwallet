@@ -1,6 +1,7 @@
 package br.com.zinid.smartwallet.domain.expense.credit.input
 
 import br.com.zinid.smartwallet.domain.creditcardinstallment.output.CreateCreditCardInstallmentsOutputPort
+import br.com.zinid.smartwallet.domain.exception.InsufficientCardLimitException
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.credit.output.CreateCreditExpenseOutputPort
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.output.FindCreditCardOutputPort
@@ -29,8 +30,8 @@ class CreateCreditExpenseUseCase(
             creditExpense.process()
 
             // TODO - fix this
-                // either create installments from installments domain
-                // or update the savedExpense in another way
+            // either create installments from installments domain
+            // or update the savedExpense in another way
             val savedExpense = createCreditExpenseAdapter.create(creditExpense)
                 .apply { this?.creditCardInstallments = creditExpense.creditCardInstallments?.copy(expense = this!!) }
 
@@ -40,8 +41,17 @@ class CreateCreditExpenseUseCase(
 
             savedExpense
         } else {
-            println("Insufficient card limit")
-            null
+            throw InsufficientCardLimitException(
+                INSUFFICIENT_CARD_LIMIT_MESSAGE.format(
+                    creditExpense.price,
+                    creditExpense.paymentMethod.getRemainingSpendableValue()
+                )
+            )
         }
+    }
+
+    companion object {
+        private const val INSUFFICIENT_CARD_LIMIT_MESSAGE =
+            "Cannot make [R$ %s] purchase from remaining card limit of [R$ %s]"
     }
 }

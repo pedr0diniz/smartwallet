@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.expense.debit.input
 
+import br.com.zinid.smartwallet.domain.exception.InsufficientBalanceException
 import br.com.zinid.smartwallet.domain.expense.debit.DebitExpense
 import br.com.zinid.smartwallet.domain.expense.debit.output.CreateDebitExpenseOutputPort
 import br.com.zinid.smartwallet.domain.financialaccount.output.FindFinancialAccountOutputPort
@@ -33,8 +34,9 @@ class CreateDebitExpenseUseCase(
     }
 
     private fun attachFinancialAccountToExpense(debitExpense: DebitExpense): DebitExpense? {
-        val possibleFinancialAccount = findFinancialAccountAdapter.findById(debitExpense.paymentMethod.financialAccount.id!!)
-            ?: return null
+        val possibleFinancialAccount =
+            findFinancialAccountAdapter.findById(debitExpense.paymentMethod.financialAccount.id!!)
+                ?: return null
 
         return debitExpense.copy(
             paymentMethod = debitExpense.paymentMethod.copy(
@@ -49,8 +51,16 @@ class CreateDebitExpenseUseCase(
             updateFinancialAccountAdapter.updateByDebitExpense(debitExpense)
             createDebitExpenseAdapter.create(debitExpense)
         } else {
-            println("Insufficient account balance")
-            null
+            throw InsufficientBalanceException(
+                INSUFFICIENT_BALANCE_MESSAGE.format(
+                    debitExpense.price,
+                    debitExpense.paymentMethod.getRemainingSpendableValue()
+                )
+            )
         }
+    }
+
+    companion object {
+        private const val INSUFFICIENT_BALANCE_MESSAGE = "Cannot deduct [R$ %s] from balance + overdraft of [R$ %s]"
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import java.util.function.Consumer
 
 @RestControllerAdvice
 class ApiExceptionHandler : ResponseEntityExceptionHandler() {
@@ -44,9 +43,9 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
         globalErrors: List<ObjectError?>,
         fieldErrors: List<FieldError>
     ): ValidationErrorOutputDto = ValidationErrorOutputDto(
-            globalErrorMessages = globalErrors.map { getErrorMessage(it) },
-            fieldErrors = fieldErrors.map { FieldErrorOutputDto(it.field, getErrorMessage(it)) }
-        )
+        globalErrorMessages = globalErrors.map { getErrorMessage(it) },
+        fieldErrors = fieldErrors.map { FieldErrorOutputDto(it.field, getErrorMessage(it)) }
+    )
 
     fun getErrorMessage(error: ObjectError?): String =
         messageSource!!.getMessage(error!!, LocaleContextHolder.getLocale())

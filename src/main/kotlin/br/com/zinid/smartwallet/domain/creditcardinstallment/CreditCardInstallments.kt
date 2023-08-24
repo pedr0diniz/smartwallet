@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.creditcardinstallment
 
+import br.com.zinid.smartwallet.domain.exception.NoInstallmentsException
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
 import br.com.zinid.smartwallet.domain.utils.DateHelper.getDateWithValidDay
@@ -65,7 +66,8 @@ data class CreditCardInstallments(
     companion object {
 
         fun createFromExpenseAndCreditCard(expense: CreditExpense, creditCard: CreditCard): CreditCardInstallments {
-            val numberOfInstallments = expense.numberOfInstallments ?: throw IllegalStateException("Must have number of months")
+            val numberOfInstallments =
+                expense.numberOfInstallments ?: throw NoInstallmentsException(NO_INSTALLMENTS_MESSAGE)
             val installmentValue = expense.price
                 .divide(
                     BigDecimal.valueOf(expense.numberOfInstallments.toLong()),
@@ -93,6 +95,9 @@ data class CreditCardInstallments(
 
             return creditCardInstallments.copy(installments = installmentsList)
         }
+
+        private const val NO_INSTALLMENTS_MESSAGE =
+            "Cannot build installments when the amount of installments is not informed"
     }
 }
 

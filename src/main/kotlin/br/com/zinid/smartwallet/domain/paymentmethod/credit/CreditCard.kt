@@ -1,5 +1,6 @@
 package br.com.zinid.smartwallet.domain.paymentmethod.credit
 
+import br.com.zinid.smartwallet.domain.exception.ExpiredCardException
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.credit.filterWithinDateRange
@@ -39,8 +40,7 @@ data class CreditCard(
         .add(getCurrentMonthInstallmentsAsExpenses().sumOf { it.price })
 
     override fun canPurchase(expense: Expense): Boolean =
-        getRemainingSpendableValue().minus(expense.price) >= BigDecimal.ZERO &&
-            expirationDate.isAfterOrEqual(expense.date)
+        getRemainingSpendableValue().minus(expense.price) >= BigDecimal.ZERO && hasNotExpiredByDateOf(expense)
 
     override fun getMonthlyExpenses(): List<Expense> =
         getExpensesWithinDateRange(previousInvoiceClosingDate, currentInvoiceClosingDate)
@@ -57,6 +57,12 @@ data class CreditCard(
 
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }
+
+    private fun hasNotExpiredByDateOf(expense: Expense): Boolean =
+        expirationDate.isAfterOrEqual(expense.date).let {
+            if (it) return it
+            else throw ExpiredCardException(EXPIRED_CARD_MESSAGE.format(last4Digits, expirationDate, expense.date))
+        }
 
     private fun getOngoingInstallmentsValue(): BigDecimal =
         expenses?.getOngoingInstallmentsValue(previousInvoiceClosingDate) ?: BigDecimal.ZERO
@@ -126,5 +132,8 @@ data class CreditCard(
             financialAccount = FinancialAccount.createBlank(),
             invoiceDueDayOfMonth = 11
         )
+
+        private const val EXPIRED_CARD_MESSAGE =
+            "Card ending with [%s] expires by [%s] and is expired by expense date [%s]"
     }
 }

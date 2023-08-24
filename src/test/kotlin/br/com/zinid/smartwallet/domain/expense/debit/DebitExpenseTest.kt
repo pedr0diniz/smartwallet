@@ -1,5 +1,7 @@
 package br.com.zinid.smartwallet.domain.expense.debit
 
+import br.com.zinid.smartwallet.domain.exception.InsufficientBalanceException
+import br.com.zinid.smartwallet.domain.exception.InvalidDateRangeException
 import br.com.zinid.smartwallet.fixtures.DebitExpenseFixtures
 import br.com.zinid.smartwallet.fixtures.DebitPaymentMethodFixtures
 import br.com.zinid.smartwallet.fixtures.FinancialAccountFixtures
@@ -8,7 +10,6 @@ import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class DebitExpenseTest {
@@ -55,7 +56,7 @@ internal class DebitExpenseTest {
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod()
         val debitExpenses = DebitExpenseFixtures.getDebitExpenseList(debitPaymentMethod)
 
-        assertThrows<IllegalStateException> {
+        assertThrows<InvalidDateRangeException> {
             debitExpenses.filterWithinDateRange(
                 today.withDayOfMonth(today.lengthOfMonth()),
                 today.withDayOfMonth(1)
@@ -95,6 +96,6 @@ internal class DebitExpenseTest {
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
         val debitExpense = DebitExpenseFixtures.getTelecomBillDebitExpense(debitPaymentMethod)
 
-        assertFalse(debitExpense.process())
+        assertThrows<InsufficientBalanceException> { debitExpense.process() }
     }
 }

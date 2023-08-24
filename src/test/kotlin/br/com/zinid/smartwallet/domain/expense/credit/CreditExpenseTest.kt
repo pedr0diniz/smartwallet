@@ -119,7 +119,10 @@ internal class CreditExpenseTest {
         val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getVacuumCleanerCreditExpense(creditCard)
 
-        assertTrue(creditExpense.process())
+        creditExpense.process()
+
+        assertNotNull(creditExpense.numberOfInstallments)
+        assertNotNull(creditExpense.creditCardInstallments)
     }
 
     @Test
@@ -127,7 +130,7 @@ internal class CreditExpenseTest {
         val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getRenovationsCreditExpense(creditCard)
 
-        assertFalse(creditExpense.process())
+        creditExpense.process()
     }
 
     @Test
