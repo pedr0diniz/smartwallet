@@ -26,6 +26,7 @@ data class CreditExpenseEntity(
     val price: BigDecimal? = null,
     val essential: Boolean? = false,
     val monthlySubscription: Boolean? = false,
+    val tag: String? = null,
 
     @ManyToOne
     @JoinColumn(name = "credit_card_id", referencedColumnName = "id", nullable = false)
@@ -42,7 +43,8 @@ data class CreditExpenseEntity(
         essential = essential,
         monthlySubscription = monthlySubscription,
         paymentMethod = paymentMethod.toDomain(),
-        numberOfInstallments = numberOfInstallments
+        numberOfInstallments = numberOfInstallments,
+        tag = tag
     )
 
     companion object {
@@ -54,7 +56,8 @@ data class CreditExpenseEntity(
             essential = creditExpense?.essential,
             monthlySubscription = creditExpense?.monthlySubscription,
             paymentMethod = CreditCardEntity.fromDomain(creditExpense?.paymentMethod),
-            numberOfInstallments = creditExpense?.numberOfInstallments
+            numberOfInstallments = creditExpense?.numberOfInstallments,
+            tag = creditExpense?.tag
         )
     }
 

@@ -14,7 +14,8 @@ data class DebitExpense(
     override val price: BigDecimal,
     override val essential: Boolean? = false,
     override val monthlySubscription: Boolean? = false,
-    override val paymentMethod: DebitPaymentMethod
+    override val paymentMethod: DebitPaymentMethod,
+    override val tag: String? = null
 ) : Expense {
     override fun getPaymentType(): PaymentType = paymentMethod.type
 
@@ -27,3 +28,5 @@ typealias DebitExpenses = List<DebitExpense>
 
 fun DebitExpenses.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<DebitExpense> =
     this.filter { it.wasPurchasedWithinDateRange(startDate, endDate) }
+
+fun DebitExpenses.filterByTag(tag: String): List<DebitExpense> = this.filter { it.tag == tag }

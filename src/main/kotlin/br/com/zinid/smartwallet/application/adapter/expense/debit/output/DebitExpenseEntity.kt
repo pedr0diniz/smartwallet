@@ -26,6 +26,7 @@ data class DebitExpenseEntity(
     val price: BigDecimal? = null,
     val essential: Boolean? = false,
     val monthlySubscription: Boolean? = false,
+    val tag: String? = null,
 
     @ManyToOne
     @JoinColumn(name = "debit_payment_method_id", referencedColumnName = "id", nullable = false)
@@ -39,7 +40,8 @@ data class DebitExpenseEntity(
         price = price ?: BigDecimal.ZERO,
         essential = essential,
         monthlySubscription = monthlySubscription,
-        paymentMethod = paymentMethod.toDomain()
+        paymentMethod = paymentMethod.toDomain(),
+        tag = tag
     )
 
     companion object {
@@ -50,7 +52,8 @@ data class DebitExpenseEntity(
             price = debitExpense?.price,
             essential = debitExpense?.essential,
             monthlySubscription = debitExpense?.monthlySubscription,
-            paymentMethod = DebitPaymentMethodEntity.fromDomain(debitExpense?.paymentMethod)
+            paymentMethod = DebitPaymentMethodEntity.fromDomain(debitExpense?.paymentMethod),
+            tag = debitExpense?.tag
         )
     }
 

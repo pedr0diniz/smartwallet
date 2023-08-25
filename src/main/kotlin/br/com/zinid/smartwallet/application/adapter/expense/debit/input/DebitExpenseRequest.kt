@@ -21,6 +21,8 @@ data class DebitExpenseRequest(
     val essential: Boolean? = false,
     val monthlySubscription: Boolean? = false,
 
+    val tag: String? = null,
+
     @field:Positive
     @field:NotNull
     val debitPaymentMethodId: Long,

@@ -94,7 +94,7 @@ internal class CreditExpenseTest {
         val expectedInstallment = CreditCardInstallments.createFromExpenseAndCreditCard(creditExpense, creditCard)
 
         val expectedExpense = CreditExpense(
-            content = "Parcela de ${creditExpense.content}",
+            content = "Parcela 2 / 10 de ${creditExpense.content}",
             date = creditExpense.date,
             price = expectedInstallment.installmentValue,
             paymentMethod = creditExpense.paymentMethod,

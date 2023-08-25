@@ -16,6 +16,7 @@ data class CreditExpense(
     override val essential: Boolean? = false,
     override val monthlySubscription: Boolean? = false,
     override val paymentMethod: CreditCard,
+    override val tag: String? = null,
     val numberOfInstallments: Int? = null
 ) : Expense {
 
@@ -45,14 +46,20 @@ data class CreditExpense(
     fun getCurrentMonthInstallmentAsExpense(): CreditExpense? {
         val possibleInstallment = getCurrentInstallment()
 
+        val installmentsList = creditCardInstallments?.installments
+        val installmentMonth = installmentsList?.indexOf(possibleInstallment)?.plus(1)
+        val installmentDetailMessage = if (installmentMonth != null) "$installmentMonth / ${installmentsList.size} "
+        else ""
+
         if (possibleInstallment != null) {
             return CreditExpense(
-                content = "Parcela de $content",
+                content = "Parcela ${installmentDetailMessage}de $content",
                 date = date,
                 price = possibleInstallment.installmentValue,
                 paymentMethod = paymentMethod,
                 essential = essential,
-                monthlySubscription = monthlySubscription
+                monthlySubscription = monthlySubscription,
+                tag = tag
             )
         }
 
@@ -73,6 +80,7 @@ data class CreditExpense(
             price = BigDecimal.ZERO,
             essential = false,
             monthlySubscription = false,
+            tag = "",
             paymentMethod = CreditCard.createBlank()
         )
     }
@@ -110,3 +118,5 @@ fun CreditExpenses.getCurrentMonthInstallmentsAsExpenses(): List<CreditExpense> 
 
     return expenses
 }
+
+fun CreditExpenses.filterByTag(tag: String): List<CreditExpense> = this.filter { it.tag == tag }

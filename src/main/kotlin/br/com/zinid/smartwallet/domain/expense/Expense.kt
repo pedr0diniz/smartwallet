@@ -16,6 +16,7 @@ interface Expense {
     val essential: Boolean?
     val monthlySubscription: Boolean?
     val paymentMethod: PaymentMethod
+    val tag: String?
 
     fun wasPurchasedWithinDateRange(startDate: LocalDate, endDate: LocalDate): Boolean {
         if (startDate.isAfter(endDate)) {

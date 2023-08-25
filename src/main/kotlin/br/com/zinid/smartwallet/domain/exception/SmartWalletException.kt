@@ -16,10 +16,9 @@ class NoInstallmentsException(message: String?) : SmartWalletException(message)
 
 class NoExplicitClassException(message: String?) : SmartWalletException(message)
 
-class NotFoundException(clazz: DomainClasses, message: String?) : SmartWalletException(message) {
+class NotFoundException(message: String?) : SmartWalletException(message) {
     companion object {
         fun buildFrom(clazz: DomainClasses, parameterName: String, parameterValue: Any) = NotFoundException(
-            clazz = clazz,
             message = NOT_FOUND_MESSAGE.format(clazz, parameterName, parameterValue)
         )
 

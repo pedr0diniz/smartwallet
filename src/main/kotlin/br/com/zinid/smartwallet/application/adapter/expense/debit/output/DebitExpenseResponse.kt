@@ -11,6 +11,7 @@ data class DebitExpenseResponse(
     val price: BigDecimal,
     val essential: Boolean? = false,
     val monthlySubscription: Boolean? = false,
+    val tag: String? = null
 ) {
     companion object {
         fun fromDomain(debitExpense: DebitExpense) = DebitExpenseResponse(
@@ -19,7 +20,8 @@ data class DebitExpenseResponse(
             date = debitExpense.date,
             price = debitExpense.price,
             essential = debitExpense.essential,
-            monthlySubscription = debitExpense.monthlySubscription
+            monthlySubscription = debitExpense.monthlySubscription,
+            tag = debitExpense.tag
         )
     }
 }

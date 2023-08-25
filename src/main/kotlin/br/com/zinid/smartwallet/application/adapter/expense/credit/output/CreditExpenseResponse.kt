@@ -12,6 +12,7 @@ data class CreditExpenseResponse(
     val price: BigDecimal,
     val essential: Boolean? = false,
     val monthlySubscription: Boolean? = false,
+    val tag: String? = null,
     val creditCardInstallments: CreditCardInstallmentsResponse?
 ) {
     companion object {
@@ -23,6 +24,7 @@ data class CreditExpenseResponse(
                 price = creditExpense.price,
                 essential = creditExpense.essential,
                 monthlySubscription = creditExpense.monthlySubscription,
+                tag = creditExpense.tag,
                 creditCardInstallments = creditExpense.creditCardInstallments?.let {
                     CreditCardInstallmentsResponse.fromDomain(it)
                 }
