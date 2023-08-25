@@ -6,10 +6,10 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 interface PaymentMethod {
-    val id: Long?
+    val id: Long
     val type: PaymentType
     val financialAccount: FinancialAccount
-    val expenses: List<Expense>?
+    val expenses: List<Expense>
 
     fun getRemainingSpendableValue(): BigDecimal
 

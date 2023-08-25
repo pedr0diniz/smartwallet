@@ -31,12 +31,12 @@ data class CreditExpenseRequest(
     val numberOfInstallments: Int?
 ) {
     fun toDomain() = CreditExpense(
-        id = null,
         content = content,
         date = date ?: LocalDate.now(),
         price = price,
         essential = essential,
         monthlySubscription = monthlySubscription,
+        tag = tag?.uppercase(),
         paymentMethod = CreditCard.createBlankFromId(creditCardId),
         numberOfInstallments = numberOfInstallments
     )

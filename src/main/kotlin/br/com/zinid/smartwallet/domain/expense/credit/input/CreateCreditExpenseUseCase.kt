@@ -21,7 +21,7 @@ class CreateCreditExpenseUseCase(
     }
 
     private fun attachPaymentMethodToExpense(creditExpense: CreditExpense): CreditExpense {
-        val creditCardId = creditExpense.paymentMethod.id!!
+        val creditCardId = creditExpense.paymentMethod.id
         val possiblePaymentMethod = findCreditCardAdapter.findById(creditCardId)
             ?: throw NotFoundException.buildFrom(CREDIT_CARD, "id", creditCardId)
 

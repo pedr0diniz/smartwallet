@@ -12,7 +12,7 @@ class CreateCreditCardUseCase(
 ) : CreateCreditCardInputPort {
 
     override fun execute(creditCard: CreditCard): CreditCard {
-        val financialAccountId = creditCard.financialAccount.id!!
+        val financialAccountId = creditCard.financialAccount.id
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(financialAccountId)
             ?: throw NotFoundException.buildFrom(FINANCIAL_ACCOUNT, "id", financialAccountId)
 

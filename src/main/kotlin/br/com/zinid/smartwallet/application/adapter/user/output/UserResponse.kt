@@ -18,7 +18,7 @@ data class UserResponse(
             lastname = user.lastname,
             email = user.email,
             phone = user.phone,
-            financialAccounts = user.financialAccounts?.map { FinancialAccountResponse.fromDomain(it) }
+            financialAccounts = user.financialAccounts.map { FinancialAccountResponse.fromDomain(it) }
         )
     }
 }

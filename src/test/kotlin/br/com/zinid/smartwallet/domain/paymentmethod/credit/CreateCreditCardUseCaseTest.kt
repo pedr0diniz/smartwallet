@@ -26,7 +26,7 @@ internal class CreateCreditCardUseCaseTest {
     fun `should find financial account and create credit card`() {
         val financialAccount = FinancialAccountFixtures.getFinancialAccount()
         val creditCard = CreditCardFixtures.getCreditCard(financialAccount)
-        val financialAccountId = financialAccount.id!!
+        val financialAccountId = financialAccount.id
 
         every {
             findFinancialAccountAdapter.findById(financialAccountId)
@@ -43,7 +43,7 @@ internal class CreateCreditCardUseCaseTest {
     fun `should not find financial account and not create credit card`() {
         val financialAccount = FinancialAccountFixtures.getFinancialAccount()
         val creditCard = CreditCardFixtures.getCreditCard(financialAccount)
-        val financialAccountId = financialAccount.id!!
+        val financialAccountId = financialAccount.id
 
         every { findFinancialAccountAdapter.findById(financialAccountId) } returns null
 

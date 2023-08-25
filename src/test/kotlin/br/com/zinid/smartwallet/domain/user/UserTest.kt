@@ -8,12 +8,12 @@ internal class UserTest {
     fun `should create a blank user`() {
         val user = User.createBlank()
 
-        assert(user.id != null)
+        assert(user.id == 0L)
         assert(user.firstname == "")
         assert(user.lastname == "")
         assert(user.email == "")
         assert(user.phone == "")
-        assert(user.financialAccounts.isNullOrEmpty())
+        assert(user.financialAccounts.isEmpty())
     }
 
     @Test
@@ -26,6 +26,6 @@ internal class UserTest {
         assert(user.lastname == "")
         assert(user.email == "")
         assert(user.phone == "")
-        assert(user.financialAccounts.isNullOrEmpty())
+        assert(user.financialAccounts.isEmpty())
     }
 }

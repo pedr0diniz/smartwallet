@@ -16,12 +16,12 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 data class CreditCard(
-    override val id: Long? = null,
+    override val id: Long = 0L,
     val last4Digits: String,
     val expirationDate: LocalDate,
     val cardLimit: BigDecimal,
     override val financialAccount: FinancialAccount,
-    override val expenses: List<CreditExpense>? = listOf(),
+    override val expenses: List<CreditExpense> = listOf(),
     val invoiceDueDayOfMonth: Int,
     val today: LocalDate = LocalDate.now()
 ) : PaymentMethod {
@@ -49,7 +49,7 @@ data class CreditCard(
 
     override fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> {
         val creditExpenses = mutableListOf<CreditExpense>()
-        creditExpenses.addAll(expenses?.filterWithinDateRange(startDate, endDate) ?: listOf())
+        creditExpenses.addAll(expenses.filterWithinDateRange(startDate, endDate))
         creditExpenses.addAll(getCurrentMonthInstallmentsAsExpenses())
 
         return creditExpenses
@@ -65,10 +65,10 @@ data class CreditCard(
         }
 
     private fun getOngoingInstallmentsValue(): BigDecimal =
-        expenses?.getOngoingInstallmentsValue(previousInvoiceClosingDate) ?: BigDecimal.ZERO
+        expenses.getOngoingInstallmentsValue(previousInvoiceClosingDate)
 
     private fun getCurrentMonthInstallmentsAsExpenses(): List<CreditExpense> =
-        expenses?.getCurrentMonthInstallmentsAsExpenses() ?: emptyList()
+        expenses.getCurrentMonthInstallmentsAsExpenses()
 
     private fun getPreviousDueDate(): LocalDate {
         return when (invoiceDueDayOfMonth > today.dayOfMonth) {

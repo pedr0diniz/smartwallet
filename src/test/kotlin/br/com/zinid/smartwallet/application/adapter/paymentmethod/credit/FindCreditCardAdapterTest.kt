@@ -77,7 +77,7 @@ internal class FindCreditCardAdapterTest {
         val creditCardEntity = CreditCardEntity.fromDomain(creditCard)
         val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard)
 
-        val financialAccountId = creditCard.financialAccount.id!!
+        val financialAccountId = creditCard.financialAccount.id
 
         every { creditCardRepository.findByFinancialAccountId(financialAccountId) } returns listOf(creditCardEntity)
         every { findCreditExpenseAdapter.findByCreditCardId(creditCardEntity.id!!) } returns creditExpenses
@@ -97,7 +97,7 @@ internal class FindCreditCardAdapterTest {
         val creditCard = CreditCardFixtures.getCreditCard().copy(id = creditCardId)
         val creditCardEntity = CreditCardEntity.fromDomain(creditCard)
 
-        val financialAccountId = creditCard.financialAccount.id!!
+        val financialAccountId = creditCard.financialAccount.id
 
         every { creditCardRepository.findByFinancialAccountId(financialAccountId) } returns listOf(creditCardEntity)
         every { findCreditExpenseAdapter.findByCreditCardId(creditCardEntity.id!!) } returns emptyList()

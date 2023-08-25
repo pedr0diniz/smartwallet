@@ -30,7 +30,7 @@ class CreateDebitExpenseUseCase(
     }
 
     private fun attachPaymentMethodToExpense(debitExpense: DebitExpense): DebitExpense {
-        val paymentMethodId = debitExpense.paymentMethod.id!!
+        val paymentMethodId = debitExpense.paymentMethod.id
         val possiblePaymentMethod = findDebitPaymentMethodAdapter.findById(paymentMethodId)
             ?: throw NotFoundException.buildFrom(DEBIT_PAYMENT_METHOD, "id", paymentMethodId)
 
@@ -38,7 +38,7 @@ class CreateDebitExpenseUseCase(
     }
 
     private fun attachFinancialAccountToExpense(debitExpense: DebitExpense): DebitExpense {
-        val financialAccountId = debitExpense.paymentMethod.financialAccount.id!!
+        val financialAccountId = debitExpense.paymentMethod.financialAccount.id
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(financialAccountId)
             ?: throw NotFoundException.buildFrom(FINANCIAL_ACCOUNT, "id", financialAccountId)
 

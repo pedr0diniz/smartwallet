@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
+import org.springframework.dao.DataIntegrityViolationException
 import java.math.BigDecimal
 
 @Entity
@@ -36,7 +37,7 @@ data class FinancialAccountEntity(
 ) {
 
     fun toDomain() = FinancialAccount(
-        id = id,
+        id = id ?: throw DataIntegrityViolationException("Entity has no ID"),
         institution = institution ?: "",
         balance = balance ?: BigDecimal.ZERO,
         overdraft = overdraft ?: BigDecimal.ZERO,
@@ -44,7 +45,7 @@ data class FinancialAccountEntity(
     )
     companion object {
         fun fromDomain(financialAccount: FinancialAccount?) = FinancialAccountEntity(
-            id = financialAccount?.id,
+            id = if (financialAccount?.id == 0L) null else financialAccount?.id,
             institution = financialAccount?.institution,
             balance = financialAccount?.balance,
             overdraft = financialAccount?.overdraft,

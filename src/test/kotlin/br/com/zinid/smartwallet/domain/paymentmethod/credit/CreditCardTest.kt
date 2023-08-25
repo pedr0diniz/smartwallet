@@ -58,10 +58,10 @@ internal class CreditCardTest {
         val monthlyExpensesValue = creditCard.getMonthlyExpensesValue()
 
         val ongoingInstallmentsValue = creditCard.expenses
-            ?.getOngoingInstallmentsValue(creditCard.previousInvoiceClosingDate) ?: BigDecimal.ZERO
+            .getOngoingInstallmentsValue(creditCard.previousInvoiceClosingDate)
 
         val currentMonthInstallmentsValue =
-            creditCard.expenses!!.getCurrentMonthInstallmentsAsExpenses().sumOf { it.price }
+            creditCard.expenses.getCurrentMonthInstallmentsAsExpenses().sumOf { it.price }
 
         val calculatedValue = creditCard.cardLimit
             .minus(monthlyExpensesValue)

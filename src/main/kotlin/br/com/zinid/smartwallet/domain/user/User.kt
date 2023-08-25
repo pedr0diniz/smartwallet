@@ -3,12 +3,12 @@ package br.com.zinid.smartwallet.domain.user
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 
 data class User(
-    val id: Long? = null,
+    val id: Long = 0L,
     val firstname: String,
     val lastname: String,
     val email: String,
     val phone: String,
-    val financialAccounts: List<FinancialAccount>? = listOf()
+    val financialAccounts: List<FinancialAccount> = listOf()
 ) {
     companion object {
         fun createBlank() = User(

@@ -77,7 +77,7 @@ internal class FindDebitPaymentMethodAdapterTest {
         val debitPaymentMethodEntity = DebitPaymentMethodEntity.fromDomain(debitPaymentMethod)
         val debitExpenses = DebitExpenseFixtures.getDebitExpenseList(debitPaymentMethod)
 
-        val financialAccountId = debitPaymentMethod.financialAccount.id!!
+        val financialAccountId = debitPaymentMethod.financialAccount.id
 
         every { debitPaymentMethodRepository.findByFinancialAccountId(financialAccountId) } returns listOf(debitPaymentMethodEntity)
         every { findDebitExpenseAdapter.findByDebitPaymentMethodId(debitPaymentMethodEntity.id!!) } returns debitExpenses
@@ -97,7 +97,7 @@ internal class FindDebitPaymentMethodAdapterTest {
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod().copy(id = debitPaymentMethodId)
         val debitPaymentMethodEntity = DebitPaymentMethodEntity.fromDomain(debitPaymentMethod)
 
-        val financialAccountId = debitPaymentMethod.financialAccount.id!!
+        val financialAccountId = debitPaymentMethod.financialAccount.id
 
         every { debitPaymentMethodRepository.findByFinancialAccountId(financialAccountId) } returns listOf(debitPaymentMethodEntity)
         every { findDebitExpenseAdapter.findByDebitPaymentMethodId(debitPaymentMethodEntity.id!!) } returns emptyList()

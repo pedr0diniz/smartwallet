@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
+import org.springframework.dao.DataIntegrityViolationException
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -32,18 +33,18 @@ data class CreditCardEntity(
     val financialAccount: FinancialAccountEntity? = null,
 ) {
     fun toDomain(creditExpenses: List<CreditExpense>? = emptyList()) = CreditCard(
-        id = id,
+        id = id ?: throw DataIntegrityViolationException("Entity has no ID"),
         last4Digits = last4Digits ?: "",
         expirationDate = expirationDate ?: LocalDate.now(),
         cardLimit = cardLimit ?: BigDecimal.ZERO,
         invoiceDueDayOfMonth = invoiceDueDayOfMonth ?: 1,
         financialAccount = financialAccount?.toDomain() ?: FinancialAccount.createBlank(),
-        expenses = creditExpenses
+        expenses = creditExpenses ?: emptyList()
     )
 
     companion object {
         fun fromDomain(creditCard: CreditCard?) = CreditCardEntity(
-            id = creditCard?.id,
+            id = if (creditCard?.id == 0L) null else creditCard?.id,
             last4Digits = creditCard?.last4Digits,
             expirationDate = creditCard?.expirationDate,
             cardLimit = creditCard?.cardLimit,

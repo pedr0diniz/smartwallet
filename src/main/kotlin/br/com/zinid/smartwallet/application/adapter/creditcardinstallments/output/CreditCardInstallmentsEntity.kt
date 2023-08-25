@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
+import org.springframework.dao.DataIntegrityViolationException
 import java.math.BigDecimal
 
 @Entity
@@ -34,7 +35,7 @@ data class CreditCardInstallmentsEntity(
 
     fun toDomain(): CreditCardInstallments {
         val creditCardInstallments = CreditCardInstallments(
-            id = id,
+            id = id ?: throw DataIntegrityViolationException("Entity has no ID"),
             numberOfMonths = numberOfMonths ?: 0,
             totalValue = totalValue ?: BigDecimal.ZERO,
             firstInstallmentValue = firstInstallmentValue ?: BigDecimal.ZERO,
@@ -48,7 +49,7 @@ data class CreditCardInstallmentsEntity(
 
     companion object {
         fun fromDomain(creditCardInstallments: CreditCardInstallments?) = CreditCardInstallmentsEntity(
-            id = creditCardInstallments?.id,
+            id = if (creditCardInstallments?.id == 0L) null else creditCardInstallments?.id,
             numberOfMonths = creditCardInstallments?.numberOfMonths,
             totalValue = creditCardInstallments?.totalValue,
             firstInstallmentValue = creditCardInstallments?.firstInstallmentValue,

@@ -28,12 +28,12 @@ data class DebitExpenseRequest(
     val debitPaymentMethodId: Long,
 ) {
     fun toDomain() = DebitExpense(
-        id = null,
         content = content,
         date = date ?: LocalDate.now(),
         price = price,
         essential = essential,
         monthlySubscription = monthlySubscription,
+        tag = tag?.uppercase(),
         paymentMethod = DebitPaymentMethod.createBlankFromId(debitPaymentMethodId)
     )
 }

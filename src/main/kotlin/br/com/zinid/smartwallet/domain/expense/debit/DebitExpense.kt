@@ -8,7 +8,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 data class DebitExpense(
-    override val id: Long? = null,
+    override val id: Long = 0L,
     override val content: String,
     override val date: LocalDate,
     override val price: BigDecimal,

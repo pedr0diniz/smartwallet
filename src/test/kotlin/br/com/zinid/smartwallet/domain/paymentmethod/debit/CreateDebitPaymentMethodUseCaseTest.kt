@@ -26,7 +26,7 @@ internal class CreateDebitPaymentMethodUseCaseTest {
     fun `should find financial account and create debit payment method`() {
         val financialAccount = FinancialAccountFixtures.getFinancialAccount()
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
-        val financialAccountId = financialAccount.id!!
+        val financialAccountId = financialAccount.id
 
         every {
             findFinancialAccountAdapter.findById(financialAccountId)
@@ -43,7 +43,7 @@ internal class CreateDebitPaymentMethodUseCaseTest {
     fun `should not find financial account and not create debit payment method`() {
         val financialAccount = FinancialAccountFixtures.getFinancialAccount()
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod(financialAccount)
-        val financialAccountId = financialAccount.id!!
+        val financialAccountId = financialAccount.id
 
         every { findFinancialAccountAdapter.findById(financialAccountId) } returns null
 

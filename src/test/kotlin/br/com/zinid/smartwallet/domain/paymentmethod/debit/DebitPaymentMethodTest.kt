@@ -107,7 +107,7 @@ internal class DebitPaymentMethodTest {
 
     @Test
     fun `should not find any monthly expense`() {
-        val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod().copy(expenses = null)
+        val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod().copy(expenses = emptyList())
 
         assertTrue(debitPaymentMethod.getMonthlyExpenses().isEmpty())
     }

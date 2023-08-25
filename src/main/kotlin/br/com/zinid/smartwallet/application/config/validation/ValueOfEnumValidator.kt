@@ -14,7 +14,7 @@ class ValueOfEnumValidator : ConstraintValidator<ValueOfEnum, String?> {
         if (value != null) {
             return acceptedValues!!
                 .contains(
-                    value.toString().trim() { it <= ' ' }
+                    value.toString().trim { it <= ' ' }
                         .uppercase(Locale.getDefault())
                 )
         }

@@ -33,7 +33,7 @@ data class CreditCardResponse(
             previousInvoiceDueDate = creditCard.previousInvoiceDueDate,
             currentInvoiceClosingDate = creditCard.currentInvoiceClosingDate,
             currentInvoiceDueDate = creditCard.currentInvoiceDueDate,
-            expenses = creditCard.expenses?.map { CreditExpenseResponse.fromDomain(it) } ?: emptyList()
+            expenses = creditCard.expenses.map { CreditExpenseResponse.fromDomain(it) }
         )
     }
 }

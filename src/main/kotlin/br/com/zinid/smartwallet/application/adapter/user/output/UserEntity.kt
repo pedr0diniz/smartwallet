@@ -10,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
+import org.springframework.dao.DataIntegrityViolationException
 
 @Entity
 @Table(name = "\"user\"")
@@ -31,7 +32,7 @@ data class UserEntity(
 ) {
 
     fun toDomain() = User(
-        id = id,
+        id = id ?: throw DataIntegrityViolationException("Entity has no ID"),
         firstname = firstname ?: "",
         lastname = lastname ?: "",
         email = email ?: "",
@@ -39,7 +40,7 @@ data class UserEntity(
     )
     companion object {
         fun fromDomain(user: User?) = UserEntity(
-            id = user?.id,
+            id = if (user?.id == 0L) null else user?.id,
             firstname = user?.firstname,
             lastname = user?.lastname,
             email = user?.email,

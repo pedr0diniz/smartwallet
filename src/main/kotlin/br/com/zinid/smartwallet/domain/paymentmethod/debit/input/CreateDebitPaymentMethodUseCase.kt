@@ -12,7 +12,7 @@ class CreateDebitPaymentMethodUseCase(
 ) : CreateDebitPaymentMethodInputPort {
 
     override fun execute(debitPaymentMethod: DebitPaymentMethod): DebitPaymentMethod {
-        val financialAccountId = debitPaymentMethod.financialAccount.id!!
+        val financialAccountId = debitPaymentMethod.financialAccount.id
         val possibleFinancialAccount = findFinancialAccountAdapter.findById(financialAccountId)
             ?: throw NotFoundException.buildFrom(FINANCIAL_ACCOUNT, "id", financialAccountId)
 

@@ -15,7 +15,7 @@ data class DebitPaymentMethodResponse(
             DebitPaymentMethodResponse(
                 id = debitPaymentMethod.id,
                 type = debitPaymentMethod.type.name,
-                expenses = debitPaymentMethod.expenses?.map { DebitExpenseResponse.fromDomain(it) } ?: emptyList()
+                expenses = debitPaymentMethod.expenses.map { DebitExpenseResponse.fromDomain(it) }
             )
     }
 }

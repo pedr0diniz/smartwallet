@@ -6,10 +6,10 @@ import br.com.zinid.smartwallet.domain.user.User
 import java.math.BigDecimal
 
 data class FinancialAccount(
-    val id: Long? = null,
+    val id: Long = 0L,
     val institution: String,
     var balance: BigDecimal,
-    val paymentMethods: List<PaymentMethod>? = listOf(),
+    val paymentMethods: List<PaymentMethod> = listOf(),
     var overdraft: BigDecimal,
     val user: User
 ) {

@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
+import org.springframework.dao.DataIntegrityViolationException
 
 @Entity
 @Table(name = "debit_payment_method")
@@ -28,15 +29,15 @@ data class DebitPaymentMethodEntity(
     val financialAccount: FinancialAccountEntity? = null,
 ) {
     fun toDomain(debitExpenses: List<DebitExpense>? = emptyList()) = DebitPaymentMethod(
-        id = id,
+        id = id ?: throw DataIntegrityViolationException("Entity has no ID"),
         type = PaymentType.valueOf(type!!),
         financialAccount = financialAccount?.toDomain() ?: FinancialAccount.createBlank(),
-        expenses = debitExpenses
+        expenses = debitExpenses ?: emptyList()
     )
 
     companion object {
         fun fromDomain(debitPaymentMethod: DebitPaymentMethod?) = DebitPaymentMethodEntity(
-            id = debitPaymentMethod?.id,
+            id = if (debitPaymentMethod?.id == 0L) null else debitPaymentMethod?.id,
             type = debitPaymentMethod?.type?.name,
             financialAccount = FinancialAccountEntity.fromDomain(debitPaymentMethod?.financialAccount)
         )

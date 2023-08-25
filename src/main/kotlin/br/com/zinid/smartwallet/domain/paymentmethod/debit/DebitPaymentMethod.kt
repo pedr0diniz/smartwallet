@@ -10,10 +10,10 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 data class DebitPaymentMethod(
-    override val id: Long? = null,
+    override val id: Long = 0L,
     override val type: PaymentType,
     override val financialAccount: FinancialAccount,
-    override val expenses: List<DebitExpense>? = listOf()
+    override val expenses: List<DebitExpense> = listOf()
 ) : PaymentMethod {
 
     override fun getRemainingSpendableValue(): BigDecimal =
@@ -23,15 +23,13 @@ data class DebitPaymentMethod(
         financialAccount.hasBalance(expense.price)
 
     override fun getMonthlyExpenses(): List<DebitExpense> =
-        expenses?.filter {
-            it.date.isAfter(LocalDate.now().withDayOfMonth(1))
-        } ?: emptyList()
+        expenses.filter { it.date.isAfter(LocalDate.now().withDayOfMonth(1)) }
 
     override fun getMonthlyExpensesValue(): BigDecimal =
         getMonthlyExpenses().sumOf { it.price }
 
     override fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<DebitExpense> =
-        expenses?.filterWithinDateRange(startDate, endDate) ?: emptyList()
+        expenses.filterWithinDateRange(startDate, endDate)
 
     override fun getExpensesValueWithinDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal =
         getExpensesWithinDateRange(startDate, endDate).sumOf { it.price }

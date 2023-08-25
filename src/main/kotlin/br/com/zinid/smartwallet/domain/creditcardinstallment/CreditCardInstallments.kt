@@ -9,7 +9,7 @@ import java.math.RoundingMode
 import java.time.LocalDate
 
 data class CreditCardInstallments(
-    val id: Long? = null,
+    val id: Long = 0L,
     val numberOfMonths: Int,
     val totalValue: BigDecimal,
     val firstInstallmentValue: BigDecimal,

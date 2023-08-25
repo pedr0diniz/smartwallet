@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
+import org.springframework.dao.DataIntegrityViolationException
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -36,7 +37,7 @@ data class CreditExpenseEntity(
 ) {
 
     fun toDomain() = CreditExpense(
-        id = id,
+        id = id ?: throw DataIntegrityViolationException("Entity has no ID"),
         content = content ?: "",
         date = date ?: LocalDate.now(),
         price = price ?: BigDecimal.ZERO,
@@ -49,7 +50,7 @@ data class CreditExpenseEntity(
 
     companion object {
         fun fromDomain(creditExpense: CreditExpense?) = CreditExpenseEntity(
-            id = creditExpense?.id,
+            id = if (creditExpense?.id == 0L) null else creditExpense?.id,
             content = creditExpense?.content,
             date = creditExpense?.date,
             price = creditExpense?.price,

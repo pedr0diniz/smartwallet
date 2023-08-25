@@ -12,7 +12,7 @@ class CreateFinancialAccountUseCase(
 ) : CreateFinancialAccountInputPort {
 
     override fun execute(financialAccount: FinancialAccount): FinancialAccount {
-        val userId = financialAccount.user.id!!
+        val userId = financialAccount.user.id
         val possibleUser = findUserAdapter.findById(userId)
             ?: throw NotFoundException.buildFrom(USER, "id", userId)
 

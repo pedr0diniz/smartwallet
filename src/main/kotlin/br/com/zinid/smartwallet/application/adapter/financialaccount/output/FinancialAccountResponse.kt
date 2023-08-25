@@ -16,7 +16,7 @@ data class FinancialAccountResponse(
             id = financialAccount.id,
             institution = financialAccount.institution,
             balance = financialAccount.balance,
-            paymentMethods = financialAccount.paymentMethods?.map { PaymentMethodResponse.fromDomain(it) },
+            paymentMethods = financialAccount.paymentMethods.map { PaymentMethodResponse.fromDomain(it) },
             overdraft = financialAccount.overdraft
         )
     }
