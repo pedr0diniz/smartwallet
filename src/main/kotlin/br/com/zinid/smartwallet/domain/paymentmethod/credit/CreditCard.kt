@@ -4,7 +4,7 @@ import br.com.zinid.smartwallet.domain.exception.ExpiredCardException
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.expense.credit.CreditExpense
 import br.com.zinid.smartwallet.domain.expense.credit.filterWithinDateRange
-import br.com.zinid.smartwallet.domain.expense.credit.getCurrentMonthInstallmentsAsExpenses
+import br.com.zinid.smartwallet.domain.expense.credit.getInstallmentsWithinDateRangeAsExpenses
 import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsValue
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
@@ -14,6 +14,7 @@ import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
 import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.YearMonth
 
 data class CreditCard(
     override val id: Long = 0L,
@@ -27,30 +28,47 @@ data class CreditCard(
 ) : PaymentMethod {
 
     override val type: PaymentType = PaymentType.CREDIT
+    val delayBetweenClosingAndDueDays: Int = DEFAULT_DELAY_BETWEEN_CLOSING_AND_DUE_DAYS.toInt()
 
-    val previousInvoiceDueDate: LocalDate = getPreviousDueDate()
-    val currentInvoiceDueDate: LocalDate = getCurrentDueDate()
+    val previousInvoiceDueDate: LocalDate = getPreviousDueDate(today)
+    val currentInvoiceDueDate: LocalDate = getCurrentDueDate(today)
 
-    val previousInvoiceClosingDate: LocalDate = getPreviousClosingDate()
-    val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate()
+    val previousInvoiceClosingDate: LocalDate = getPreviousClosingDate(today)
+    val currentInvoiceClosingDate: LocalDate = getCurrentClosingDate(today)
 
     override fun getRemainingSpendableValue(): BigDecimal = cardLimit
-        .minus(getMonthlyExpensesValue())
+        .minus(getMonthlyExpensesValue(YearMonth.now()))
         .minus(getOngoingInstallmentsValue())
-        .add(getCurrentMonthInstallmentsAsExpenses().sumOf { it.price })
+        .add(
+            getInstallmentsWithinDateRangeAsExpenses(
+                previousInvoiceClosingDate,
+                currentInvoiceClosingDate
+            ).sumOf { it.price }
+        )
 
     override fun canPurchase(expense: Expense): Boolean =
         getRemainingSpendableValue().minus(expense.price) >= BigDecimal.ZERO && hasNotExpiredByDateOf(expense)
 
-    override fun getMonthlyExpenses(): List<Expense> =
-        getExpensesWithinDateRange(previousInvoiceClosingDate, currentInvoiceClosingDate)
+    override fun getMonthlyExpenses(yearMonth: YearMonth?): List<Expense> {
+        val (previousClosingDate, currentClosingDate) = if (yearMonth == null || yearMonth == YearMonth.now()) {
+            Pair(previousInvoiceClosingDate, currentInvoiceClosingDate)
+        } else {
+            Pair(
+                getPreviousClosingDate(LocalDate.of(yearMonth.year, yearMonth.month, today.dayOfMonth)),
+                getCurrentClosingDate(LocalDate.of(yearMonth.year, yearMonth.month, today.dayOfMonth))
+            )
+        }
 
-    override fun getMonthlyExpensesValue(): BigDecimal = getMonthlyExpenses().sumOf { it.price }
+        return getExpensesWithinDateRange(previousClosingDate, currentClosingDate)
+    }
+
+    override fun getMonthlyExpensesValue(yearMonth: YearMonth?): BigDecimal =
+        getMonthlyExpenses(yearMonth).sumOf { it.price }
 
     override fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> {
         val creditExpenses = mutableListOf<CreditExpense>()
         creditExpenses.addAll(expenses.filterWithinDateRange(startDate, endDate))
-        creditExpenses.addAll(getCurrentMonthInstallmentsAsExpenses())
+        creditExpenses.addAll(getInstallmentsWithinDateRangeAsExpenses(startDate, endDate))
 
         return creditExpenses
     }
@@ -67,29 +85,43 @@ data class CreditCard(
     private fun getOngoingInstallmentsValue(): BigDecimal =
         expenses.getOngoingInstallmentsValue(previousInvoiceClosingDate)
 
-    private fun getCurrentMonthInstallmentsAsExpenses(): List<CreditExpense> =
-        expenses.getCurrentMonthInstallmentsAsExpenses()
+    private fun getInstallmentsWithinDateRangeAsExpenses(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<CreditExpense> = expenses.getInstallmentsWithinDateRangeAsExpenses(startDate, endDate)
 
-    private fun getPreviousDueDate(): LocalDate {
-        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
-            true -> getDateWithValidDay(today.minusMonths(1), invoiceDueDayOfMonth)
-            false -> getDateWithValidDay(today, invoiceDueDayOfMonth)
+    private fun getPreviousDueDate(givenDate: LocalDate?): LocalDate {
+        val referenceDate = givenDate ?: today
+
+        return when (invoiceDueDayOfMonth > referenceDate.dayOfMonth) {
+            true -> getDateWithValidDay(referenceDate.minusMonths(1), invoiceDueDayOfMonth)
+            false -> getDateWithValidDay(referenceDate, invoiceDueDayOfMonth)
         }
     }
 
-    private fun getCurrentDueDate(): LocalDate {
-        return when (invoiceDueDayOfMonth > today.dayOfMonth) {
-            true -> getDateWithValidDay(today, invoiceDueDayOfMonth)
-            false -> getDateWithValidDay(today.plusMonths(1), invoiceDueDayOfMonth)
+    private fun getCurrentDueDate(givenDate: LocalDate?): LocalDate {
+        val referenceDate = givenDate ?: today
+
+        return when (invoiceDueDayOfMonth > referenceDate.dayOfMonth) {
+            true -> getDateWithValidDay(referenceDate, invoiceDueDayOfMonth)
+            false -> getDateWithValidDay(referenceDate.plusMonths(1), invoiceDueDayOfMonth)
         }
     }
 
-    private fun getPreviousClosingDate(): LocalDate {
-        val invoiceDueDate = when (todayIsBetweenClosingDayAndDueDay()) {
-            true -> currentInvoiceDueDate
-            false -> previousInvoiceDueDate
+    private fun getPreviousClosingDate(givenDate: LocalDate?): LocalDate {
+        val referenceDate = givenDate ?: today
+
+        val (currentDueDate, previousDueDate) = if (referenceDate == today) {
+            Pair(currentInvoiceDueDate, previousInvoiceDueDate)
+        } else {
+            Pair(getCurrentDueDate(referenceDate), getPreviousDueDate(referenceDate))
         }
-        val invoiceClosingDay = invoiceDueDate.minusDays(DELAY_BETWEEN_CLOSING_AND_DUE_DAYS).dayOfMonth
+
+        val invoiceDueDate = when (givenDayIsBetweenClosingDayAndDueDay(referenceDate)) {
+            true -> currentDueDate
+            false -> previousDueDate
+        }
+        val invoiceClosingDay = invoiceDueDate.minusDays(delayBetweenClosingAndDueDays.toLong()).dayOfMonth
 
         return when (invoiceClosingDay > invoiceDueDate.dayOfMonth) {
             true -> getDateWithValidDay(invoiceDueDate.minusMonths(1), invoiceClosingDay)
@@ -97,12 +129,17 @@ data class CreditCard(
         }
     }
 
-    private fun getCurrentClosingDate(): LocalDate {
-        val invoiceDueDate = when (todayIsBetweenClosingDayAndDueDay()) {
-            true -> currentInvoiceDueDate.plusMonths(1)
-            false -> currentInvoiceDueDate
+    private fun getCurrentClosingDate(givenDate: LocalDate?): LocalDate {
+        val referenceDate = givenDate ?: today
+
+        val currentDueDate = if (referenceDate == today) currentInvoiceDueDate
+        else getCurrentDueDate(referenceDate)
+
+        val invoiceDueDate = when (givenDayIsBetweenClosingDayAndDueDay(referenceDate)) {
+            true -> currentDueDate.plusMonths(1)
+            false -> currentDueDate
         }
-        val invoiceClosingDay = invoiceDueDate.minusDays(DELAY_BETWEEN_CLOSING_AND_DUE_DAYS).dayOfMonth
+        val invoiceClosingDay = invoiceDueDate.minusDays(delayBetweenClosingAndDueDays.toLong()).dayOfMonth
 
         return when (invoiceClosingDay > invoiceDueDate.dayOfMonth) {
             true -> getDateWithValidDay(invoiceDueDate.minusMonths(1), invoiceClosingDay)
@@ -110,18 +147,19 @@ data class CreditCard(
         }
     }
 
-    private fun todayIsBetweenClosingDayAndDueDay(): Boolean =
-        currentInvoiceDueDate.minusDays(DELAY_BETWEEN_CLOSING_AND_DUE_DAYS).isBeforeOrEqual(today)
+    private fun givenDayIsBetweenClosingDayAndDueDay(givenDate: LocalDate): Boolean =
+        currentInvoiceDueDate.minusDays(delayBetweenClosingAndDueDays.toLong()).isBeforeOrEqual(givenDate)
 
     companion object {
-        private const val DELAY_BETWEEN_CLOSING_AND_DUE_DAYS = 10L
+        private const val DEFAULT_DELAY_BETWEEN_CLOSING_AND_DUE_DAYS = 10L
         fun createBlank() = CreditCard(
             id = 0L,
             last4Digits = "",
             expirationDate = LocalDate.MAX,
             cardLimit = BigDecimal.valueOf(Double.MAX_VALUE),
             financialAccount = FinancialAccount.createBlank(),
-            invoiceDueDayOfMonth = 11
+            invoiceDueDayOfMonth = 11,
+            today = LocalDate.now()
         )
 
         fun createBlankFromId(id: Long) = CreditCard(
@@ -130,7 +168,8 @@ data class CreditCard(
             expirationDate = LocalDate.MAX,
             cardLimit = BigDecimal.valueOf(Double.MAX_VALUE),
             financialAccount = FinancialAccount.createBlank(),
-            invoiceDueDayOfMonth = 11
+            invoiceDueDayOfMonth = 11,
+            today = LocalDate.now()
         )
 
         private const val EXPIRED_CARD_MESSAGE =

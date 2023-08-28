@@ -18,6 +18,8 @@ data class CreditCardInstallments(
     val installments: List<CreditCardInstallment>? = listOf(),
     val expense: CreditExpense
 ) {
+    private val delayBetweenClosingAndDueDays = expense.paymentMethod.delayBetweenClosingAndDueDays
+
     fun getOngoingInstallments(lastClosingDate: LocalDate): List<CreditCardInstallment> = installments
         ?.filter {
             it.dueDate > lastClosingDate
@@ -33,13 +35,13 @@ data class CreditCardInstallments(
 
     fun buildInstallmentsList(): List<CreditCardInstallment> {
         val installments: MutableList<CreditCardInstallment> = mutableListOf()
-        installments.add(
-            CreditCardInstallment(
-                dueDate = getDueDate(expense.date),
-                installmentValue = firstInstallmentValue,
-                content = expense.content
-            )
+        val firstInstallment = CreditCardInstallment(
+            dueDate = getDueDate(expense.date),
+            installmentValue = firstInstallmentValue,
+            content = expense.content
         )
+
+        installments.add(firstInstallment)
 
         for (i in 2..numberOfMonths) {
             installments.add(
@@ -53,14 +55,29 @@ data class CreditCardInstallments(
         return installments
     }
 
-    private fun getDueDate(currentDate: LocalDate): LocalDate {
-        val dueDay = invoiceDueDayOfMonth
+    private fun getDueDate(expenseDate: LocalDate): LocalDate {
 
-        if (dueDay > currentDate.dayOfMonth) {
-            return getDateWithValidDay(currentDate, dueDay)
+        // Dia de fechamento está no fim do mês e vencimento no começo do mês
+        if (expenseDate.dayOfMonth + delayBetweenClosingAndDueDays > expenseDate.lengthOfMonth()) {
+
+            // Compra foi feita entre o período de fechamento e o de vencimento
+            return if (expenseDate.plusDays(delayBetweenClosingAndDueDays.toLong()).dayOfMonth > invoiceDueDayOfMonth) {
+                getDateWithValidDay(expenseDate.plusMonths(2), invoiceDueDayOfMonth)
+            } else {
+                // Compra foi feita antes do fechamento
+                getDateWithValidDay(expenseDate.plusMonths(1), invoiceDueDayOfMonth)
+            }
         }
 
-        return getDateWithValidDay(currentDate.plusMonths(1), dueDay)
+        // Dia de fechamento e vencimento estão no mesmo mês.
+        // Dia da compra + delay entre vencimento e fechamento é maior que o dia do vencimento.
+        return if (expenseDate.dayOfMonth + delayBetweenClosingAndDueDays > invoiceDueDayOfMonth) {
+            getDateWithValidDay(expenseDate.plusMonths(1), invoiceDueDayOfMonth)
+        } else {
+            // Dia de fechamento e vencimento estão no mesmo mês.
+            // Dia da compra + delay entre vencimento e fechamento é menor que o dia do vencimento.
+            getDateWithValidDay(expenseDate, invoiceDueDayOfMonth)
+        }
     }
 
     companion object {

@@ -2,7 +2,7 @@ package br.com.zinid.smartwallet.domain.paymentmethod.credit
 
 import br.com.zinid.smartwallet.domain.exception.ExpiredCardException
 import br.com.zinid.smartwallet.domain.exception.InvalidDateRangeException
-import br.com.zinid.smartwallet.domain.expense.credit.getCurrentMonthInstallmentsAsExpenses
+import br.com.zinid.smartwallet.domain.expense.credit.getInstallmentsWithinDateRangeAsExpenses
 import br.com.zinid.smartwallet.domain.expense.credit.getOngoingInstallmentsValue
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.utils.DateHelper.getDateWithValidDay
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.YearMonth
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -55,13 +56,16 @@ internal class CreditCardTest {
         )
         val remainingSpendableValue = creditCard.getRemainingSpendableValue()
 
-        val monthlyExpensesValue = creditCard.getMonthlyExpensesValue()
+        val monthlyExpensesValue = creditCard.getMonthlyExpensesValue(YearMonth.now())
 
         val ongoingInstallmentsValue = creditCard.expenses
             .getOngoingInstallmentsValue(creditCard.previousInvoiceClosingDate)
 
         val currentMonthInstallmentsValue =
-            creditCard.expenses.getCurrentMonthInstallmentsAsExpenses().sumOf { it.price }
+            creditCard.expenses.getInstallmentsWithinDateRangeAsExpenses(
+                creditCard.previousInvoiceDueDate,
+                creditCard.currentInvoiceDueDate
+            ).sumOf { it.price }
 
         val calculatedValue = creditCard.cardLimit
             .minus(monthlyExpensesValue)
@@ -125,7 +129,7 @@ internal class CreditCardTest {
         )
 
         assertEquals(3, expenses.size)
-        assertEquals(expenses.sumOf { it.price }, creditCard.getMonthlyExpensesValue())
+        assertEquals(expenses.sumOf { it.price }, creditCard.getMonthlyExpensesValue(YearMonth.now()))
     }
 
     @Test
@@ -154,7 +158,7 @@ internal class CreditCardTest {
         )
 
         val expectedValue =
-            CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard).creditCardInstallments!!.installmentValue
+            CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard).creditCardInstallments!!.firstInstallmentValue
                 .add(CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard).price)
                 .add(CreditExpenseFixtures.getSubscriptionCreditExpense(creditCard).price)
 
