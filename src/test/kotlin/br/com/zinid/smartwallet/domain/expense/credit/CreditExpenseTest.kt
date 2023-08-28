@@ -31,6 +31,7 @@ internal class CreditExpenseTest {
         assertFalse(creditExpense.monthlySubscription!!)
         assertEquals(CreditCard.createBlank(), creditExpense.paymentMethod)
     }
+
     @Test
     fun `should get payment type`() {
         val creditExpense = CreditExpense.createBlank()
@@ -86,17 +87,41 @@ internal class CreditExpenseTest {
     }
 
     @Test
-    fun `should get current month installment as expense`() {
+    fun `should get current month installment as expense with early month closing date`() {
         val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard)
 
-        val currentInstallmentAsExpense = creditExpense.getCurrentMonthInstallmentAsExpense()
+        val currentInstallmentAsExpense = creditExpense.getInstallmentWithinDateRangeAsExpense()
         val expectedInstallment = CreditCardInstallments.createFromExpenseAndCreditCard(creditExpense, creditCard)
 
         val expectedExpense = CreditExpense(
-            content = "Parcela 2 / 10 de ${creditExpense.content}",
+            content = "Parcela 1 / 10 de ${creditExpense.content}",
             date = creditExpense.date,
-            price = expectedInstallment.installmentValue,
+            price = expectedInstallment.firstInstallmentValue,
+            paymentMethod = creditExpense.paymentMethod,
+            essential = creditExpense.essential,
+            monthlySubscription = creditExpense.monthlySubscription
+        )
+
+        assertNotNull(currentInstallmentAsExpense)
+        assertEquals(expectedExpense, currentInstallmentAsExpense)
+    }
+
+    @Test
+    fun `should get current month installment as expense with late month closing date`() {
+        val creditCard = CreditCardFixtures.getCreditCard().copy(
+            today = today.withDayOfMonth(1),
+            invoiceDueDayOfMonth = 5
+        )
+        val creditExpense = CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard)
+
+        val currentInstallmentAsExpense = creditExpense.getInstallmentWithinDateRangeAsExpense()
+        val expectedInstallment = CreditCardInstallments.createFromExpenseAndCreditCard(creditExpense, creditCard)
+
+        val expectedExpense = CreditExpense(
+            content = "Parcela 1 / 10 de ${creditExpense.content}",
+            date = creditExpense.date,
+            price = expectedInstallment.firstInstallmentValue,
             paymentMethod = creditExpense.paymentMethod,
             essential = creditExpense.essential,
             monthlySubscription = creditExpense.monthlySubscription
@@ -111,7 +136,7 @@ internal class CreditExpenseTest {
         val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpense = CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard)
 
-        assertNull(creditExpense.getCurrentMonthInstallmentAsExpense())
+        assertNull(creditExpense.getInstallmentWithinDateRangeAsExpense())
     }
 
     @Test
@@ -160,6 +185,22 @@ internal class CreditExpenseTest {
     }
 
     @Test
+    fun `should filter by tag and return results`() {
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
+        val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard).map { it.copy(tag = "TESTE") }
+
+        assertTrue(creditExpenses.filterByTag("TESTE").isNotEmpty())
+    }
+
+    @Test
+    fun `should filter by tag and return no results`() {
+        val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
+        val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard)
+
+        assertTrue(creditExpenses.filterByTag("TESTE").isEmpty())
+    }
+
+    @Test
     fun `should get ongoing installments`() {
         val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = CreditExpenseFixtures.getCreditExpenseList(creditCard)
@@ -195,9 +236,12 @@ internal class CreditExpenseTest {
         val creditCard = CreditCardFixtures.getCreditCard().copy(today = today.withDayOfMonth(12))
         val creditExpenses = listOf(CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard))
 
-        val expectedExpense = creditExpenses.first().getCurrentMonthInstallmentAsExpense()
+        val expectedExpense = creditExpenses.first().getInstallmentWithinDateRangeAsExpense()
 
-        val installmentsAsExpenses = creditExpenses.getCurrentMonthInstallmentsAsExpenses()
+        val installmentsAsExpenses = creditExpenses.getInstallmentsWithinDateRangeAsExpenses(
+            creditCard.previousInvoiceClosingDate,
+            creditCard.currentInvoiceClosingDate
+        )
 
         assertEquals(expectedExpense, installmentsAsExpenses.first())
     }
@@ -210,6 +254,11 @@ internal class CreditExpenseTest {
             CreditExpenseFixtures.getSubscriptionCreditExpense(creditCard)
         )
 
-        assertTrue(creditExpenses.getCurrentMonthInstallmentsAsExpenses().isEmpty())
+        assertTrue(
+            creditExpenses.getInstallmentsWithinDateRangeAsExpenses(
+                creditCard.previousInvoiceClosingDate,
+                creditCard.currentInvoiceClosingDate
+            ).isEmpty()
+        )
     }
 }

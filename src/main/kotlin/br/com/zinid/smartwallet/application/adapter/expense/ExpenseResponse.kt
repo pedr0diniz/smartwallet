@@ -35,9 +35,9 @@ data class MonthlyExpensesResponse(
     val expenses: List<ExpenseResponse>
 ) {
     companion object {
-        fun fromExpenseList(expenses: List<ExpenseResponse>) =
+        fun fromExpenseList(expenses: List<ExpenseResponse>, yearMonth: YearMonth? = null) =
             MonthlyExpensesResponse(
-                yearMonth = YearMonth.now(),
+                yearMonth = yearMonth ?: YearMonth.now(),
                 monthlyExpensesValue = expenses.sumOf { it.price },
                 expenses = expenses.sortedBy { it.date }
             )

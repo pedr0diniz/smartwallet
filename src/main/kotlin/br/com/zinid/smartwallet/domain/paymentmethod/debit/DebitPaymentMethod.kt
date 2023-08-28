@@ -6,8 +6,11 @@ import br.com.zinid.smartwallet.domain.expense.debit.filterWithinDateRange
 import br.com.zinid.smartwallet.domain.financialaccount.FinancialAccount
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
+import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
+import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.YearMonth
 
 data class DebitPaymentMethod(
     override val id: Long = 0L,
@@ -22,11 +25,17 @@ data class DebitPaymentMethod(
     override fun canPurchase(expense: Expense): Boolean =
         financialAccount.hasBalance(expense.price)
 
-    override fun getMonthlyExpenses(): List<DebitExpense> =
-        expenses.filter { it.date.isAfter(LocalDate.now().withDayOfMonth(1)) }
+    override fun getMonthlyExpenses(yearMonth: YearMonth?): List<Expense> {
+        val date = if (yearMonth == null) LocalDate.now().withDayOfMonth(1)
+        else LocalDate.of(yearMonth.year, yearMonth.month, 1)
 
-    override fun getMonthlyExpensesValue(): BigDecimal =
-        getMonthlyExpenses().sumOf { it.price }
+        return expenses.filter {
+            it.date.isAfterOrEqual(date) && it.date.isBeforeOrEqual(date.withDayOfMonth(date.lengthOfMonth()))
+        }
+    }
+
+    override fun getMonthlyExpensesValue(yearMonth: YearMonth?): BigDecimal =
+        getMonthlyExpenses(yearMonth).sumOf { it.price }
 
     override fun getExpensesWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<DebitExpense> =
         expenses.filterWithinDateRange(startDate, endDate)

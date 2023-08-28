@@ -50,6 +50,7 @@ object DebitExpenseFixtures {
         price = BigDecimal.valueOf(227.79),
         essential = true,
         monthlySubscription = false,
-        paymentMethod = DebitPaymentMethod.createBlankFromId(id)
+        paymentMethod = DebitPaymentMethod.createBlankFromId(id),
+        tag = "IPVA"
     )
 }

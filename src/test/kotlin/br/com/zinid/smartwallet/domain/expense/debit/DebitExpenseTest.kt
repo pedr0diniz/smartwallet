@@ -65,6 +65,23 @@ internal class DebitExpenseTest {
     }
 
     @Test
+    fun `should filter by tag and return results`() {
+        val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod()
+        val debitExpenses = DebitExpenseFixtures.getDebitExpenseList(debitPaymentMethod) +
+            DebitExpenseFixtures.getExpenseWithBlankPaymentMethod(1L)
+
+        assertTrue(debitExpenses.filterByTag("IPVA").isNotEmpty())
+    }
+
+    @Test
+    fun `should filter by tag and return no results`() {
+        val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod()
+        val debitExpenses = DebitExpenseFixtures.getDebitExpenseList(debitPaymentMethod)
+
+        assertTrue(debitExpenses.filterByTag("IPVA").isEmpty())
+    }
+
+    @Test
     fun `should get financial account`() {
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod()
         val debitExpense = DebitExpenseFixtures.getTelecomBillDebitExpense(debitPaymentMethod)

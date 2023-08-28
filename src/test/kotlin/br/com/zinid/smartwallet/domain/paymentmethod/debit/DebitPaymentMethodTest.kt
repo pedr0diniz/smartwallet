@@ -12,6 +12,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.YearMonth
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -90,7 +91,7 @@ internal class DebitPaymentMethodTest {
         )
 
         assertEquals(3, expenses.size)
-        assertEquals(expenses.sumOf { it.price }, debitPaymentMethod.getMonthlyExpensesValue())
+        assertEquals(expenses.sumOf { it.price }, debitPaymentMethod.getMonthlyExpensesValue(YearMonth.now()))
     }
 
     @Test
@@ -109,7 +110,7 @@ internal class DebitPaymentMethodTest {
     fun `should not find any monthly expense`() {
         val debitPaymentMethod = DebitPaymentMethodFixtures.getDebitPaymentMethod().copy(expenses = emptyList())
 
-        assertTrue(debitPaymentMethod.getMonthlyExpenses().isEmpty())
+        assertTrue(debitPaymentMethod.getMonthlyExpenses(YearMonth.now()).isEmpty())
     }
 
     @Test

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.YearMonth
 
 @RestController
 @RequestMapping("/users")
@@ -42,21 +43,28 @@ class UserController(
         val user = findUserUseCase.findById(userId) ?: return ResponseEntity.notFound().build() // TODO - error handling
         val expensesResponse = filterMonthlyExpenses(user.financialAccounts, queryParameters)
 
-        return ResponseEntity.ok(MonthlyExpensesResponse.fromExpenseList(expensesResponse))
+        return ResponseEntity.ok(expensesResponse)
     }
 
     private fun filterMonthlyExpenses(
         financialAccounts: List<FinancialAccount>,
         queryParameters: Map<String, String>
-    ): List<ExpenseResponse> {
+    ): MonthlyExpensesResponse {
         val paymentType = queryParameters["payment_type"]
+        val yearMonth = try {
+            YearMonth.parse(queryParameters["year_month"])
+        } catch (ex: Exception) {
+            YearMonth.now()
+        }
 
-        return financialAccounts
+        val expensesResponse = financialAccounts
             .asSequence()
             .map { filterPaymentMethods(it.paymentMethods, paymentType) }.flatten()
-            .map { filterExpenses(it.getMonthlyExpenses(), queryParameters) }.flatten()
+            .map { filterExpenses(it.getMonthlyExpenses(yearMonth), queryParameters) }.flatten() // TODO - FIX THIS!!!
             .map { ExpenseResponse.fromDomain(it) }
             .toList()
+
+        return MonthlyExpensesResponse.fromExpenseList(expensesResponse, yearMonth)
     }
 
     private fun filterPaymentMethods(paymentMethods: List<PaymentMethod>, paymentType: String?): List<PaymentMethod> {
