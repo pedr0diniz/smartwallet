@@ -52,12 +52,12 @@ data class CreditExpense(
 
         val installmentsList = creditCardInstallments?.installments
         val installmentMonth = installmentsList?.indexOf(possibleInstallment)?.plus(1)
-        val installmentDetailMessage = if (installmentMonth != null) "$installmentMonth / ${installmentsList.size} "
+        val installmentDetailMessage = if (installmentMonth != null) "$installmentMonth / ${installmentsList.size}"
         else ""
 
         if (possibleInstallment != null) {
             return CreditExpense(
-                content = "Parcela ${installmentDetailMessage}de $content",
+                content = "Parcela $installmentDetailMessage de $content",
                 date = date,
                 price = possibleInstallment.installmentValue,
                 paymentMethod = paymentMethod,
@@ -71,20 +71,9 @@ data class CreditExpense(
     }
 
     private fun getInstallmentWithinDateRange(
-        previousClosingDate: LocalDate,
-        currentClosingDate: LocalDate
-    ): CreditCardInstallment? =
-        creditCardInstallments?.getInstallmentsByPeriod(
-            extractDueDateFromClosingDate(previousClosingDate),
-            extractDueDateFromClosingDate(currentClosingDate)
-        )?.firstOrNull()
-
-    private fun extractDueDateFromClosingDate(closingDate: LocalDate): LocalDate =
-        if (closingDate.dayOfMonth <= paymentMethod.invoiceDueDayOfMonth) {
-            closingDate.withDayOfMonth(paymentMethod.invoiceDueDayOfMonth)
-        } else {
-            closingDate.plusMonths(1).withDayOfMonth(paymentMethod.invoiceDueDayOfMonth)
-        }
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): CreditCardInstallment? = creditCardInstallments?.getInstallmentsByPeriod(startDate, endDate)?.firstOrNull()
 
     companion object {
         fun createBlank() = CreditExpense(

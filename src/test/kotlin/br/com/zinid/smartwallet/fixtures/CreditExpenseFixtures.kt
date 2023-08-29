@@ -19,7 +19,7 @@ object CreditExpenseFixtures {
     fun getVacuumCleanerCreditExpense(creditCard: CreditCard): CreditExpense = CreditExpense(
         id = 3L,
         content = "Aspirador Robô Kabum Smart 700",
-        date = LocalDate.now().withDayOfMonth(5),
+        date = LocalDate.now().minusMonths(1).withDayOfMonth(5),
         price = BigDecimal.valueOf(1399.72),
         essential = false,
         monthlySubscription = false,

@@ -156,7 +156,6 @@ internal class CreditCardTest {
             creditCard.previousInvoiceClosingDate,
             creditCard.currentInvoiceClosingDate
         )
-
         val expectedValue =
             CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard).creditCardInstallments!!.firstInstallmentValue
                 .add(CreditExpenseFixtures.getFoodDeliveryCreditExpense(creditCard).price)

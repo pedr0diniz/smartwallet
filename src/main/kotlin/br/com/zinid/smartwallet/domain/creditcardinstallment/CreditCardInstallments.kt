@@ -27,7 +27,7 @@ data class CreditCardInstallments(
 
     fun getInstallmentsByPeriod(startDate: LocalDate, endDate: LocalDate) =
         installments?.filter {
-            (it.dueDate > startDate) && (it.dueDate <= endDate)
+            (it.dueDate >= startDate) && (it.dueDate < endDate)
         } ?: listOf()
 
     fun getOngoingInstallmentsValue(lastClosingDate: LocalDate): BigDecimal = getOngoingInstallments(lastClosingDate)

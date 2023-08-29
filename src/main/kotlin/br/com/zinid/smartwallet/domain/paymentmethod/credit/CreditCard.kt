@@ -78,7 +78,7 @@ data class CreditCard(
 
     private fun hasNotExpiredByDateOf(expense: Expense): Boolean =
         expirationDate.isAfterOrEqual(expense.date).let {
-            if (it) return it
+            if (it) return true
             else throw ExpiredCardException(EXPIRED_CARD_MESSAGE.format(last4Digits, expirationDate, expense.date))
         }
 
