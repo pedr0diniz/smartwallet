@@ -14,7 +14,8 @@ data class CreditExpenseResponse(
     override val essential: Boolean? = false,
     override val monthlySubscription: Boolean? = false,
     override val tag: String? = null,
-    val creditCardInstallments: CreditCardInstallmentsResponse?
+    val creditCardInstallments: CreditCardInstallmentsResponse?,
+    val dueDate: LocalDate? = null
 ) : ExpenseResponse {
     companion object {
         fun fromDomain(creditExpense: CreditExpense): CreditExpenseResponse =
@@ -28,7 +29,8 @@ data class CreditExpenseResponse(
                 tag = creditExpense.tag,
                 creditCardInstallments = creditExpense.creditCardInstallments?.let {
                     CreditCardInstallmentsResponse.fromDomain(it)
-                }
+                },
+                dueDate = creditExpense.dueDate
             )
     }
 }

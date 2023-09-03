@@ -60,7 +60,7 @@ class UserController(
         val expensesResponse = financialAccounts
             .asSequence()
             .map { filterPaymentMethods(it.paymentMethods, paymentType) }.flatten()
-            .map { filterExpenses(it.getMonthlyExpenses(yearMonth), queryParameters) }.flatten() // TODO - FIX THIS!!!
+            .map { filterExpenses(it.getMonthlyExpenses(yearMonth), queryParameters) }.flatten()
             .map { ExpenseResponse.fromDomain(it) }
             .toList()
 

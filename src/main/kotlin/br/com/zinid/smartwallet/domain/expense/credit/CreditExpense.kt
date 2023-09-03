@@ -5,6 +5,8 @@ import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallme
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
+import br.com.zinid.smartwallet.domain.utils.DateHelper
+import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -17,14 +19,18 @@ data class CreditExpense(
     override val monthlySubscription: Boolean? = false,
     override val paymentMethod: CreditCard,
     override val tag: String? = null,
-    val numberOfInstallments: Int? = null
+    val numberOfInstallments: Int? = null,
+    var dueDate: LocalDate? = null
 ) : Expense {
 
-    // TODO - try to make this have a private set
     var creditCardInstallments: CreditCardInstallments? = null
 
     override fun getPaymentType(): PaymentType = paymentMethod.type
-    override fun process() = buildInstallments()
+    override fun process() {
+        val expenseDueDate = getExpenseDueDate()
+        buildInstallments()
+        if (creditCardInstallments == null) dueDate = expenseDueDate
+    }
 
     fun hasInstallments() = (creditCardInstallments != null)
 
@@ -37,13 +43,29 @@ data class CreditExpense(
         }
     }
 
+    private fun getExpenseDueDate(): LocalDate {
+        val currentDueDate = DateHelper.getCurrentDueDate(paymentMethod.invoiceDueDayOfMonth, date)
+
+        return when (
+            date.isBeforeOrEqual(
+                currentDueDate.minusDays(paymentMethod.delayBetweenClosingAndDueDays.toLong())
+            )
+        ) {
+            true -> currentDueDate
+            false -> currentDueDate.plusMonths(1)
+        }
+    }
+
     fun getCreditCardInstallmentsByPeriod(startDate: LocalDate, endDate: LocalDate): List<CreditCardInstallment> {
         return creditCardInstallments?.installments?.filter {
             it.dueDate > startDate && it.dueDate <= endDate
         } ?: emptyList()
     }
 
-    fun getInstallmentWithinDateRangeAsExpense(startDate: LocalDate? = null, endDate: LocalDate? = null): CreditExpense? {
+    fun getInstallmentWithinDateRangeAsExpense(
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null
+    ): CreditExpense? {
 
         val possibleInstallment = getInstallmentWithinDateRange(
             startDate ?: paymentMethod.previousInvoiceClosingDate,

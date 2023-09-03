@@ -33,7 +33,8 @@ data class CreditExpenseEntity(
     @JoinColumn(name = "credit_card_id", referencedColumnName = "id", nullable = false)
     val paymentMethod: CreditCardEntity,
 
-    val numberOfInstallments: Int? = null
+    val numberOfInstallments: Int? = null,
+    val dueDate: LocalDate? = null
 ) {
 
     fun toDomain() = CreditExpense(
@@ -45,7 +46,8 @@ data class CreditExpenseEntity(
         monthlySubscription = monthlySubscription,
         paymentMethod = paymentMethod.toDomain(),
         numberOfInstallments = numberOfInstallments,
-        tag = tag
+        tag = tag,
+        dueDate = dueDate
     )
 
     companion object {
@@ -58,7 +60,8 @@ data class CreditExpenseEntity(
             monthlySubscription = creditExpense?.monthlySubscription,
             paymentMethod = CreditCardEntity.fromDomain(creditExpense?.paymentMethod),
             numberOfInstallments = creditExpense?.numberOfInstallments,
-            tag = creditExpense?.tag
+            tag = creditExpense?.tag,
+            dueDate = creditExpense?.dueDate
         )
     }
 
@@ -73,7 +76,9 @@ data class CreditExpenseEntity(
     override fun hashCode(): Int = javaClass.hashCode()
 
     @Override
-    override fun toString(): String =
-        this::class.simpleName + "(id = $id , content = $content , date = $date , price = $price , " +
-            "essential = $essential , monthlySubscription = $monthlySubscription , paymentMethod = $paymentMethod )"
+    override fun toString(): String {
+        return this::class.simpleName + "(id = $id , content = $content , date = $date , price = $price , " +
+            "essential = $essential , monthlySubscription = $monthlySubscription , tag = $tag , " +
+            "paymentMethod = $paymentMethod , numberOfInstallments = $numberOfInstallments , dueDate = $dueDate )"
+    }
 }
