@@ -25,11 +25,11 @@ data class CreditCard(
     override val financialAccount: FinancialAccount,
     override val expenses: List<CreditExpense> = listOf(),
     val invoiceDueDayOfMonth: Int,
-    val today: LocalDate = LocalDate.now()
+    val today: LocalDate = LocalDate.now(),
+    var delayBetweenClosingAndDueDays: Int = DEFAULT_DELAY_BETWEEN_CLOSING_AND_DUE_DAYS.toInt()
 ) : PaymentMethod {
 
     override val type: PaymentType = PaymentType.CREDIT
-    val delayBetweenClosingAndDueDays: Int = DEFAULT_DELAY_BETWEEN_CLOSING_AND_DUE_DAYS.toInt()
 
     val previousInvoiceDueDate: LocalDate = DateHelper.getPreviousDueDate(invoiceDueDayOfMonth, today)
     val currentInvoiceDueDate: LocalDate = DateHelper.getCurrentDueDate(invoiceDueDayOfMonth, today)
@@ -51,16 +51,11 @@ data class CreditCard(
         getRemainingSpendableValue().minus(expense.price) >= BigDecimal.ZERO && hasNotExpiredByDateOf(expense)
 
     override fun getMonthlyExpenses(yearMonth: YearMonth?): List<Expense> {
-        val (previousClosingDate, currentClosingDate) = if (yearMonth == null || yearMonth == YearMonth.now()) {
-            Pair(previousInvoiceClosingDate, currentInvoiceClosingDate)
-        } else {
-            Pair(
-                getPreviousClosingDate(LocalDate.of(yearMonth.year, yearMonth.month, today.dayOfMonth)),
-                getCurrentClosingDate(LocalDate.of(yearMonth.year, yearMonth.month, today.dayOfMonth))
-            )
-        }
+        val (startDate, endDate) =
+            if (yearMonth == null) Pair(previousInvoiceDueDate, currentInvoiceDueDate)
+            else Pair(yearMonth.atDay(1), yearMonth.atEndOfMonth())
 
-        return getExpensesWithinDateRange(previousClosingDate, currentClosingDate)
+        return getExpensesWithinDateRange(startDate, endDate)
     }
 
     override fun getMonthlyExpensesValue(yearMonth: YearMonth?): BigDecimal =

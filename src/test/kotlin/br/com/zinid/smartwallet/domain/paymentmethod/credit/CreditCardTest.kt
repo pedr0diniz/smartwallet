@@ -236,7 +236,8 @@ internal class CreditCardTest {
     fun `should get closing dates when outside closing-due days and due date is after today`() {
         val creditCard = CreditCardFixtures.getCreditCard().copy(
             invoiceDueDayOfMonth = 15,
-            today = LocalDate.parse("2023-07-03")
+            today = LocalDate.parse("2023-07-03"),
+            delayBetweenClosingAndDueDays = 10
         )
 
         val dueDate = getInvoiceDueDateForCurrentClosingDate(creditCard)
@@ -253,7 +254,9 @@ internal class CreditCardTest {
     fun `should get closing dates when outside closing-due days and due date is before today`() {
         val creditCard = CreditCardFixtures.getCreditCard().copy(
             invoiceDueDayOfMonth = 1,
-            today = LocalDate.parse("2023-07-15")
+            today = LocalDate.parse("2023-07-15"),
+            delayBetweenClosingAndDueDays = 10
+
         )
 
         val dueDate = getInvoiceDueDateForCurrentClosingDate(creditCard)
@@ -270,7 +273,8 @@ internal class CreditCardTest {
     fun `should get closing dates when inside closing-due days and due date is after today`() {
         val creditCard = CreditCardFixtures.getCreditCard().copy(
             invoiceDueDayOfMonth = 11,
-            today = LocalDate.parse("2023-07-05")
+            today = LocalDate.parse("2023-07-05"),
+            delayBetweenClosingAndDueDays = 10
         )
 
         val dueDate = getInvoiceDueDateForCurrentClosingDate(creditCard)
@@ -287,7 +291,8 @@ internal class CreditCardTest {
     fun `should get closing dates when inside closing-due days and due date is before today`() {
         val creditCard = CreditCardFixtures.getCreditCard().copy(
             invoiceDueDayOfMonth = 5,
-            today = LocalDate.parse("2023-07-27")
+            today = LocalDate.parse("2023-07-27"),
+            delayBetweenClosingAndDueDays = 10
         )
 
         val dueDate = getInvoiceDueDateForCurrentClosingDate(creditCard)

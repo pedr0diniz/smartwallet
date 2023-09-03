@@ -44,6 +44,7 @@ data class CreditCardInstallmentsEntity(
             expense = expense?.toDomain() ?: CreditExpense.createBlank()
         )
 
+        // TODO - fix this after creating the expense installment entity
         return creditCardInstallments.copy(installments = creditCardInstallments.buildInstallmentsList())
     }
 

@@ -28,19 +28,22 @@ data class CreditExpense(
     override fun getPaymentType(): PaymentType = paymentMethod.type
     override fun process() {
         val expenseDueDate = getExpenseDueDate()
-        buildInstallments()
-        if (creditCardInstallments == null) dueDate = expenseDueDate
+
+        if (numberOfInstallments != null) {
+            buildInstallments(expenseDueDate)
+        } else {
+            dueDate = expenseDueDate
+        }
     }
 
     fun hasInstallments() = (creditCardInstallments != null)
 
-    private fun buildInstallments() {
-        if (numberOfInstallments != null) {
-            creditCardInstallments = CreditCardInstallments.createFromExpenseAndCreditCard(
-                expense = this,
-                creditCard = paymentMethod
-            )
-        }
+    private fun buildInstallments(firstInstallmentDueDate: LocalDate) {
+        creditCardInstallments = CreditCardInstallments.createFromExpenseAndCreditCard(
+            expense = this,
+            creditCard = paymentMethod,
+            firstInstallmentDueDate = firstInstallmentDueDate
+        )
     }
 
     private fun getExpenseDueDate(): LocalDate {

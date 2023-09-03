@@ -33,10 +33,11 @@ data class CreditCardInstallments(
     fun getOngoingInstallmentsValue(lastClosingDate: LocalDate): BigDecimal = getOngoingInstallments(lastClosingDate)
         .sumOf { it.installmentValue }
 
-    fun buildInstallmentsList(): List<CreditCardInstallment> {
+    fun buildInstallmentsList(firstInstallmentDueDate: LocalDate? = null): List<CreditCardInstallment> {
         val installments: MutableList<CreditCardInstallment> = mutableListOf()
+        val dueDateOfFirstInstallment = firstInstallmentDueDate ?: getDueDate(expense.date)
         val firstInstallment = CreditCardInstallment(
-            dueDate = getDueDate(expense.date),
+            dueDate = dueDateOfFirstInstallment,
             installmentValue = firstInstallmentValue,
             content = expense.content
         )
@@ -46,7 +47,7 @@ data class CreditCardInstallments(
         for (i in 2..numberOfMonths) {
             installments.add(
                 CreditCardInstallment(
-                    dueDate = getDueDate(expense.date.plusMonths(i - 1L)),
+                    dueDate = dueDateOfFirstInstallment.plusMonths(i - 1L),
                     installmentValue = installmentValue,
                     content = expense.content
                 )
@@ -82,7 +83,11 @@ data class CreditCardInstallments(
 
     companion object {
 
-        fun createFromExpenseAndCreditCard(expense: CreditExpense, creditCard: CreditCard): CreditCardInstallments {
+        fun createFromExpenseAndCreditCard(
+            expense: CreditExpense,
+            creditCard: CreditCard,
+            firstInstallmentDueDate: LocalDate? = null
+        ): CreditCardInstallments {
             val numberOfInstallments =
                 expense.numberOfInstallments ?: throw NoInstallmentsException(NO_INSTALLMENTS_MESSAGE)
             val installmentValue = expense.price
@@ -108,7 +113,7 @@ data class CreditCardInstallments(
                 invoiceDueDayOfMonth = creditCard.invoiceDueDayOfMonth,
                 expense = expense
             )
-            val installmentsList = creditCardInstallments.buildInstallmentsList()
+            val installmentsList = creditCardInstallments.buildInstallmentsList(firstInstallmentDueDate)
 
             return creditCardInstallments.copy(installments = installmentsList)
         }
