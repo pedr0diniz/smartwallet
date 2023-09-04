@@ -4,7 +4,6 @@ import br.com.zinid.smartwallet.domain.exception.InvalidDateRangeException
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
-import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -23,7 +22,7 @@ interface Expense {
             throw InvalidDateRangeException(INVALID_DATE_RANGE_MESSAGE.format(startDate, endDate))
         }
 
-        return (date.isAfterOrEqual(startDate)) && (date.isBeforeOrEqual(endDate))
+        return (date.isAfterOrEqual(startDate)) && (date.isBefore(endDate))
     }
 
     fun getPaymentType(): PaymentType
@@ -33,6 +32,6 @@ interface Expense {
     fun process()
 
     companion object {
-        private const val INVALID_DATE_RANGE_MESSAGE = "Date range is invalid with start date [%s] and end date [%s]"
+        const val INVALID_DATE_RANGE_MESSAGE = "Date range is invalid with start date [%s] and end date [%s]"
     }
 }

@@ -81,15 +81,15 @@ class UserController(
     }
 
     private fun filterExpenses(expenses: List<Expense>, queryParameters: Map<String, String>): List<Expense> {
-        val essential = queryParameters["essential"].toBoolean()
-        val monthlySubscription = queryParameters["monthly_subscription"].toBoolean()
+        val essential = queryParameters["essential"]
+        val monthlySubscription = queryParameters["monthly_subscription"]
         val installmentsOnly = queryParameters["installments_only"].toBoolean()
         val tags = queryParameters["tags"]?.uppercase()?.split(",")
 
-        val expensesByFlags =
-            expenses
-                .filter { it.essential == essential }
-                .filter { it.monthlySubscription == monthlySubscription }
+        val expensesByFlags = expenses.apply {
+            if (essential != null) this.filter { it.essential == essential.toBoolean() }
+            if (monthlySubscription != null) this.filter { it.monthlySubscription == monthlySubscription.toBoolean() }
+        }
 
         val expensesByFlagsAndInstallmentFlag = if (installmentsOnly) expensesByFlags.filter { it.id == 0L }
         else expensesByFlags

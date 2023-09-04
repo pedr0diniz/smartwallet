@@ -2,10 +2,12 @@ package br.com.zinid.smartwallet.domain.expense.credit
 
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallment
 import br.com.zinid.smartwallet.domain.creditcardinstallment.CreditCardInstallments
+import br.com.zinid.smartwallet.domain.exception.InvalidDateRangeException
 import br.com.zinid.smartwallet.domain.expense.Expense
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.CreditCard
 import br.com.zinid.smartwallet.domain.utils.DateHelper
+import br.com.zinid.smartwallet.domain.utils.DateHelper.isAfterOrEqual
 import br.com.zinid.smartwallet.domain.utils.DateHelper.isBeforeOrEqual
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -71,8 +73,8 @@ data class CreditExpense(
     ): CreditExpense? {
 
         val possibleInstallment = getInstallmentWithinDateRange(
-            startDate ?: paymentMethod.previousInvoiceClosingDate,
-            endDate ?: paymentMethod.currentInvoiceClosingDate
+            startDate ?: paymentMethod.previousInvoiceDueDate,
+            endDate ?: paymentMethod.currentInvoiceDueDate
         )
 
         val installmentsList = creditCardInstallments?.installments
@@ -88,7 +90,8 @@ data class CreditExpense(
                 paymentMethod = paymentMethod,
                 essential = essential,
                 monthlySubscription = monthlySubscription,
-                tag = tag
+                tag = tag,
+                dueDate = possibleInstallment.dueDate
             )
         }
 
@@ -116,10 +119,18 @@ data class CreditExpense(
 
 typealias CreditExpenses = List<CreditExpense>
 
-fun CreditExpenses.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> =
-    this.filter {
-        it.wasPurchasedWithinDateRange(startDate, endDate) && it.creditCardInstallments == null
+fun CreditExpenses.filterWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<CreditExpense> {
+    if (startDate.isAfter(endDate)) {
+        throw InvalidDateRangeException(Expense.INVALID_DATE_RANGE_MESSAGE.format(startDate, endDate))
     }
+
+    return this.filter {
+        it.dueDate != null &&
+            it.creditCardInstallments == null &&
+            it.dueDate!!.isAfterOrEqual(startDate) &&
+            it.dueDate!!.isBefore(endDate)
+    }
+}
 
 fun CreditExpenses.getOngoingInstallments(previousInvoiceClosingDate: LocalDate): List<CreditCardInstallment> {
     val installments = mutableListOf<CreditCardInstallment>()

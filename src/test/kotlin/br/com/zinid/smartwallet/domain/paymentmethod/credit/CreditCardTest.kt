@@ -117,15 +117,16 @@ internal class CreditCardTest {
 
     @Test
     fun `should get expenses within date range`() {
+        val today = LocalDate.now()
         val tempCard = CreditCardFixtures.getCreditCard()
         val creditCard = tempCard.copy(
             expenses = CreditExpenseFixtures.getCreditExpenseList(tempCard),
-            today = LocalDate.now().withDayOfMonth(13)
+            today = today.withDayOfMonth(13)
         )
 
         val expenses = creditCard.getExpensesWithinDateRange(
-            creditCard.previousInvoiceClosingDate,
-            creditCard.currentInvoiceClosingDate
+            today.withDayOfMonth(1),
+            today.withDayOfMonth(today.lengthOfMonth())
         )
 
         assertEquals(3, expenses.size)
