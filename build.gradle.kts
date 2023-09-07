@@ -85,6 +85,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.mockk:mockk:1.12.0")
+
+    archTestImplementation("org.junit.jupiter:junit-jupiter")
+    archTestImplementation("com.tngtech.archunit:archunit-junit5-api:1.0.1")
+    archTestImplementation("com.tngtech.archunit:archunit-junit5-engine:1.0.1")
 }
 
 fun loadEnv(environment: MutableMap<String, Any>, file: File) {

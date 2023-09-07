@@ -100,7 +100,8 @@ internal class CreditExpenseTest {
             price = expectedInstallment.firstInstallmentValue,
             paymentMethod = creditExpense.paymentMethod,
             essential = creditExpense.essential,
-            monthlySubscription = creditExpense.monthlySubscription
+            monthlySubscription = creditExpense.monthlySubscription,
+            dueDate = currentInstallmentAsExpense?.dueDate
         )
 
         assertNotNull(currentInstallmentAsExpense)
@@ -115,7 +116,10 @@ internal class CreditExpenseTest {
         )
         val creditExpense = CreditExpenseFixtures.getVacuumCleanerCreditExpenseWithInstallments(creditCard)
 
-        val currentInstallmentAsExpense = creditExpense.getInstallmentWithinDateRangeAsExpense()
+        val currentInstallmentAsExpense = creditExpense.getInstallmentWithinDateRangeAsExpense(
+            startDate = today.withDayOfMonth(1),
+            endDate = today.withDayOfMonth(today.lengthOfMonth())
+        )
         val expectedInstallment = CreditCardInstallments.createFromExpenseAndCreditCard(creditExpense, creditCard)
 
         val expectedExpense = CreditExpense(
@@ -124,7 +128,8 @@ internal class CreditExpenseTest {
             price = expectedInstallment.firstInstallmentValue,
             paymentMethod = creditExpense.paymentMethod,
             essential = creditExpense.essential,
-            monthlySubscription = creditExpense.monthlySubscription
+            monthlySubscription = creditExpense.monthlySubscription,
+            dueDate = currentInstallmentAsExpense?.dueDate
         )
 
         assertNotNull(currentInstallmentAsExpense)

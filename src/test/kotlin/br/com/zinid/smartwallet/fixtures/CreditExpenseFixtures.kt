@@ -30,22 +30,22 @@ object CreditExpenseFixtures {
     fun getFoodDeliveryCreditExpense(creditCard: CreditCard): CreditExpense = CreditExpense(
         id = 4L,
         content = "iFood - Pizzaria Reis Magos",
-        date = LocalDate.now().withDayOfMonth(15),
+        date = LocalDate.now().minusMonths(1).withDayOfMonth(15),
         price = BigDecimal.valueOf(99.72),
         essential = false,
         monthlySubscription = false,
         paymentMethod = creditCard,
-    )
+    ).apply { this.process() }
 
     fun getSubscriptionCreditExpense(creditCard: CreditCard): CreditExpense = CreditExpense(
         id = 5L,
         content = "Netflix",
-        date = LocalDate.now().withDayOfMonth(10),
+        date = LocalDate.now().minusMonths(1).withDayOfMonth(10),
         price = BigDecimal.valueOf(55.90),
         essential = false,
         monthlySubscription = true,
         paymentMethod = creditCard,
-    )
+    ).apply { this.process() }
 
     fun getRenovationsCreditExpense(creditCard: CreditCard): CreditExpense = CreditExpense(
         id = 6L,
@@ -55,5 +55,5 @@ object CreditExpenseFixtures {
         essential = true,
         monthlySubscription = false,
         paymentMethod = creditCard,
-    )
+    ).apply { this.process() }
 }
