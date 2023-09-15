@@ -9,6 +9,11 @@ import br.com.zinid.smartwallet.domain.paymentmethod.PaymentMethod
 import br.com.zinid.smartwallet.domain.paymentmethod.PaymentType
 import br.com.zinid.smartwallet.domain.user.input.CreateUserInputPort
 import br.com.zinid.smartwallet.domain.user.input.FindUserInputPort
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.Explode
+import io.swagger.v3.oas.annotations.enums.ParameterIn
+import io.swagger.v3.oas.annotations.enums.ParameterStyle
+import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -38,6 +43,16 @@ class UserController(
     @GetMapping("{userId}/monthlyExpenses")
     fun getMonthlyExpensesByUserId(
         @PathVariable userId: Long,
+        @Parameter(
+            name = "query_params",
+            `in` = ParameterIn.QUERY,
+            required = false,
+            schema = Schema(
+                type = "object",
+                additionalProperties = Schema.AdditionalPropertiesValue.TRUE, ref = "#/components/schemas/ParameterMap"),
+            style = ParameterStyle.FORM,
+            explode = Explode.TRUE
+            )
         @RequestParam queryParameters: Map<String, String>
     ): ResponseEntity<Any?> {
         val user = findUserUseCase.findById(userId) ?: return ResponseEntity.notFound().build() // TODO - error handling
