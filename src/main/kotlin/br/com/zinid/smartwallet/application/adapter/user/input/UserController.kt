@@ -13,7 +13,11 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.enums.Explode
 import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.enums.ParameterStyle
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -33,6 +37,18 @@ class UserController(
     private val findUserUseCase: FindUserInputPort
 ) {
 
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                content = [
+                    Content(
+                        schema = Schema(implementation = UserResponse::class)
+                    )
+                ]
+            )
+        ]
+    )
     @PostMapping
     fun create(@Valid @RequestBody userRequest: UserRequest): ResponseEntity<Any?> {
         val possibleUser = createUserUseCase.execute(userRequest.toDomain())
@@ -40,6 +56,18 @@ class UserController(
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromDomain(possibleUser))
     }
 
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = MonthlyExpensesResponse::class))
+                    )
+                ]
+            )
+        ]
+    )
     @GetMapping("{userId}/monthlyExpenses")
     fun getMonthlyExpensesByUserId(
         @PathVariable userId: Long,
@@ -49,10 +77,11 @@ class UserController(
             required = false,
             schema = Schema(
                 type = "object",
-                additionalProperties = Schema.AdditionalPropertiesValue.TRUE, ref = "#/components/schemas/ParameterMap"),
+                additionalProperties = Schema.AdditionalPropertiesValue.TRUE, ref = "#/components/schemas/ParameterMap"
+            ),
             style = ParameterStyle.FORM,
             explode = Explode.TRUE
-            )
+        )
         @RequestParam queryParameters: Map<String, String>
     ): ResponseEntity<Any?> {
         val user = findUserUseCase.findById(userId) ?: return ResponseEntity.notFound().build() // TODO - error handling

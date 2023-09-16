@@ -3,6 +3,10 @@ package br.com.zinid.smartwallet.application.adapter.creditcardinstallments.inpu
 import br.com.zinid.smartwallet.application.adapter.creditcardinstallments.output.CreditCardInstallmentsResponse
 import br.com.zinid.smartwallet.application.config.exception.ErrorResponse
 import br.com.zinid.smartwallet.domain.creditcardinstallment.input.FindCreditCardInstallmentsInputPort
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,6 +19,26 @@ class CreditCardInstallmentsController(
     private val findCreditCardInstallmentsUseCase: FindCreditCardInstallmentsInputPort
 ) {
 
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [
+                    Content(
+                        schema = Schema(implementation = CreditCardInstallmentsResponse::class)
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                content = [
+                    Content(
+                        schema = Schema(implementation = ErrorResponse::class)
+                    )
+                ]
+            )
+        ]
+    )
     @GetMapping
     fun findByCreditExpenseId(@RequestParam creditExpenseId: Long): ResponseEntity<Any?> {
         val creditCardInstallments = findCreditCardInstallmentsUseCase.findByCreditExpenseId(creditExpenseId)

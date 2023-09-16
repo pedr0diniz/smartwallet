@@ -3,6 +3,11 @@ package br.com.zinid.smartwallet.application.adapter.paymentmethod.credit.input
 import br.com.zinid.smartwallet.application.adapter.paymentmethod.credit.output.CreditCardResponse
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.input.CreateCreditCardInputPort
 import br.com.zinid.smartwallet.domain.paymentmethod.credit.input.FindCreditCardInputPort
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,7 +25,19 @@ class CreditCardController(
     private val findCreditCardUseCase: FindCreditCardInputPort
 ) {
 
-    @PostMapping("/credit")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                content = [
+                    Content(
+                        schema = Schema(implementation = CreditCardResponse::class)
+                    )
+                ]
+            )
+        ]
+    )
+    @PostMapping
     fun create(@Valid @RequestBody creditCardRequest: CreditCardRequest): ResponseEntity<Any?> {
         val possibleCreditCard = createCreditCardUseCase.execute(creditCardRequest.toDomain())
 
@@ -29,6 +46,18 @@ class CreditCardController(
         )
     }
 
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = CreditCardResponse::class))
+                    )
+                ]
+            )
+        ]
+    )
     @GetMapping
     fun findByFinancialAccountId(@RequestParam financialAccountId: Long): ResponseEntity<Any?> =
         ResponseEntity.ok(

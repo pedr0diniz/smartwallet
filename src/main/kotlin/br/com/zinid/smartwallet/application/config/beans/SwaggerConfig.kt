@@ -16,7 +16,8 @@ class SwaggerConfig {
         .components(
             Components()
                 .addSchemas(
-                    "ParameterMap", Schema<Map<String, String>>()
+                    "ParameterMap",
+                    Schema<Map<String, String>>()
                         .addProperty("year_month", StringSchema().example("2023-09"))
                         .addProperty("payment_type", StringSchema().example("credit"))
                         .addProperty("tags", StringSchema().example("obra,gasolina"))
